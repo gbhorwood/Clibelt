@@ -1,11 +1,8 @@
 var searchData=
 [
-  ['pad',['pad',['../class_clibelt.html#a9e99e911db513bb271f39c3369bbdb20',1,'Clibelt']]],
-  ['prepargs',['prepArgs',['../class_clibelt.html#afc786fe851f45ce389a5393f71cbc724',1,'Clibelt']]],
-  ['printerr',['printerr',['../class_clibelt.html#a9e75d2aa36480d5f62677da1a7fdcd83',1,'Clibelt']]],
-  ['printout',['printout',['../class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545',1,'Clibelt']]],
-  ['progress',['progress',['../class_clibelt.html#a84759f29640d57a05168067f6a43763f',1,'Clibelt']]],
-  ['progressfilesizetrack',['progressFilesizeTrack',['../class_clibelt.html#a7b8d00d73c58d75d7a407cd67e930e9a',1,'Clibelt']]],
-  ['promptchoice',['promptChoice',['../class_clibelt.html#ab0708733ca417fe76e7f9652110bdd03',1,'Clibelt']]],
-  ['promptchoiceyn',['promptChoiceYn',['../class_clibelt.html#a7359c901a6514cfbafd9977f85825af8',1,'Clibelt']]]
+  ['getkeydown',['getKeyDown',['../class_clibelt.html#a61e23c01833c394bd9cdcaad33dfc1af',1,'Clibelt']]],
+  ['getlasterror',['getLastError',['../class_clibelt.html#ae8040f6cb2f74166de7ddb9a868c03e9',1,'Clibelt']]],
+  ['getlastinput',['getLastInput',['../class_clibelt.html#a00fc813728e27f072e54eb28998eb598',1,'Clibelt']]],
+  ['getlengthoflongestline',['getLengthOfLongestLine',['../class_clibelt.html#ac57ab8329098f4ddc0b9e65ab5234bd3',1,'Clibelt']]],
+  ['getterminalwidth',['getTerminalWidth',['../class_clibelt.html#abdace9b01160b56a82157615454b88ab',1,'Clibelt']]]
 ];

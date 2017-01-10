@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['erase',['erase',['../class_clibelt.html#a0f01bdf605d7f99e61f5f238be6d09bd',1,'Clibelt']]]
+  ['clear',['clear',['../class_clibelt.html#a6620a95424357a460db66bce469a5910',1,'Clibelt']]],
+  ['clearline',['clearLine',['../class_clibelt.html#a54287a8a07d0e8085070b76c855130f7',1,'Clibelt']]]
 ];
