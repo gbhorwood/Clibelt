@@ -42,6 +42,7 @@ define('BOLD', '1');
 define('ITALIC', '3'); // limite terminal support. ymmv.
 define('UNDERLINE', '4');
 define('STRIKETHROUGH', '9');
+define('REVERSE', '7');
 
 /**
  * Convenience ANSI codes
@@ -98,7 +99,6 @@ define('CENTER', 2);
  * @todo help() maybe build list of cli args to auto output
  * @todo handle arguments, maybe ie php commando
  * @todo banner() // printout text as a banner
- * @todo modify box for too narrow window, ie wrapping
  */
 class Clibelt
 {
@@ -119,6 +119,12 @@ class Clibelt
      * The text of the last user input
      */
     private $lastInput = null;
+
+    /**
+     * The array of cached menu output so it does not need to be rebuilt every time it's rendered for display
+     */
+    private $cachedMenuArray = null;
+    private $cachedMaxContentLineLength = null;
 
     /**
      * @brief Gets the lastError thrown by Clibelt.
@@ -280,7 +286,7 @@ class Clibelt
          */
         $defaults = array_fill(0, count($options), $default);
         $displayOptions = implode(",", array_map(function ($option, $default) {
-                if ($option[0] == $default[0]) {
+                if ($option[0] == @$default[0]) {
                     return BOLD_ANSI.$option[0].CLOSE_ANSI;
                 }
 
@@ -298,41 +304,35 @@ class Clibelt
         }
         $displayPrompt .= ": ";
 
-        /**
-         * Direct read from STDIN with readline_callback_handler_install() is used to read user keystroke without
-         * requiring them to hit <cr>
-         */
+        // if the prompt is too long for the terminal, wrap at the word break. it looks nicer.
+        $displayPrompt = $this->wrapToTerminalWidth($displayPrompt);
+
         fwrite(STDOUT, $displayPrompt); // direct output used for prompt to preserve ANSI encoding for bold
-        readline_callback_handler_install("", function () {});
+
+        // read user keydown until we get a valid response
         while (true) {
-            $r = array(STDIN);
-            $w = null;
-            $e = null;
-            $n = stream_select($r, $w, $e, null);
-            if ($n && in_array(STDIN, $r)) {
-                // read the user choice from STDIN
-                $userChoice = stream_get_contents(STDIN, 1);
+            $userChoice = $this->getKeyDown();
 
-                // selection not in list, use the default if one has been set
-                if ($default && !in_array($userChoice, $testOptions)) {
-                    $userChoice = $default;
-                    break; // usable input, break from loop
-                }
+            // selection not in list, use the default if one has been set
+            if ($default && !in_array($userChoice, $testOptions)) {
+                $userChoice = $default;
+                break; // usable input, break from loop
+            }
 
-                // selection is in list of options
-                elseif (in_array($userChoice, $testOptions)) {
-                    break; // usable input, break from loop
-                }
+            // selection is in list of options
+            elseif (in_array($userChoice, $testOptions)) {
+                break; // usable input, break from loop
+            }
 
-                // bad selection, reprint prompt and continue with the loop
-                else {
-                    if ($userChoice != PHP_EOL) {
-                        fwrite(STDOUT, $userChoice); // echo back user's keystroke so they can see their invalid choice
-                    }
-                    fwrite(STDOUT, PHP_EOL.$displayPrompt);
+            // bad selection, reprint prompt and continue with the loop
+            else {
+                if ($userChoice != PHP_EOL) {
+                    fwrite(STDOUT, $userChoice); // echo back user's keystroke so they can see their invalid choice
                 }
+                fwrite(STDOUT, PHP_EOL.$displayPrompt);
             }
         }
+
         print PHP_EOL;
 
         // log the user choice in lastInput so it can be retrieved after the return event
@@ -395,6 +395,180 @@ class Clibelt
 
         return $userInput;
     } // read
+
+
+    /**
+     * @brief Reads user input with star-echo for privacy
+     *
+     * @param $prompt String. The prompt to display before user input
+     * @return String
+     */
+    public function readPassword($prompt)
+    {
+        // output user-supplied prompt
+        $this->printout($prompt.":");
+        
+        // the array of chars of user input
+        $enteredCharsArray = [];
+
+        // loop while polling user input on STDIN
+        while (true) {
+            // read user key down event into enteredChar for adding to array and testing
+            // for special keys
+            $enteredChar = $this->getKeyDown();
+            // RETURN key. break loop to return entered text
+            if (ord($enteredChar) == 10) {
+                break;
+            }
+
+            // backspace key. delete previous char and backspace previous output star
+            else if (ord($enteredChar) == 127 || ord($enteredChar) == 126) {
+                array_pop($enteredCharsArray);
+                fwrite(STDOUT,BACKSPACE);
+                fwrite(STDOUT,  "\033[0K"); // erase line
+            }
+
+            // any other key. add to array of entered chars
+            else {
+                $enteredCharsArray[] = $enteredChar;
+                fwrite(STDOUT,"*");
+            }
+
+        } // while(true)
+
+        // log the user choice in lastInput so it can be retrieved after the return event
+        $this->lastInput = join("",$enteredCharsArray);
+
+        // user got here by hitting RETURN. build string from array and return.
+        return join("",$enteredCharsArray);
+
+    } // readPassword
+
+
+    /**
+     * @brief Displays a menu, navigable with arrow or tab keys, with optional alignment and styling
+     *
+     * This method builds and displays a menu of the provided $options. The user can navigate the menu by either
+     *   * Using the up and down arrow keys to highlight the selection and hitting RETURN to select
+     *   * Using the tab key to scroll down the menu and hitting RETURN to select
+     *	 * Pressing the key for the option, if the $options array is keyed by a single char
+     *
+     * The value returned is the key of the $options element that was selected.
+     *
+     * The menu continues to display until the user makes a correct selection.
+     *
+     * The foreground and backgroud colours of the menu can be set using the $foregroundColour and $backgroundColour
+     * arguments. Colours must be one of the pre-set ANSI constants: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN or WHITE.
+     *
+     * The menu option currently hightlighted by the user is shown by having the colour options reversed using ANSI REVERSE.
+     *
+     * The menu is displayed inside of a box. The text in the box can be aligned with the $innerAlign argument by passing
+     * one of the pre-determined alignment constants: LEFT, RIGHT or CENTER.
+     *
+     * The menu box can be aligned in the terminal using the $outerAlign argument. Valid options are LEFT, RIGHT or CENTER.
+     *
+     * The menu box may wrap the contents of the description or options in order to fit the whole box nicely in the width of
+     * of the terminal. Line breaks provided in the content of options and the description are preserved.
+     *
+     * sample usage:
+     * @code
+     * $description = "Which band can be considered the first true punk band?"
+     * $options = array(
+     *     "a" => "New York Dolls",
+     *     "b" => "Rocket from the Tombs",
+     *     "c" => "Death"
+     * );
+     * $result = $cli->menu($description, $options);
+     * // the key, either 'a', 'b' or 'c' is in $result.
+     * @endcode
+     *
+     * @param $description String. The description that goes above the list of selectable options.
+     * @param $options Array.  The associative array of options to choose from.
+     * @param $innerAlign Pre-defined constant. Optional. The alignment of the text inside the box. One of LEFT, RIGHT or CENTER
+     * @param $outerAlign Pre-defined constant. Optional. The alignment of the box in the terminal. One of LEFT, RIGHT or CENTER
+     * @param $foregroundColour Pre-defined constant. Optional. The colour of the foreground text. One of the pre-set ANSI colours.
+     * @param $backgroundColour Pre-defined constant. Optional. The colour of the background of the text. One of the pre-set ANSI colours.
+     * @return String
+     */
+    public function menu($description,  $options, $innerAlign = LEFT, $outerAlign = LEFT, $foregroundColour = null, $backgroundColour = null)
+    {
+        // hightlight the first option in the menu to start
+        $selectedIndex = 0;
+
+        // retrieve the key by the index
+        $selectedKey = array_keys($options)[$selectedIndex];
+
+        // draw the menu
+        $this->printoutMenuBox($description, $options, $selectedKey, $innerAlign, $outerAlign, $foregroundColour, $backgroundColour);
+
+        // loop awaiting user input
+        while (true) {
+            // get key down event from user
+            $userChoice = $this->getKeyDown();
+
+            // scroll down
+            // 66 down arrow
+            // 9 tab
+            if (ord($userChoice) == 66 || ord($userChoice) == 9) {
+                // delete ouput of menu
+                $this->erase();
+
+                // update the menu to highlight the next option
+                if ($selectedIndex < count($options)-1) {
+                    $selectedIndex++;
+                }
+                // wrap back to top
+                else {
+                    $selectedIndex = 0;
+                }
+
+                // draw the new menu
+                $this->printoutMenuBox($description, $options, array_keys($options)[$selectedIndex], $innerAlign, $outerAlign, $foregroundColour, $backgroundColour);
+            }
+
+            // scroll up
+            // 65 up arrow
+            if (ord($userChoice) == 65) {
+                // delete output of menu
+                $this->erase();
+
+                // update the menu to highlight previous option
+                // wrap back to bottom
+                if ($selectedIndex == 0) {
+                    $selectedIndex = count($options)-1;
+                } else {
+                    $selectedIndex--;
+                }
+
+                // draw the new menu
+                $this->printoutMenuBox($description, $options, array_keys($options)[$selectedIndex], $innerAlign, $outerAlign, $foregroundColour, $backgroundColour);
+            }
+
+            // select and return current key
+            // 10 return
+            if (ord($userChoice) == 10) {
+                $returnVal = array_keys($options)[$selectedIndex];
+                break;
+            }
+
+            // key selection of option
+            // if pressed key is the char of an option key select and return
+            if (in_array($userChoice, array_keys($options))) {
+                $returnVal = $userChoice;
+                break;
+            }
+        } // while true
+
+        $this->lastInput = $returnVal;
+
+        // cached values for this menu are now cleared so future menus are forced to build and draw
+        $this->cachedMaxContentLineLength = null;
+        $this->cachedMenuArray = null;
+
+        // return selected key
+        return $returnVal;
+    } // menu
+
 
     ##
     # Methods to do formatted output
@@ -522,14 +696,14 @@ class Clibelt
      * @param $background. Pre-defined constant. A color constant as used in printout()
      * @param $alignment. Pre-defined constant. An alignment constant as used in printout()
      * @return void
+     * @todo make boxMargin settable by arg
      */
     public function box($text, $foreground = null, $background = null, $alignment = CENTER)
     {
-        /**
- * @todo make settable by arg
- */
         // inner left and right margin, in spaces
         $boxMargin = 4;
+
+        $text = $this->wrapToTerminalWidth($text, ($boxMargin*2) +2);
 
         // get the length of the longest line if there are more than one.
         // this is used to determine the overall width of the box and pad lines for centreing
@@ -581,83 +755,6 @@ class Clibelt
             // override lastPrintLineCount for erase()
             $this->lastPrintLineCount = count($box)+2;
     } // box
-
-
-    /**
-     *
-     *
-     */
-    public function menuDynamic($description, $prompt, $options, $innerAlign, $outerAlign, $highlightColour, $foregroundColour, $backgroundColour)
-    {
-        // hightlight the first option in the menu to start
-        $highLightIndex = 0;
-        // retrieve the key by the index
-        $highLightKey = array_keys($options)[$highLightIndex];
-
-        // draw the menu
-        $this->printoutMenuBox($description, $options, $highLightKey, $innerAlign, $outerAlign, $highlightColour, $foregroundColour, $backgroundColour);
-
-        // loop awaiting user input
-        while (true) {
-            // get key down event from user
-            $userChoice = $this->getKeyDown();
-
-            // scroll down
-            // 66 down arrow
-            // 9 tab
-            if (ord($userChoice) == 66 || ord($userChoice) == 9) {
-                // delete ouput of menu
-                $this->erase();
-
-                // update the menu to highlight the next option
-                if ($highLightIndex < count($options)-1) {
-                    $highLightIndex++;
-                }
-                // wrap back to top
-                else {
-                    $highLightIndex = 0;
-                }
-
-                // draw the new menu
-                $this->printoutMenuBox($description, $options, array_keys($options)[$highLightIndex], $innerAlign, $outerAlign, $highlightColour, $foregroundColour, $backgroundColour);
-            }
-
-            // scroll up
-            // 65 up arrow
-            if (ord($userChoice) == 65) {
-                // delete output of menu
-                $this->erase();
-
-                // update the menu to highlight previous option
-                // wrap back to bottom
-                if ($highLightIndex == 0) {
-                    $highLightIndex = count($options)-1;
-                } else {
-                    $highLightIndex--;
-                }
-
-                // draw the new menu
-                $this->printoutMenuBox($description, $options, array_keys($options)[$highLightIndex], $innerAlign, $outerAlign, $highlightColour, $foregroundColour, $backgroundColour);
-            }
-
-            // select and return current key
-            // 10 return
-            if (ord($userChoice) == 10) {
-                $returnVal = array_keys($options)[$highLightIndex];
-                break;
-            }
-
-            // key selection of option
-            // if pressed key is the char of an option key select and return
-            if (in_array($userChoice, array_keys($options))) {
-                $returnVal = $userChoice;
-                break;
-            }
-        } // while true
-
-        // return selected key
-        return $returnVal;
-    } // menuDynamic
 
 
     /**
@@ -1100,6 +1197,32 @@ class Clibelt
 
 
     /**
+     * @brief Returns the longest line in either the string or array passed
+     *
+     * Uses ANSI safe strlen() to strip out printable but unseen ANSI control chars.
+     * @param $lines Mixed. Either a string of lines separated by PHP_EOL or an array of lines
+     * @return String
+     */
+    private function getLongestLine($lines)
+    {
+        if (is_string($lines)) {
+            $lines = explode(PHP_EOL, $lines);
+        }
+
+        $longestLine = $lines[0];
+        $max = 0;
+        while (list(, $line) = each($lines)) {
+            if ($this->strlenAnsiSafe($line) > $max) {
+                $max = $this->strlenAnsiSafe($line);
+                $longestLine = $line;
+            }
+        }
+
+        return $longestLine;
+    } // getLongestLine
+
+
+    /**
      * @brief Writes to a stream, either STDOUT or STDERR, user-supplied text with optional color and formatting
      *
      * @param $text String. The string to write to the stream.
@@ -1276,19 +1399,24 @@ class Clibelt
 
 
     /**
-     * @brief Builds and ouputs a formatted menu box
+     * @brief Prints out the box of options, description and prompt that is a 'menu'.
      *
-     * @param $description String. The description that goes above the list of options
-     * @param $options Array. Associative array of menu options. Key is returned on selection.
-     * @param $highLightKey String. The key of the option that is currently selected.
-     * @param $innerAlign Pre-defined constant. One of LEFT, RIGHT, CENTER. Alignment of text inside the box.
-     * @param $outerAlign Pre-defined constant. One of LEFT, RIGHT, CENTER. Alignment of the box in the screen
-     * @param $highlightColour Pre-defined constant. A colour. Used to highlight the currently selected option
-     * @param $foreground Pre-defined constant. A colour. Foreground colour of the box.
-     * @param $background Pre-defined constant. A colour. Background colour of the box.
+     * This method builds all the lines that comprise a menu box, including padding and alignment, composes and array of those
+     * lines and calls printoutMenuBoxCache() to do the actual output to STDOUT. If an array of build menu lines
+     * is already set in cachedMenuArray, then this method immediately calls printoutMenuBoxCache() with that array. This is
+     * caching mechanism to improve performance as the menu is redrawn on every valid user keydown event.
+     *
+     * @param $description String. The description that goes above the list of selectable options.
+     * @param $options Array.  The associative array of options to choose from.
+     * @param $selectedKey. String. The key of the options array that is currently highlighted as selected
+     * @param $innerAlign Pre-defined constant. Optional. The alignment of the text inside the box. One of LEFT, RIGHT or CENTER
+     * @param $outerAlign Pre-defined constant. Optional. The alignment of the box in the terminal. One of LEFT, RIGHT or CENTER
+     * @param $foregroundColour Pre-defined constant. Optional. The colour of the foreground text. One of the pre-set ANSI colours.
+     * @param $backgroundColour Pre-defined constant. Optional. The colour of the background of the text. One of the pre-set ANSI colours.
      * @return void
+     * @see menu
      */
-    private function printoutMenuBox($description, $options, $highLightKey, $innerAlign, $outerAlign, $highlightColour, $foreground, $background)
+    private function printoutMenuBox($description, $options, $selectedKey, $innerAlign, $outerAlign, $foreground, $background)
     {
         // the character that makes the box border
         // @todo make arg
@@ -1298,205 +1426,251 @@ class Clibelt
         // @todo make arg
         $boxMargin = 2;
 
+        // the minimum padding between an option's key and it's value. padding may be greater in menus with LEFT-justified
+        // content so that values are vertically flush
+        $keyPad = "  ";
+
+        // options are indented from the $description and the $prompt to improve readability. this is the indentation string.
+        $indent = "  ";
+
         // build ANSI colour coding tags
 
         // default foreground, background as supplied
         $defaultAnsi = ESC."[".implode(";", [$foreground, $background+10])."m";
 
-        // the hightlight tags as supplied, default green
-        $selectedAnsi = ESC."[".implode(";", [GREEN, $background+10])."m";
-        if ($highlightColour) {
-            $selectedAnsi = ESC."[".implode(";", [$highlightColour, $background+10])."m";
+        // the hightlight tag
+        $selectedAnsi = BOLD_ANSI.ESC."[".implode(";", [REVERSE])."m";
+
+        // if this menu's printableMenuArray has already been built and cached, we should use that and call
+        // printoutMenuBoxCache(). This saves having to rebuild the menu on every update, which improves
+        // performance marginally.
+        if (is_array($this->cachedMenuArray)) {
+            $this->printoutMenuBoxCache($this->cachedMenuArray,
+                array_keys($options),
+                $innerAlign,
+                $outerAlign,
+                $selectedKey,
+                $defaultAnsi,
+                $selectedAnsi,
+                $boxBorderChar,
+                $boxMargin,
+                $this->cachedMaxContentLineLength);
+
+            return true;
         }
 
         // default prompt
         // @todo make arg
         $prompt = "(Use up and down arrow cards, hit RETURN to select)";
 
-        // get the length of the longest key of an option. this is used for building the padding between option keys
-        // and values so that values are vertically aligned, ie:
-        //  k)    Value for k
-        //  key2) Value for key2
-        // this is only done when inner alignment is not CENTER
-        $maxOptionKey = $this->getLengthOfLongestLine(array_keys($options));
+        // since option keys are padded so that option vals are verticlly aligned, we need to know the length
+        // of the longest key. used for padding and figuring out word wrap for option vals
+        $lengthOfLongestKey = $this->getLengthOfLongestLine(array_keys($options));
 
-        // work out the width of the longest line in menu. there are three components we have to test: the header,
-        // the list of options and the prompt. we need this data so that we can properly align the text inside the
-        // box.
+        // all the lines in the menu are put in one array so we can treat them as a single block
+        $fullMenuArray = array_merge(
+            ["description" => $description],
+            ["blank1" => ""], // empty space for readability
+            $options,
+            ["blank2" => ""], // empty space for readability
+            ["prompt" => $prompt]);
 
-        // length of longest line in the options list.
-        // options are displayed as key + ) + padding + val so we need to build each line like that to get the lengths
-        $maxOptionLength = 0;
-        while (list($optionKey, $optionVal) = each($options)) {
-            $optionLine = $optionKey.")".str_pad("", $maxOptionKey-$this->strlenAnsiSafe($optionKey), " ")." ".$optionVal;
-            // if this line is longer than the current longest option line, it is the new longest
-            if ($this->strlenAnsiSafe($optionLine) > $maxOptionLength) {
-                $maxOptionLength = $this->strlenAnsiSafe($optionLine);
+        // word wrap
+        // option vals, the description or the prompt may be wider than current terminal. this creates ugly default wrapping.
+        // here we word wrap all the elements so the box will fit nicely in the terminal
+
+        // to calculate word wrap we need to know the extra width, in addition to the length of the string, for each line.
+        // there are two types of lines:
+        // text lines, ie the description and the prompt, their format for width is:
+        // boxBorderChar + boxMargin +  value + boxMargin + boxBorderChar
+        $textPad = strlen($boxBorderChar)+$boxMargin+$boxMargin+strlen($boxBorderChar);
+        // option lines, ie the choosable options their format for width is:
+        // boxBorderChar + boxMargin + longest key + one space pad + value + boxMargin + boxBorderChar
+        if ($innerAlign == LEFT) {
+            $optionPad = strlen($boxBorderChar)+$boxMargin+strlen(")")+strlen($keyPad)+$lengthOfLongestKey+$boxMargin+strlen($boxBorderChar);
+        } else {
+            $optionPad = strlen($boxBorderChar)+$boxMargin+strlen(")")+$lengthOfLongestKey+$boxMargin+strlen($boxBorderChar);
+        }
+
+        // array that holds the menu lines after wrapping
+        $fullMenuArrayWrapped = [];
+
+        // do word wrap on each line, push into fullMenuArrayWrapped
+        while (list($key, $val) = each($fullMenuArray)) {
+            if (in_array($key, array_keys($options))) {
+                $fullMenuArrayWrapped[$key] = $this->wrapToTerminalWidth($val, $optionPad);
+            } else {
+                $fullMenuArrayWrapped[$key] = $this->wrapToTerminalWidth($val, $textPad);
             }
         }
-        reset($options); // reset so future loops work
 
-        // get longest line of all content in this menu, the description, prompt and option list
-        // throw the longest line counts of each component into an array and get the largest with max()
-        // the result is the longest line in the entire display text, a value we use to pad inside the box
-        $maxLine = max([$maxOptionLength,
-            $this->getLengthOfLongestLine($description),
-            $this->getLengthOfLongestLine($prompt), ]);
+        // once the lines have been wrapped to the screen width, we build an array of all the lines to
+        // display complete with keys for options, padding on keys and creating sub-arrays for lines.
+        $fullMenuArrayWrappedAndPadded = []; // the array that will hold all the formatted lines
+        $longestKey = $this->getLongestLine(array_keys($options)); // the longest option key, used for padding
+        $maxContentLineLength = 0; // the length of the longest line, used for building top and bottom borders of the box
 
-        // build an array of all the options with appropriate formatting
+        while (list($key, $val) = each($fullMenuArrayWrapped)) {
+            $thisElementArray = explode(PHP_EOL, $val);
 
-        // holds the array of all the printable lines of the options
-        $optionLines = [];
-        while (list($optionKey, $optionVal) = each($options)) {
-            // if alignment inside the box is LEFT, we want to pad between the key and the value so the values column
-            // vertically align
-            if ($innerAlign == LEFT) {
-                $optionLine = "  ".$optionKey.")".str_pad("", $maxOptionKey-$this->strlenAnsiSafe($optionKey), " ")." ".$optionVal;
-            } else {
-                $optionLine = $optionKey.") ".$optionVal;
+            for ($i = 0;$i<count($thisElementArray);$i++) {
+                if (in_array($key, array_keys($options))) {
+                    // if the innerAlign is LEFT then we want the values to be vertically flush
+                    // this is done by padding the space between the end of the key and the beginning of the value
+                    // $keyAlignPad is this padding
+                    // if the value of the option is across several lines then, to maintain the vertical flush we
+                    // need to pad out the length of the key for all lines of the value other than the first one.
+                    // this achieves the effect of:
+                    //  key1)  first line of value for key1
+                    //         second line of value for key1
+                    //  k2)    value for k2
+                    $emptyKey = ""; // default null, only pad for innerAlign LEFT
+                    $keyAlignPad = ""; // default null, only pad for innerAlign LEFT
+                    // innerAlign, we pad the keys
+                    if ($innerAlign == LEFT) {
+                        $emptyKey = str_pad("", strlen($key.")"), " "); // the length of key and bracket
+                        $keyAlignPad = str_pad("", $lengthOfLongestKey-strlen($key), " "); // padding defined by longest key in options[]
+                    }
+
+                    // if the option has multiple lines in the value, we only print the key on the first line
+                    if ($i == 0) {
+                        $thisElementArray[$i] = $indent.
+                                                $key.")".
+                                                $keyAlignPad.
+                                                $keyPad.
+                                                $thisElementArray[$i];
+                    }
+                    // all subsequent value lines have spaces where the key would normally be to maintain vertical flush
+                    else {
+                        $thisElementArray[$i] = $indent.
+                                                $emptyKey.
+                                                $keyAlignPad.
+                                                $keyPad.
+                                                $thisElementArray[$i];
+                    }
+                }
+
+                // set the length of the last line. this is used to calculate padding inside the box
+                if ($this->strlenAnsiSafe($thisElementArray[$i]) > $maxContentLineLength) {
+                    $maxContentLineLength = $this->strlenAnsiSafe($thisElementArray[$i]);
+                }
             }
 
-            // work out inner center justified padding
-            // if we are centering inside the box, we put half the padding on the left and the other half on the right.
-            // total padding is the length of the longest line in the whole display string, minus the length of this line
-            if ($innerAlign == CENTER) {
-                $padLeft = ceil($maxLine-$this->strlenAnsiSafe($optionLine)/2); // alternate ceil/floor to accommodate odd total padding
-                $padRight = floor($maxLine-$this->strlenAnsiSafe($optionLine)/2);
-            }
-            // work out inner right justified padding
-            // no padding right, balance on left
-            elseif ($innerAlign == RIGHT) {
-                $padLeft = $maxLine-$this->strlenAnsiSafe($optionLine);
-                $padRight = 0;
-            }
-            // work out inner left justified padding. default behaviour.
-            // no padding on left, balance on right.
-            else {
-                $padLeft = 0;
-                $padRight = $maxLine-$this->strlenAnsiSafe($optionLine);
-            }
+            $fullMenuArrayWrappedAndPadded[$key] = $thisElementArray;
+        }
 
-            // the currently selected option, as defined by highLightKey, needs to be highlighted.
-            // note that with ANSI formatting inside strings, length of the string should always be acquired with
-            // strlenAnsiSafe()
-            if ($optionKey == $highLightKey) {
-                // format with bold and selectedAnsi
-                $optionLine = BOLD_ANSI.$selectedAnsi.$optionLine.CLOSE_ANSI;
-            } else {
-                $optionLine = $defaultAnsi.$optionLine.CLOSE_ANSI;
-            }
+        // push the top and bottom borders of the box onto the array of lines
+        $borderString = str_pad("", strlen($boxBorderChar)+$boxMargin+$maxContentLineLength+$boxMargin+strlen($boxBorderChar), $boxBorderChar);
+        $printableMenuArray = array_merge(
+            array("bordertop" => [$borderString]),
+            $fullMenuArrayWrappedAndPadded,
+            array("borderbottom" => [$borderString]));
 
-            // add this line to the array of option lines
-            $optionLines[] =
-                $defaultAnsi.// start user-supplied formatting
-                $boxBorderChar.// left box border character
-                str_pad("", $padLeft+$boxMargin, " ").// padding on left of option
-                CLOSE_ANSI.// close formatting so it does not collide with highlighting if any
-                $optionLine.// the option line, with formatting already set
-                $defaultAnsi.// start user-supplied formatting
-                str_pad("", $padRight+$boxMargin, " ").// padding on right of option
-                $boxBorderChar.// right box border character
-                CLOSE_ANSI; // close all formatting for this line
-        } // while(list($optionKey, $optionVal) = each($options))...
+        // cache the printableMenuArray and the maxContentLineLength (used for building the top and bottom borders of the box)
+        // so that on future calls to this method for menu refresh we don't need to do all this calculation again.
+        // performance gains are marginal, but nice to have.
+        $this->cachedMenuArray = $printableMenuArray;
+        $this->cachedMaxContentLineLength = $maxContentLineLength;
 
-        // build an array of all the lines in the description
-
-        // make an array of the description string, one element per line, with a blank line padding the bottom
-        // which is iterated over to apply formatting
-        $descriptionExplodedLines =  array_merge(explode(PHP_EOL, $description), [""]);
-        // holds the array of all the printable lines of the description
-        $descriptionLines = [];
-        while (list(, $line) = each($descriptionExplodedLines)) {
-            // work out inner center justified padding
-            // if we are centering inside the box, we put half the padding on the left and the other half on the right.
-            // total padding is the length of the longest line in the whole display string, minus the length of this line
-            if ($innerAlign == CENTER) {
-                $padLeft = ceil($maxLine-$this->strlenAnsiSafe($line)/2); // alternate ceil/floor to accommodate odd total padding
-                $padRight = floor($maxLine-$this->strlenAnsiSafe($line)/2);
-            }
-            // work out inner right justified padding
-            // no padding right, balance on left
-            elseif ($innerAlign == RIGHT) {
-                $padLeft = $maxLine-$this->strlenAnsiSafe($line);
-                $padRight = 0;
-            }
-            // work out inner left justified padding
-            // no padding on left, balance on right.
-            else {
-                $padLeft = 0;
-                $padRight = $maxLine-$this->strlenAnsiSafe($line);
-            }
-
-            $descriptionLines[] =
-                $defaultAnsi.// start user-supplied formatting
-                $boxBorderChar.// left box border character
-                str_pad("", $padLeft+$boxMargin, " ").// padding on left of line
-                $line.// the line of the description
-                str_pad("", $padRight+$boxMargin, " ").// padding on right of line
-                $boxBorderChar.// right box border char
-                CLOSE_ANSI; // close all formatting for this line
-        } // while(list(,$line) = each($descriptionExplodedLines))...
-
-        // build an array of all the lines in the prompt
-
-        // make an array of the prompt string, one element per line, with a blank line padding the top
-        // which is iterated over to apply formatting
-        $promptExplodedLines =  array_merge([""], explode(PHP_EOL, $prompt));
-        // holds the array of all the printable lines of the prompt
-        $promptLines = [];
-        while (list(, $line) = each($promptExplodedLines)) {
-            // work out inner center justified padding
-            // if we are centering inside the box, we put half the padding on the left and the other half on the right.
-            // total padding is the length of the longest line in the whole display string, minus the length of this line
-            if ($innerAlign == CENTER) {
-                $padLeft = ceil($maxLine-$this->strlenAnsiSafe($line)/2); // alternate ceil/floor to accommodate odd total padding
-                $padRight = floor($maxLine-$this->strlenAnsiSafe($line)/2);
-            }
-            // work out inner right justified padding
-            // no padding right, balance on left
-            elseif ($innerAlign == RIGHT) {
-                $padLeft = $maxLine-$this->strlenAnsiSafe($line);
-                $padRight = 0;
-            }
-            // work out left justified padding
-            // no padding on left, balance on right.
-            else {
-                $padLeft = 0;
-                $padRight = $maxLine-$this->strlenAnsiSafe($line);
-            }
-
-            $promptLines[] =
-                $defaultAnsi.// start user-supplied formatting
-                $boxBorderChar.// left box border character
-                str_pad("", $padLeft+$boxMargin, " ").// padding on left of line
-                $line.// the line of the description
-                str_pad("", $padRight+$boxMargin, " ").// padding on right of line
-                $boxBorderChar.// right box border char
-                CLOSE_ANSI; // close all formatting for this line
-        } // while(list(,$line) = each($promptExplodedLines))...
-
-        $boundaryBorderBar = $defaultAnsi.
-            str_pad("", $this->strlenAnsiSafe($descriptionLines[0]), $boxBorderChar).
-            CLOSE_ANSI;
-
-        // build the array of all the lines to ouput as a string
-        $returnArray = array_merge(
-            [$boundaryBorderBar],   // the top bar of borderChar
-            $descriptionLines,      // user-supplied description
-            $optionLines,           // all the options
-            $promptLines,           // the prompt line
-            [$boundaryBorderBar]);  // the bottom bar of borderChar
-
-        // apply alignment padding defined by outerAlign to each line of output
-        $returnArray = array_map(function ($line, $align) {
-                return $this->pad($line, $align);
-            },
-            $returnArray,
-            array_fill(0, count($returnArray), $outerAlign));
-
-        // write to STDOUT
-        $this->printout(implode(PHP_EOL, $returnArray));
+        // call the method to printout
+        $this->printoutMenuBoxCache($printableMenuArray,
+            array_keys($options),
+            $innerAlign,
+            $outerAlign,
+            $selectedKey,
+            $defaultAnsi,
+            $selectedAnsi,
+            $boxBorderChar,
+            $boxMargin,
+            $maxContentLineLength);
     } // printoutMenuBox
+
+
+    /**
+     * @brief Prints out the menu from $printableMenu. Should be called only by printoutMenuBox()
+     *
+     * @param $printableMenu Array. An array of all the elements with sub-array for all the lines in the printable menu box
+     * @param $optionKeys Array.  An array of all the keys for the options array that makes up the menu
+     * @param $innerAlign Pre-defined constant. Optional. The alignment of the text inside the box. One of LEFT, RIGHT or CENTER
+     * @param $outerAlign Pre-defined constant. Optional. The alignment of the box in the terminal. One of LEFT, RIGHT or CENTER
+     * @param $selectedKey. String. The key of the options array that is currently highlighted as selected
+     * @param $defaultAnsi String. The ANSI style supplied by the user from foregroundColour and backgroundColour
+     * @param $selectedAnsi String. The reverse of defaultAnsi, used to highlight the selected menu item
+     * @param $boxBorderChar String. The character used to make the box. Default '#'
+     * @param $boxMargin Int. The number of spaces between the left and right edges of the box and the content
+     * @param $max Int.  The length of the longest line of content, used for calcuating padding.
+     * @return boolean
+     * @see printoutMenuBox
+     */
+    private function printoutMenuBoxCache($printableMenu,
+        $optionKeys,
+        $innerAlign,
+        $outerAlign,
+        $selectedKey,
+        $defaultAnsi,
+        $selectedAnsi,
+        $boxBorderChar,
+        $boxMargin,
+        $max)
+    {
+        $menu = null;
+        while (list($key, $printableMenuLineArray) = each($printableMenu)) {
+            while (list($subkey, $line) = each($printableMenuLineArray)) {
+                if ($innerAlign == CENTER) {
+                    $padLeft = ceil(($max-$this->strlenAnsiSafe($line))/2); // alternate ceil/floor to accommodate odd total padding
+                    $padRight = floor(($max-$this->strlenAnsiSafe($line))/2);
+				}
+				else if ($innerAlign == RIGHT) {
+                    $padLeft = $max-$this->strlenAnsiSafe($line);
+                    $padRight = 0;
+		
+                } else {
+                    $padLeft = 0;
+                    $padRight = $max-$this->strlenAnsiSafe($line);
+                }
+
+                if ($key == "bordertop" || $key == "borderbottom") {
+                    $menu .= $defaultAnsi.$line.CLOSE_ANSI.PHP_EOL;
+                } elseif (in_array($key, $optionKeys)) {
+                    $keyAnsi = $defaultAnsi;
+                    if ($key == $selectedKey) {
+                        $keyAnsi = $selectedAnsi;
+                    }
+                    $menu .=
+                        $defaultAnsi.
+                        $boxBorderChar.
+                        str_pad("", $boxMargin, " ").
+                        str_pad("", $padLeft, " ").
+                        CLOSE_ANSI.
+                        $keyAnsi.
+                        $line.
+                        CLOSE_ANSI.
+                        $defaultAnsi.
+                        str_pad("", $padRight, " ").
+                        str_pad("", $boxMargin, " ").
+                        $boxBorderChar.
+                        CLOSE_ANSI.
+                        PHP_EOL;
+                } else {
+                    $menu .=
+                        $defaultAnsi.
+                        $boxBorderChar.
+                        str_pad("", $boxMargin, " ").
+                        str_pad("", $padLeft, " ").
+                        $line.
+                        str_pad("", $padRight, " ").
+                        str_pad("", $boxMargin, " ").
+                        $boxBorderChar.
+                        CLOSE_ANSI.
+                        PHP_EOL;
+                }
+            }
+        }
+
+        $this->printout($menu, null, null, null, $outerAlign);
+
+        return true;
+    } // printoutMenuBoxCache
 
 
     /**
@@ -1531,6 +1705,7 @@ class Clibelt
      * @return Int
      * @note This method relies on an exec() call to `stty`
      * @see pad
+     * @see wrapToTerminalWidth
      */
     private function getTerminalWidth()
     {
@@ -1634,4 +1809,27 @@ class Clibelt
 
         return $userChoice;
     } // getKeyDown
+
+
+    /**
+     * @brief Wraps the supplied to the width of the terminal minus the supplied widith of padding
+     *
+     * If the terminal width is unavailable because of `stty` failure, the text is returned unmodified.
+     *
+     * @param $text String. The text to wrap
+     * @param $padLength Int. The length of any padding to the text, eg for margins, box borders &c
+     * @return String
+     * @see getTerminalWidth
+     */
+    private function wrapToTerminalWidth($text, $padLength = 0)
+    {
+        $terminalWidth = $this->getTerminalWidth();
+
+        // getTerminalWidth() failed, return the text unmodified
+        if ($terminalWidth == 0) {
+            return $text;
+        }
+
+        return wordwrap($text, $terminalWidth-$padLength, PHP_EOL, false);
+    } // wrapToTerminalWidth
 } //Clibelt
