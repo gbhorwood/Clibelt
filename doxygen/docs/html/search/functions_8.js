@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['safecopy',['safeCopy',['../class_clibelt.html#a14e38bbd822a154551b9a41411e95dc7',1,'Clibelt']]],
-  ['spin',['spin',['../class_clibelt.html#adf469d77973da15ab118206d2c84347e',1,'Clibelt']]],
-  ['strlenansisafe',['strlenAnsiSafe',['../class_clibelt.html#aacafa278b93d53cb1aa0ee2f8da3c31b',1,'Clibelt']]]
+  ['read',['read',['../class_clibelt.html#a30682cb8555cd6e90cbb404575a023fb',1,'Clibelt']]],
+  ['readpassword',['readPassword',['../class_clibelt.html#a89dbac89dd0ec36bbcbe62beaaad5ade',1,'Clibelt']]],
+  ['readstdin',['readStdin',['../class_clibelt.html#a2453986c94673cf92fcfe983faf4fdc1',1,'Clibelt']]],
+  ['readstdinstream',['readStdinStream',['../class_clibelt.html#ad2493bf3bc5334182cf37ac4c7c0c79e',1,'Clibelt']]]
 ];

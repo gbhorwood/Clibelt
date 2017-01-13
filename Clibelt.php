@@ -124,6 +124,10 @@ class Clibelt
      * The array of cached menu output so it does not need to be rebuilt every time it's rendered for display
      */
     private $cachedMenuArray = null;
+
+    /**
+     * The cached length of the longest line in a menu so it does not need to be recalculated
+     */
     private $cachedMaxContentLineLength = null;
 
     /**
@@ -230,7 +234,7 @@ class Clibelt
      * @brief Convenience method wrapping promptChoice() to offer yes/no choice as [y,n]
      *
      * @param $prompt The optional string to display as a prompt to the user. Default "Choose 'yes' or 'no'"
-     * @param $default Optional. Either 'y' or 'n'. The value to return if the user selects an invalid option or hits <cr>
+     * @param $default Optional. Either 'y' or 'n'. The value to return if the user selects an invalid option or hits RETURN
      * @return String. Either 'y' or 'n'. Lowercase.
      */
     public function promptChoiceYn($prompt = "Choose 'yes' or 'no'", $default = null)
@@ -252,7 +256,7 @@ class Clibelt
      * can be used. [y,n] is the default behaviour.
      *
      * A default option value can be set. If the script user makes a selection that is not in the list of options
-     * or simply hits <cr>, and a default value is set, the default value is returned.
+     * or simply hits RETURN, and a default value is set, the default value is returned.
      *
      * If a default value is set, it is indicated both by being bolded in the displayed options list and by displayed in the
      * (Default:) part of the prompt.
@@ -272,7 +276,7 @@ class Clibelt
     {
         /**
          * The options[] argument is forced to an array of chars. If an array of strings is passed only the
-         * the first letter is used. Since this method takes keystroke input without requiring a <cr>, it by
+         * the first letter is used. Since this method takes keystroke input without requiring a RETURN, it by
          * necessity can only work with single chars.
          */
         $testOptions = array_map(function ($option) {
@@ -407,7 +411,7 @@ class Clibelt
     {
         // output user-supplied prompt
         $this->printout($prompt.":");
-        
+
         // the array of chars of user input
         $enteredCharsArray = [];
 
@@ -422,26 +426,24 @@ class Clibelt
             }
 
             // backspace key. delete previous char and backspace previous output star
-            else if (ord($enteredChar) == 127 || ord($enteredChar) == 126) {
+            elseif (ord($enteredChar) == 127 || ord($enteredChar) == 126) {
                 array_pop($enteredCharsArray);
-                fwrite(STDOUT,BACKSPACE);
+                fwrite(STDOUT, BACKSPACE);
                 fwrite(STDOUT,  "\033[0K"); // erase line
             }
 
             // any other key. add to array of entered chars
             else {
                 $enteredCharsArray[] = $enteredChar;
-                fwrite(STDOUT,"*");
+                fwrite(STDOUT, "*");
             }
-
         } // while(true)
 
         // log the user choice in lastInput so it can be retrieved after the return event
-        $this->lastInput = join("",$enteredCharsArray);
+        $this->lastInput = implode("", $enteredCharsArray);
 
         // user got here by hitting RETURN. build string from array and return.
-        return join("",$enteredCharsArray);
-
+        return implode("", $enteredCharsArray);
     } // readPassword
 
 
@@ -691,10 +693,10 @@ class Clibelt
      * and printerr().
      *
      * Box is aligned centre by default.
-     * @param $text. String.
-     * @param $foreground. Pre-defined constant. A color constant as used in printout()
-     * @param $background. Pre-defined constant. A color constant as used in printout()
-     * @param $alignment. Pre-defined constant. An alignment constant as used in printout()
+     * @param $text String.
+     * @param $foreground Pre-defined constant. A color constant as used in printout()
+     * @param $background Pre-defined constant. A color constant as used in printout()
+     * @param $alignment Pre-defined constant. An alignment constant as used in printout()
      * @return void
      * @todo make boxMargin settable by arg
      */
@@ -910,7 +912,7 @@ class Clibelt
      * @endcode
      *
      * @param $sourceFile Path of file to copy
-     * @param $destFile. String. Path to the file or directory for the destination of the copied file.
+     * @param $destFile String. Path to the file or directory for the destination of the copied file.
      * If a directory is provided, the destination file is given the same name as it has in the source file path.
      * @return String. The path of the newly-copied file or boolean false on error
      * @note spawns child process
@@ -1038,8 +1040,8 @@ class Clibelt
      * }
      * @endcode
      *
-     * @param $url. String. The url of the file to download
-     * @param $destFile. String. Path to the file or directory for the destination of the downloaded file.
+     * @param $url String. The url of the file to download
+     * @param $destFile String. Path to the file or directory for the destination of the downloaded file.
      * If a directory is provided, the destination file is given the same name as it has in the url.
      * @return String. The path of the newly-downloaded file or boolean false on error
      * @note spawns child process
@@ -1298,7 +1300,7 @@ class Clibelt
      * @brief Display 'waiting' animation as an ASCII art spinner
      *
      * This method contains an infinite loop and is designed to terminated with posix_kill() by a child process.
-     * @param $delay. Pre-defined constant. Optional. The speed at which the animation runs. One of DELAY_SLOW, DELAY_MED, DELAY_FAST or DELAY_VERY_FAST.
+     * @param $delay Pre-defined constant. Optional. The speed at which the animation runs. One of DELAY_SLOW, DELAY_MED, DELAY_FAST or DELAY_VERY_FAST.
      * Default DELAY_MED.
      * @note only call this method from a method that spawns a child process
      */
@@ -1331,7 +1333,7 @@ class Clibelt
      * Progress bar is a run of # chars.
      *
      * This method contains an infinite loop and is designed to terminated with posix_kill() by a child process.
-     * @param $delay. Pre-defined constant. Optional. The speed at which the animation runs. One of DELAY_SLOW, DELAY_MED, DELAY_FAST or DELAY_VERY_FAST.
+     * @param $delay Pre-defined constant. Optional. The speed at which the animation runs. One of DELAY_SLOW, DELAY_MED, DELAY_FAST or DELAY_VERY_FAST.
      * Default DELAY_MED.
      * @note only call this method from a method that spawns a child process
      */
@@ -1408,11 +1410,11 @@ class Clibelt
      *
      * @param $description String. The description that goes above the list of selectable options.
      * @param $options Array.  The associative array of options to choose from.
-     * @param $selectedKey. String. The key of the options array that is currently highlighted as selected
+     * @param $selectedKey String. The key of the options array that is currently highlighted as selected
      * @param $innerAlign Pre-defined constant. Optional. The alignment of the text inside the box. One of LEFT, RIGHT or CENTER
      * @param $outerAlign Pre-defined constant. Optional. The alignment of the box in the terminal. One of LEFT, RIGHT or CENTER
-     * @param $foregroundColour Pre-defined constant. Optional. The colour of the foreground text. One of the pre-set ANSI colours.
-     * @param $backgroundColour Pre-defined constant. Optional. The colour of the background of the text. One of the pre-set ANSI colours.
+     * @param $foreground Pre-defined constant. Optional. The colour of the foreground text. One of the pre-set ANSI colours.
+     * @param $background Pre-defined constant. Optional. The colour of the background of the text. One of the pre-set ANSI colours.
      * @return void
      * @see menu
      */
@@ -1593,7 +1595,7 @@ class Clibelt
      * @param $optionKeys Array.  An array of all the keys for the options array that makes up the menu
      * @param $innerAlign Pre-defined constant. Optional. The alignment of the text inside the box. One of LEFT, RIGHT or CENTER
      * @param $outerAlign Pre-defined constant. Optional. The alignment of the box in the terminal. One of LEFT, RIGHT or CENTER
-     * @param $selectedKey. String. The key of the options array that is currently highlighted as selected
+     * @param $selectedKey String. The key of the options array that is currently highlighted as selected
      * @param $defaultAnsi String. The ANSI style supplied by the user from foregroundColour and backgroundColour
      * @param $selectedAnsi String. The reverse of defaultAnsi, used to highlight the selected menu item
      * @param $boxBorderChar String. The character used to make the box. Default '#'
@@ -1619,11 +1621,9 @@ class Clibelt
                 if ($innerAlign == CENTER) {
                     $padLeft = ceil(($max-$this->strlenAnsiSafe($line))/2); // alternate ceil/floor to accommodate odd total padding
                     $padRight = floor(($max-$this->strlenAnsiSafe($line))/2);
-				}
-				else if ($innerAlign == RIGHT) {
+                } elseif ($innerAlign == RIGHT) {
                     $padLeft = $max-$this->strlenAnsiSafe($line);
                     $padRight = 0;
-		
                 } else {
                     $padLeft = 0;
                     $padRight = $max-$this->strlenAnsiSafe($line);

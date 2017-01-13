@@ -1,8 +1,8 @@
 var indexSectionsWithContent =
 {
-  0: "$abcdegprstw",
+  0: "$abcdegmprstw",
   1: "c",
-  2: "abcdegprsw",
+  2: "abcdegmprsw",
   3: "$",
   4: "t"
 };

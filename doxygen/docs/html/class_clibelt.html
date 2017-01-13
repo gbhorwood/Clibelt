@@ -125,6 +125,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a30682cb8555cd6e90cbb404575a023fb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a30682cb8555cd6e90cbb404575a023fb">read</a> ($prompt)</td></tr>
 <tr class="memdesc:a30682cb8555cd6e90cbb404575a023fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads one line of user input and returns it.  <a href="#a30682cb8555cd6e90cbb404575a023fb">More...</a><br /></td></tr>
 <tr class="separator:a30682cb8555cd6e90cbb404575a023fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89dbac89dd0ec36bbcbe62beaaad5ade"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a89dbac89dd0ec36bbcbe62beaaad5ade">readPassword</a> ($prompt)</td></tr>
+<tr class="memdesc:a89dbac89dd0ec36bbcbe62beaaad5ade"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads user input with star-echo for privacy.  <a href="#a89dbac89dd0ec36bbcbe62beaaad5ade">More...</a><br /></td></tr>
+<tr class="separator:a89dbac89dd0ec36bbcbe62beaaad5ade"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35d53f4cd4909efd3f4aab39e255a337"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a35d53f4cd4909efd3f4aab39e255a337">menu</a> ($description, $options, $innerAlign=LEFT, $outerAlign=LEFT, $foregroundColour=null, $backgroundColour=null)</td></tr>
+<tr class="memdesc:a35d53f4cd4909efd3f4aab39e255a337"><td class="mdescLeft">&#160;</td><td class="mdescRight">Displays a menu, navigable with arrow or tab keys, with optional alignment and styling.  <a href="#a35d53f4cd4909efd3f4aab39e255a337">More...</a><br /></td></tr>
+<tr class="separator:a35d53f4cd4909efd3f4aab39e255a337"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad66e12cb4cc3f7481670f2549881a545"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545">printout</a> ($text, $level=null, $foreground=null, $<a class="el" href="class_clibelt.html#af44c78ed546850491d49ed7c92938e4c">background</a>=null, $alignment=null)</td></tr>
 <tr class="memdesc:ad66e12cb4cc3f7481670f2549881a545"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes string to STDOUT with optional ANSI formatting.  <a href="#ad66e12cb4cc3f7481670f2549881a545">More...</a><br /></td></tr>
 <tr class="separator:ad66e12cb4cc3f7481670f2549881a545"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -134,9 +140,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acfc7094c5e803a445ade018b2506e2fd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#acfc7094c5e803a445ade018b2506e2fd">box</a> ($text, $foreground=null, $<a class="el" href="class_clibelt.html#af44c78ed546850491d49ed7c92938e4c">background</a>=null, $alignment=CENTER)</td></tr>
 <tr class="memdesc:acfc7094c5e803a445ade018b2506e2fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outputs the provided text in a box bordered by hashes.  <a href="#acfc7094c5e803a445ade018b2506e2fd">More...</a><br /></td></tr>
 <tr class="separator:acfc7094c5e803a445ade018b2506e2fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4c93f374db5bc3b15429c965a7efb1d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4c93f374db5bc3b15429c965a7efb1d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>menuDynamic</b> ($description, $prompt, $options, $innerAlign, $outerAlign, $highlightColour, $foregroundColour, $backgroundColour)</td></tr>
-<tr class="separator:aa4c93f374db5bc3b15429c965a7efb1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f01bdf605d7f99e61f5f238be6d09bd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a0f01bdf605d7f99e61f5f238be6d09bd">erase</a> ()</td></tr>
 <tr class="memdesc:a0f01bdf605d7f99e61f5f238be6d09bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases the output of the last call to either <a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545" title="Writes string to STDOUT with optional ANSI formatting. ">printout()</a> or <a class="el" href="class_clibelt.html#a9e75d2aa36480d5f62677da1a7fdcd83" title="Writes string to STDERR with option ANSI formatting. ">printerr()</a>  <a href="#a0f01bdf605d7f99e61f5f238be6d09bd">More...</a><br /></td></tr>
 <tr class="separator:a0f01bdf605d7f99e61f5f238be6d09bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -161,6 +164,9 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:ac57ab8329098f4ddc0b9e65ab5234bd3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#ac57ab8329098f4ddc0b9e65ab5234bd3">getLengthOfLongestLine</a> ($lines)</td></tr>
 <tr class="memdesc:ac57ab8329098f4ddc0b9e65ab5234bd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the strlen of the longest line in either the string or array passed.  <a href="#ac57ab8329098f4ddc0b9e65ab5234bd3">More...</a><br /></td></tr>
 <tr class="separator:ac57ab8329098f4ddc0b9e65ab5234bd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9130e0f2f8a92a1302b85b320c7ec1fb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a9130e0f2f8a92a1302b85b320c7ec1fb">getLongestLine</a> ($lines)</td></tr>
+<tr class="memdesc:a9130e0f2f8a92a1302b85b320c7ec1fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the longest line in either the string or array passed.  <a href="#a9130e0f2f8a92a1302b85b320c7ec1fb">More...</a><br /></td></tr>
+<tr class="separator:a9130e0f2f8a92a1302b85b320c7ec1fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2bf9f3d3d56241108d9d2c46728b95a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#ae2bf9f3d3d56241108d9d2c46728b95a">write</a> ($text, $stream=STDOUT, $level=null, $foreground=null, $<a class="el" href="class_clibelt.html#af44c78ed546850491d49ed7c92938e4c">background</a>=null, $alignment=null)</td></tr>
 <tr class="memdesc:ae2bf9f3d3d56241108d9d2c46728b95a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes to a stream, either STDOUT or STDERR, user-supplied text with optional color and formatting.  <a href="#ae2bf9f3d3d56241108d9d2c46728b95a">More...</a><br /></td></tr>
 <tr class="separator:ae2bf9f3d3d56241108d9d2c46728b95a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -173,9 +179,12 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a7b8d00d73c58d75d7a407cd67e930e9a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a7b8d00d73c58d75d7a407cd67e930e9a">progressFilesizeTrack</a> ($destFile, $targetSize, $delay=DELAY_VERY_FAST)</td></tr>
 <tr class="memdesc:a7b8d00d73c58d75d7a407cd67e930e9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Display progress update for copying files, shows percentage complete by filesize comparison.  <a href="#a7b8d00d73c58d75d7a407cd67e930e9a">More...</a><br /></td></tr>
 <tr class="separator:a7b8d00d73c58d75d7a407cd67e930e9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29a62a3ae448ba0706b1008d450047d5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a29a62a3ae448ba0706b1008d450047d5">printoutMenuBox</a> ($description, $options, $highLightKey, $innerAlign, $outerAlign, $highlightColour, $foreground, $<a class="el" href="class_clibelt.html#af44c78ed546850491d49ed7c92938e4c">background</a>)</td></tr>
-<tr class="memdesc:a29a62a3ae448ba0706b1008d450047d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds and ouputs a formatted menu box.  <a href="#a29a62a3ae448ba0706b1008d450047d5">More...</a><br /></td></tr>
-<tr class="separator:a29a62a3ae448ba0706b1008d450047d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae60ce4bd81570b9a0fc882a95eb101e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#ae60ce4bd81570b9a0fc882a95eb101e0">printoutMenuBox</a> ($description, $options, $selectedKey, $innerAlign, $outerAlign, $foreground, $<a class="el" href="class_clibelt.html#af44c78ed546850491d49ed7c92938e4c">background</a>)</td></tr>
+<tr class="memdesc:ae60ce4bd81570b9a0fc882a95eb101e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints out the box of options, description and prompt that is a 'menu'.  <a href="#ae60ce4bd81570b9a0fc882a95eb101e0">More...</a><br /></td></tr>
+<tr class="separator:ae60ce4bd81570b9a0fc882a95eb101e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2945a5ec498465fa7a42a9d4854411ec"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a2945a5ec498465fa7a42a9d4854411ec">printoutMenuBoxCache</a> ($printableMenu, $optionKeys, $innerAlign, $outerAlign, $selectedKey, $defaultAnsi, $selectedAnsi, $boxBorderChar, $boxMargin, $max)</td></tr>
+<tr class="memdesc:a2945a5ec498465fa7a42a9d4854411ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints out the menu from $printableMenu. Should be called only by <a class="el" href="class_clibelt.html#ae60ce4bd81570b9a0fc882a95eb101e0" title="Prints out the box of options, description and prompt that is a &#39;menu&#39;. ">printoutMenuBox()</a>  <a href="#a2945a5ec498465fa7a42a9d4854411ec">More...</a><br /></td></tr>
+<tr class="separator:a2945a5ec498465fa7a42a9d4854411ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc786fe851f45ce389a5393f71cbc724"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#afc786fe851f45ce389a5393f71cbc724">prepArgs</a> ($args)</td></tr>
 <tr class="memdesc:afc786fe851f45ce389a5393f71cbc724"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepares arguments for the <a class="el" href="class_clibelt.html#af44c78ed546850491d49ed7c92938e4c" title="Runs executable PHP code in the background with an optional progress animation. ">background()</a> method.  <a href="#afc786fe851f45ce389a5393f71cbc724">More...</a><br /></td></tr>
 <tr class="separator:afc786fe851f45ce389a5393f71cbc724"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -191,6 +200,9 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a61e23c01833c394bd9cdcaad33dfc1af"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a61e23c01833c394bd9cdcaad33dfc1af">getKeyDown</a> ()</td></tr>
 <tr class="memdesc:a61e23c01833c394bd9cdcaad33dfc1af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Poll for user keyboard input.  <a href="#a61e23c01833c394bd9cdcaad33dfc1af">More...</a><br /></td></tr>
 <tr class="separator:a61e23c01833c394bd9cdcaad33dfc1af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3d68df8f32f9dc3045bbf7e89f724bf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#af3d68df8f32f9dc3045bbf7e89f724bf">wrapToTerminalWidth</a> ($text, $padLength=0)</td></tr>
+<tr class="memdesc:af3d68df8f32f9dc3045bbf7e89f724bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps the supplied to the width of the terminal minus the supplied widith of padding.  <a href="#af3d68df8f32f9dc3045bbf7e89f724bf">More...</a><br /></td></tr>
+<tr class="separator:af3d68df8f32f9dc3045bbf7e89f724bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -200,6 +212,10 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a35f0553200956b49561355eccf95b77d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acae0ddb4c473f41ad4a9924316ed7e6f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#acae0ddb4c473f41ad4a9924316ed7e6f">$lastInput</a> = null</td></tr>
 <tr class="separator:acae0ddb4c473f41ad4a9924316ed7e6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2263dc79f445d52f350a71f3372a2d01"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a2263dc79f445d52f350a71f3372a2d01">$cachedMenuArray</a> = null</td></tr>
+<tr class="separator:a2263dc79f445d52f350a71f3372a2d01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2a5b3f5172439fe14180f562d5bc761"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#ad2a5b3f5172439fe14180f562d5bc761">$cachedMaxContentLineLength</a> = null</td></tr>
+<tr class="separator:ad2a5b3f5172439fe14180f562d5bc761"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="class_clibelt.html">Clibelt</a></p>
@@ -211,8 +227,7 @@ Private Attributes</h2></td></tr>
 <p>deleteLockFile() </p>
 <p>help() maybe build list of cli args to auto output </p>
 <p>handle arguments, maybe ie php commando </p>
-<p>banner() // printout text as a banner </p>
-<p class="enddd">modify box for too narrow window, ie wrapping </p>
+<p class="enddd">banner() // printout text as a banner </p>
 </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="ab67f1d3183e4347776b66531684b3bb6"></a>
@@ -338,15 +353,15 @@ Private Attributes</h2></td></tr>
 <p>The box can be styled using the color and alignment constants as accepted by <a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545" title="Writes string to STDOUT with optional ANSI formatting. ">printout()</a> and <a class="el" href="class_clibelt.html#a9e75d2aa36480d5f62677da1a7fdcd83" title="Writes string to STDERR with option ANSI formatting. ">printerr()</a>.</p>
 <p>Box is aligned centre by default. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">$text.</td><td>String. </td></tr>
-    <tr><td class="paramname">$foreground.</td><td>Pre-defined constant. A color constant as used in <a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545" title="Writes string to STDOUT with optional ANSI formatting. ">printout()</a> </td></tr>
-    <tr><td class="paramname">$background.</td><td>Pre-defined constant. A color constant as used in <a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545" title="Writes string to STDOUT with optional ANSI formatting. ">printout()</a> </td></tr>
-    <tr><td class="paramname">$alignment.</td><td>Pre-defined constant. An alignment constant as used in <a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545" title="Writes string to STDOUT with optional ANSI formatting. ">printout()</a> </td></tr>
+    <tr><td class="paramname">$text</td><td>String. </td></tr>
+    <tr><td class="paramname">$foreground</td><td>Pre-defined constant. A color constant as used in <a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545" title="Writes string to STDOUT with optional ANSI formatting. ">printout()</a> </td></tr>
+    <tr><td class="paramname">$background</td><td>Pre-defined constant. A color constant as used in <a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545" title="Writes string to STDOUT with optional ANSI formatting. ">printout()</a> </td></tr>
+    <tr><td class="paramname">$alignment</td><td>Pre-defined constant. An alignment constant as used in <a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545" title="Writes string to STDOUT with optional ANSI formatting. ">printout()</a> </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>make settable by arg </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>make boxMargin settable by arg </dd></dl>
 
 </div>
 </div>
@@ -424,8 +439,8 @@ Private Attributes</h2></td></tr>
 </ul>
 <p>Usage example: </p><div class="fragment"><div class="line">$cli = <span class="keyword">new</span> <a class="code" href="class_clibelt.html">Clibelt</a>();</div><div class="line">$downloadCheck = $cli-&gt;download(<span class="stringliteral">&quot;http://example.com/file.tar&quot;</span>, <span class="stringliteral">&quot;/path/to/destination/file.tar&quot;</span>);</div><div class="line"><span class="keywordflow">if</span> (!$downloadCheck) {</div><div class="line">    $downloadError = $cli-&gt;getLastError();</div><div class="line">    <span class="comment">// handle or log error accordingly.</span></div><div class="line">    <span class="comment">// read below for error codes.</span></div><div class="line">}</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">$url.</td><td>String. The url of the file to download </td></tr>
-    <tr><td class="paramname">$destFile.</td><td>String. Path to the file or directory for the destination of the downloaded file. If a directory is provided, the destination file is given the same name as it has in the url. </td></tr>
+    <tr><td class="paramname">$url</td><td>String. The url of the file to download </td></tr>
+    <tr><td class="paramname">$destFile</td><td>String. Path to the file or directory for the destination of the downloaded file. If a directory is provided, the destination file is given the same name as it has in the url. </td></tr>
   </table>
   </dd>
 </dl>
@@ -559,6 +574,39 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 
 </div>
 </div>
+<a class="anchor" id="a9130e0f2f8a92a1302b85b320c7ec1fb"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::getLongestLine </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$lines</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the longest line in either the string or array passed. </p>
+<p>Uses ANSI safe strlen() to strip out printable but unseen ANSI control chars. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$lines</td><td>Mixed. Either a string of lines separated by PHP_EOL or an array of lines </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>String </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="abdace9b01160b56a82157615454b88ab"></a>
 <div class="memitem">
 <div class="memproto">
@@ -584,7 +632,85 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 <p>If there is a failure because of stty() or beause exec() has been disabled in PHP, then zero will be returned. <em>Make sure you handle this</em>.</p>
 <dl class="section return"><dt>Returns</dt><dd>Int </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This method relies on an exec() call to <code>stty</code> </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_clibelt.html#a9e99e911db513bb271f39c3369bbdb20" title="Returns the provided text with left-padding to align it (left, right or centre) in the terminal...">pad</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_clibelt.html#a9e99e911db513bb271f39c3369bbdb20" title="Returns the provided text with left-padding to align it (left, right or centre) in the terminal...">pad</a> </dd>
+<dd>
+<a class="el" href="class_clibelt.html#af3d68df8f32f9dc3045bbf7e89f724bf" title="Wraps the supplied to the width of the terminal minus the supplied widith of padding. ">wrapToTerminalWidth</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a35d53f4cd4909efd3f4aab39e255a337"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::menu </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$description</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$options</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$innerAlign</em> = <code>LEFT</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$outerAlign</em> = <code>LEFT</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$foregroundColour</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$backgroundColour</em> = <code>null</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Displays a menu, navigable with arrow or tab keys, with optional alignment and styling. </p>
+<p>This method builds and displays a menu of the provided $options. The user can navigate the menu by either</p><ul>
+<li>Using the up and down arrow keys to highlight the selection and hitting RETURN to select</li>
+<li>Using the tab key to scroll down the menu and hitting RETURN to select</li>
+<li>Pressing the key for the option, if the $options array is keyed by a single char</li>
+</ul>
+<p>The value returned is the key of the $options element that was selected.</p>
+<p>The menu continues to display until the user makes a correct selection.</p>
+<p>The foreground and backgroud colours of the menu can be set using the $foregroundColour and $backgroundColour arguments. Colours must be one of the pre-set ANSI constants: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN or WHITE.</p>
+<p>The menu option currently hightlighted by the user is shown by having the colour options reversed using ANSI REVERSE.</p>
+<p>The menu is displayed inside of a box. The text in the box can be aligned with the $innerAlign argument by passing one of the pre-determined alignment constants: LEFT, RIGHT or CENTER.</p>
+<p>The menu box can be aligned in the terminal using the $outerAlign argument. Valid options are LEFT, RIGHT or CENTER.</p>
+<p>The menu box may wrap the contents of the description or options in order to fit the whole box nicely in the width of of the terminal. Line breaks provided in the content of options and the description are preserved.</p>
+<p>sample usage: </p><div class="fragment"><div class="line">$description = <span class="stringliteral">&quot;Which band can be considered the first true punk band?&quot;</span></div><div class="line">$options = array(</div><div class="line">    <span class="stringliteral">&quot;a&quot;</span> =&gt; <span class="stringliteral">&quot;New York Dolls&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;b&quot;</span> =&gt; <span class="stringliteral">&quot;Rocket from the Tombs&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;c&quot;</span> =&gt; <span class="stringliteral">&quot;Death&quot;</span></div><div class="line">);</div><div class="line">$result = $cli-&gt;menu($description, $options);</div><div class="line"><span class="comment">// the key, either &#39;a&#39;, &#39;b&#39; or &#39;c&#39; is in $result.</span></div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$description</td><td>String. The description that goes above the list of selectable options. </td></tr>
+    <tr><td class="paramname">$options</td><td>Array. The associative array of options to choose from. </td></tr>
+    <tr><td class="paramname">$innerAlign</td><td>Pre-defined constant. Optional. The alignment of the text inside the box. One of LEFT, RIGHT or CENTER </td></tr>
+    <tr><td class="paramname">$outerAlign</td><td>Pre-defined constant. Optional. The alignment of the box in the terminal. One of LEFT, RIGHT or CENTER </td></tr>
+    <tr><td class="paramname">$foregroundColour</td><td>Pre-defined constant. Optional. The colour of the foreground text. One of the pre-set ANSI colours. </td></tr>
+    <tr><td class="paramname">$backgroundColour</td><td>Pre-defined constant. Optional. The colour of the background of the text. One of the pre-set ANSI colours. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>String </dd></dl>
 
 </div>
 </div>
@@ -862,7 +988,7 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 
 </div>
 </div>
-<a class="anchor" id="a29a62a3ae448ba0706b1008d450047d5"></a>
+<a class="anchor" id="ae60ce4bd81570b9a0fc882a95eb101e0"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -885,7 +1011,7 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$highLightKey</em>, </td>
+          <td class="paramname"><em>$selectedKey</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -898,12 +1024,6 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
           <td></td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>$outerAlign</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$highlightColour</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -930,21 +1050,123 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 </table>
 </div><div class="memdoc">
 
-<p>Builds and ouputs a formatted menu box. </p>
+<p>Prints out the box of options, description and prompt that is a 'menu'. </p>
+<p>This method builds all the lines that comprise a menu box, including padding and alignment, composes and array of those lines and calls <a class="el" href="class_clibelt.html#a2945a5ec498465fa7a42a9d4854411ec" title="Prints out the menu from $printableMenu. Should be called only by printoutMenuBox() ...">printoutMenuBoxCache()</a> to do the actual output to STDOUT. If an array of build menu lines is already set in cachedMenuArray, then this method immediately calls <a class="el" href="class_clibelt.html#a2945a5ec498465fa7a42a9d4854411ec" title="Prints out the menu from $printableMenu. Should be called only by printoutMenuBox() ...">printoutMenuBoxCache()</a> with that array. This is caching mechanism to improve performance as the menu is redrawn on every valid user keydown event.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">$description</td><td>String. The description that goes above the list of options </td></tr>
-    <tr><td class="paramname">$options</td><td>Array. Associative array of menu options. Key is returned on selection. </td></tr>
-    <tr><td class="paramname">$highLightKey</td><td>String. The key of the option that is currently selected. </td></tr>
-    <tr><td class="paramname">$innerAlign</td><td>Pre-defined constant. One of LEFT, RIGHT, CENTER. Alignment of text inside the box. </td></tr>
-    <tr><td class="paramname">$outerAlign</td><td>Pre-defined constant. One of LEFT, RIGHT, CENTER. Alignment of the box in the screen </td></tr>
-    <tr><td class="paramname">$highlightColour</td><td>Pre-defined constant. A colour. Used to highlight the currently selected option </td></tr>
-    <tr><td class="paramname">$foreground</td><td>Pre-defined constant. A colour. Foreground colour of the box. </td></tr>
-    <tr><td class="paramname">$background</td><td>Pre-defined constant. A colour. Background colour of the box. </td></tr>
+    <tr><td class="paramname">$description</td><td>String. The description that goes above the list of selectable options. </td></tr>
+    <tr><td class="paramname">$options</td><td>Array. The associative array of options to choose from. </td></tr>
+    <tr><td class="paramname">$selectedKey</td><td>String. The key of the options array that is currently highlighted as selected </td></tr>
+    <tr><td class="paramname">$innerAlign</td><td>Pre-defined constant. Optional. The alignment of the text inside the box. One of LEFT, RIGHT or CENTER </td></tr>
+    <tr><td class="paramname">$outerAlign</td><td>Pre-defined constant. Optional. The alignment of the box in the terminal. One of LEFT, RIGHT or CENTER </td></tr>
+    <tr><td class="paramname">$foreground</td><td>Pre-defined constant. Optional. The colour of the foreground text. One of the pre-set ANSI colours. </td></tr>
+    <tr><td class="paramname">$background</td><td>Pre-defined constant. Optional. The colour of the background of the text. One of the pre-set ANSI colours. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_clibelt.html#a35d53f4cd4909efd3f4aab39e255a337" title="Displays a menu, navigable with arrow or tab keys, with optional alignment and styling. ">menu</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a2945a5ec498465fa7a42a9d4854411ec"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::printoutMenuBoxCache </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$printableMenu</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$optionKeys</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$innerAlign</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$outerAlign</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$selectedKey</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$defaultAnsi</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$selectedAnsi</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$boxBorderChar</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$boxMargin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$max</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Prints out the menu from $printableMenu. Should be called only by <a class="el" href="class_clibelt.html#ae60ce4bd81570b9a0fc882a95eb101e0" title="Prints out the box of options, description and prompt that is a &#39;menu&#39;. ">printoutMenuBox()</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$printableMenu</td><td>Array. An array of all the elements with sub-array for all the lines in the printable menu box </td></tr>
+    <tr><td class="paramname">$optionKeys</td><td>Array. An array of all the keys for the options array that makes up the menu </td></tr>
+    <tr><td class="paramname">$innerAlign</td><td>Pre-defined constant. Optional. The alignment of the text inside the box. One of LEFT, RIGHT or CENTER </td></tr>
+    <tr><td class="paramname">$outerAlign</td><td>Pre-defined constant. Optional. The alignment of the box in the terminal. One of LEFT, RIGHT or CENTER </td></tr>
+    <tr><td class="paramname">$selectedKey</td><td>String. The key of the options array that is currently highlighted as selected </td></tr>
+    <tr><td class="paramname">$defaultAnsi</td><td>String. The ANSI style supplied by the user from foregroundColour and backgroundColour </td></tr>
+    <tr><td class="paramname">$selectedAnsi</td><td>String. The reverse of defaultAnsi, used to highlight the selected menu item </td></tr>
+    <tr><td class="paramname">$boxBorderChar</td><td>String. The character used to make the box. Default '#' </td></tr>
+    <tr><td class="paramname">$boxMargin</td><td>Int. The number of spaces between the left and right edges of the box and the content </td></tr>
+    <tr><td class="paramname">$max</td><td>Int. The length of the longest line of content, used for calcuating padding. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>boolean </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_clibelt.html#ae60ce4bd81570b9a0fc882a95eb101e0" title="Prints out the box of options, description and prompt that is a &#39;menu&#39;. ">printoutMenuBox</a> </dd></dl>
 
 </div>
 </div>
@@ -974,7 +1196,7 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 <p>Progress bar is a run of # chars.</p>
 <p>This method contains an infinite loop and is designed to terminated with posix_kill() by a child process. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">$delay.</td><td>Pre-defined constant. Optional. The speed at which the animation runs. One of DELAY_SLOW, DELAY_MED, DELAY_FAST or DELAY_VERY_FAST. Default DELAY_MED. </td></tr>
+    <tr><td class="paramname">$delay</td><td>Pre-defined constant. Optional. The speed at which the animation runs. One of DELAY_SLOW, DELAY_MED, DELAY_FAST or DELAY_VERY_FAST. Default DELAY_MED. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1068,7 +1290,7 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 
 <p>Prompts the user to choose from a list of char values and returns the selection. </p>
 <p>This method provides a simple way for the script user to choose from a list of provided, single char, options. The most common example would be yes/no choice presented as [y,n], but any list of characters and any prompt text can be used. [y,n] is the default behaviour.</p>
-<p>A default option value can be set. If the script user makes a selection that is not in the list of options or simply hits &lt;cr&gt;, and a default value is set, the default value is returned.</p>
+<p>A default option value can be set. If the script user makes a selection that is not in the list of options or simply hits RETURN, and a default value is set, the default value is returned.</p>
 <p>If a default value is set, it is indicated both by being bolded in the displayed options list and by displayed in the (Default:) part of the prompt.</p>
 <p>Options are case sensitive, ie an option list of [F,f] is valid.</p>
 <p>If no default value is set and the script user chooses and invalid option, the prompt is displayed again and will be continued to be dispalyed until a valid option is selected.</p>
@@ -1082,10 +1304,9 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>String The value selected by the user as a single char </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Only single chars are used as options and selections </dd></dl>
-<p>The options[] argument is forced to an array of chars. If an array of strings is passed only the the first letter is used. Since this method takes keystroke input without requiring a &lt;cr&gt;, it by necessity can only work with single chars.</p>
+<p>The options[] argument is forced to an array of chars. If an array of strings is passed only the the first letter is used. Since this method takes keystroke input without requiring a RETURN, it by necessity can only work with single chars.</p>
 <p>A string of the options is appended to the prompt, with the default option in bold (if the terminal supports it).</p>
 <p>The prompt displays the list of options as well as the default option, if it is set, in brackets afterwards</p>
-<p>Direct read from STDIN with readline_callback_handler_install() is used to read user keystroke without requiring them to hit &lt;cr&gt;</p>
 
 </div>
 </div>
@@ -1117,7 +1338,7 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">$prompt</td><td>The optional string to display as a prompt to the user. Default "Choose 'yes' or 'no'" </td></tr>
-    <tr><td class="paramname">$default</td><td>Optional. Either 'y' or 'n'. The value to return if the user selects an invalid option or hits &lt;cr&gt; </td></tr>
+    <tr><td class="paramname">$default</td><td>Optional. Either 'y' or 'n'. The value to return if the user selects an invalid option or hits RETURN </td></tr>
   </table>
   </dd>
 </dl>
@@ -1150,6 +1371,31 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Mixed </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a89dbac89dd0ec36bbcbe62beaaad5ade"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::readPassword </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$prompt</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads user input with star-echo for privacy. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$prompt</td><td>String. The prompt to display before user input </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>String </dd></dl>
 
 </div>
 </div>
@@ -1227,7 +1473,7 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 <p>Usage example: </p><div class="fragment"><div class="line">$cli = <span class="keyword">new</span> <a class="code" href="class_clibelt.html">Clibelt</a>();</div><div class="line">$copyCheck = $cli-&gt;safeCopy(<span class="stringliteral">&quot;/path/to/souce/file&quot;</span>, <span class="stringliteral">&quot;/path/to/destination/file&quot;</span>);</div><div class="line"><span class="keywordflow">if</span> (!$copyCheck) {</div><div class="line">    $copyError = $cli-&gt;getLastError();</div><div class="line">    <span class="comment">// handle or log error accordingly.</span></div><div class="line">    <span class="comment">// read below for error codes.</span></div><div class="line">}</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">$sourceFile</td><td>Path of file to copy </td></tr>
-    <tr><td class="paramname">$destFile.</td><td>String. Path to the file or directory for the destination of the copied file. If a directory is provided, the destination file is given the same name as it has in the source file path. </td></tr>
+    <tr><td class="paramname">$destFile</td><td>String. Path to the file or directory for the destination of the copied file. If a directory is provided, the destination file is given the same name as it has in the source file path. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1263,7 +1509,7 @@ Errors generated while preflighting the copy are stored in lastError </dd></dl>
 <p>Display 'waiting' animation as an ASCII art spinner. </p>
 <p>This method contains an infinite loop and is designed to terminated with posix_kill() by a child process. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">$delay.</td><td>Pre-defined constant. Optional. The speed at which the animation runs. One of DELAY_SLOW, DELAY_MED, DELAY_FAST or DELAY_VERY_FAST. Default DELAY_MED. </td></tr>
+    <tr><td class="paramname">$delay</td><td>Pre-defined constant. Optional. The speed at which the animation runs. One of DELAY_SLOW, DELAY_MED, DELAY_FAST or DELAY_VERY_FAST. Default DELAY_MED. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1304,6 +1550,52 @@ Errors generated while preflighting the copy are stored in lastError </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Int </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af3d68df8f32f9dc3045bbf7e89f724bf"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::wrapToTerminalWidth </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$text</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$padLength</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wraps the supplied to the width of the terminal minus the supplied widith of padding. </p>
+<p>If the terminal width is unavailable because of <code>stty</code> failure, the text is returned unmodified.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$text</td><td>String. The text to wrap </td></tr>
+    <tr><td class="paramname">$padLength</td><td>Int. The length of any padding to the text, eg for margins, box borders &amp;c </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>String </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_clibelt.html#abdace9b01160b56a82157615454b88ab" title="Returns the width of the terminal in columns or 0 or failure. ">getTerminalWidth</a> </dd></dl>
 
 </div>
 </div>
@@ -1381,6 +1673,48 @@ Errors generated while preflighting the copy are stored in lastError </dd></dl>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="ad2a5b3f5172439fe14180f562d5bc761"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::$cachedMaxContentLineLength = null</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>The cached length of the longest line in a menu so it does not need to be recalculated </p>
+
+</div>
+</div>
+<a class="anchor" id="a2263dc79f445d52f350a71f3372a2d01"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::$cachedMenuArray = null</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>The array of cached menu output so it does not need to be rebuilt every time it's rendered for display </p>
+
+</div>
+</div>
 <a class="anchor" id="a6db04996152bfaed14bf11abb5b6866d"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1445,7 +1779,7 @@ Errors generated while preflighting the copy are stored in lastError </dd></dl>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>Clibelt.php</li>
+<li>/home/ghorwood/Desktop/Clibelt/Clibelt.php</li>
 </ul>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.8-->
@@ -1456,7 +1790,7 @@ Errors generated while preflighting the copy are stored in lastError </dd></dl>
 </div>
 </div>
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jan 9 2017 22:01:18 for Clibelt by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jan 12 2017 22:20:09 for Clibelt by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>
