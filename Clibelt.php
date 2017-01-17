@@ -83,6 +83,12 @@ define('LEFT', 0);
 define('RIGHT', 1);
 define('CENTER', 2);
 
+define('BULLET_UNORDERED', 0);
+define('BULLET_NUMBER', 1);
+define('BULLET_LETTER_UPPERCASE', 2);
+define('BULLET_LETTER_LOWERCASE', 3);
+define('BULLET_ROMAN', 4);
+
 /**
  * Clibelt
  *
@@ -758,6 +764,216 @@ class Clibelt
             $this->lastPrintLineCount = count($box)+2;
     } // box
 
+
+    /**
+     * @brief Takes an array and outputs it as a list
+     *
+     * The array can be of an arbitrary depth. 
+     *
+     * The argument bulletsArray determines the type of bullet applied to the list level. It's values can be
+     * one of:
+     *   * BULLET_UNORDERED
+     *   * BULLET_NUMBER
+     *   * BULLET_LETTER_LOWERCASE
+     *   * BULLET_LETTER_UPPERCASE
+     *   * BULLET_ROMAN
+     *
+     * Example usage:
+     * @code
+     * $cli = new Clibelt();
+     * 
+     * // the array to print as a list. three deep
+     * $listArray = array (
+     *     "first level list item 1",
+     *     "first level list item 2",
+     *     "first level list item 3\nsecond line of item 3.",
+     *     array (
+     *         "second level list item 1",
+     *         array (
+     *             "third level list item 1",
+     *             "third level list item 2"
+     *         ),
+     *     ),
+     *     "first level list last item"
+     * );
+     * 
+     * // bullets, one for each level of the array
+     * $bulletsArray = array (
+     *     BULLET_LETTER_UPPERCASE,
+     *     BULLET_NUMBER,
+     *     BULLET_LETTER_LOWERCASE
+     * );
+     * 
+     * // call printlist()
+     * $cli->printlist($listArray, $bulletsArray, 4, 4);
+     * 
+     * // the output looks like this
+     * //     A. first level list item 1
+     * //     B. first level list item 2
+     * //     C. first level list item 3
+     * //        second line of item 3.
+     * //         1. second level list item 1
+     * //             a) third level list item 1
+     * //             b) third level list item 2
+     * //     D. first level list last item
+     * @endcode
+     *
+     * @param $listArray Array. The array of values to render as a list.
+     * @param $bulletsArray Array. Optional array of bullet types.
+     * @param $listIndentSize Int. Indentation of the entire list, number of spaces.
+     * @param $subListIndentSize Int. Amount to indent sublists from the top level list, number of spaces
+     * @return void
+     */
+	public function printlist($listArray, $bulletsArray=[], $listIndentSize=4, $subListIndentSize=4)
+	{
+
+        // modify bulletsArray to include both the bullet type and the count value, which is used
+        // to increment the bullet with each new item, ie 'a' to 'b' or '1' to '2' and so on.
+        $countableBulletsArray = [];
+        while(list($key,$val) = each($bulletsArray)) {
+            $countableBulletsArray[$key] = ["bullet" => $val, "count" => 0];
+        }
+
+        // get the list as an array
+		$list = $this->getPrintlist($listArray,
+            $countableBulletsArray, 
+            $listIndentSize, 
+            $subListIndentSize, 
+            0, // level. as arg for recursion 
+            []); // starting point of array that is returned. as arg for recursion.
+
+
+        // wrap the vlaue to fit terminal width
+        // bust value into array of lines so right vertical flushing can be done
+        while(list($key,$val) = each($list)) {
+            $list[$key]["value"] = explode(PHP_EOL, $this->wrapToTerminalWidth($val["value"], $this->strlenAnsiSafe($val["bullet"])));
+        }
+        reset($list);
+
+
+        // build a printable string of the list from the list array.
+        $listString = null;
+        while(list($key,$val) = each($list)) {
+            // add the bullet and the first line of the value
+            $listString .= $val["bullet"].$val["value"][0].PHP_EOL;
+            // if there are other lines to the value, append them with padding for right vertical flush
+            for($i=1;$i<count($val["value"]);$i++) {
+                $listString .= str_pad("",strlen($val["bullet"])," ").$val["value"][$i].PHP_EOL;
+            }
+        }
+
+        // output the list to STDOUT
+        $this->printout($listString);
+	} // printlist
+
+
+	private function getPrintlist($listArray, $countableBulletsArray, $listIndentSize, $subListIndentSize, $level, $printableArray)
+	{ 
+        // to keep the values vertically flushed, we pad out to the length of the longest key
+        // get length of the longest key for this level
+        $longestBulletLength = $this->getPrintlistBulletMaxLength($countableBulletsArray[$level]["bullet"], count($listArray));
+
+		while(list(,$val) = each($listArray)) {
+			if(!is_array($val)) {
+
+                $countableBulletsArray[$level]["count"]++;
+ 
+                $bullet = $this->getPrintlistBullet($countableBulletsArray[$level]["bullet"], $countableBulletsArray[$level]["count"]);
+
+                // pad for right vertical flush of values
+                $bulletPad = str_pad("", $longestBulletLength-$this->strlenAnsiSafe($bullet), " ");
+				
+                $subArray = array(
+                    "bullet" => str_pad("", $listIndentSize, " ").
+                    str_pad("", $level*$subListIndentSize, " ").
+                    $bullet.
+                    $bulletPad, "value" => $val);
+                $printableArray[] = $subArray;
+			}
+			else {
+                $printableArray = $this->getPrintlist($val, $countableBulletsArray, $listIndentSize, $subListIndentSize, $level+1, $printableArray);
+			}
+		}
+
+        return $printableArray;
+	}
+
+    private function getPrintlistBullet($bullet, $count)
+    {
+
+        $printableBullet = null;
+
+        // convert decimal number to alphabetical. ie dec 28 to 'ab' or dec 798 to 'adr'
+        // upper or lower case version
+        if($bullet == BULLET_LETTER_UPPERCASE || $bullet == BULLET_LETTER_LOWERCASE) {
+
+            // pre-calculate the number of characters this bullet will have
+            // by converting to base 26 and testing the length
+            $numOfBulletChars = strlen(strval(base_convert($count,10,26)));
+
+            $printableBullet = null; // the bullet to return
+
+            // for each place in the previously-calculated base 26 number, we convert to a letter
+            for($i=($numOfBulletChars-1);$i > 0; $i--) {
+                $baseVal = pow(26, $i); // the value of this place in the base 26 number
+
+                // convert to ascii. ascii 97 is 'a', so if we want to convert 1 to 'a', we add 96
+                $printableBullet .= chr(($count/$baseVal)+96);
+
+                // subtract the value of this place so we move on to the next place in the number
+                $count = $count - $baseVal;
+            }
+            // final place of base 26 number
+            $printableBullet .= chr(($count%26)+96);
+
+            // uppercase if bullet type is 'A', the uppercase bullet.
+            if($bullet == BULLET_LETTER_UPPERCASE) {
+                $printableBullet = strtoupper($printableBullet).". ";
+            }
+            else {
+                $printableBullet .=") ";
+            }
+        }
+
+        else if ($bullet == BULLET_NUMBER) {
+            $printableBullet = $count.". ";
+        }
+        else if ($bullet == BULLET_ROMAN) {
+            $lookup = ['m' => 1000, 'cm' => 900, 'd' => 500,
+             'cd' => 400, 'c' => 100, 'xc' => 90, 'l' => 50,
+             'xl' => 40, 'x' => 10, 'ix' => 9, 'v' => 5,
+             'iv' => 4, 'i' => 1]; 
+
+            while (list($roman, $value) = each($lookup)) {
+                $matches = intval($count/$value);
+                $printableBullet .= str_repeat($roman,$matches);
+                $count = $count % $value;
+            }
+
+            $printableBullet .= ". ";
+        }
+
+        else {
+            $printableBullet = "* ";
+        }
+
+        return $printableBullet;
+    } // getPrintlistBullet
+
+    private function getPrintlistBulletMaxLength($bullet, $count)
+    {
+
+        $maxLength = 0;
+
+        for($i=0;$i<$count;$i++) {
+            $length = $this->strlenAnsiSafe($this->getPrintlistBullet($bullet, $count)); 
+            if($length > $maxLength) {
+                $maxLength = $length;
+            }
+        }
+
+        return $maxLength;
+    } // getPrintlistBulletMaxLength
 
     /**
      * @brief Erases the output of the last call to either printout() or printerr()
