@@ -140,6 +140,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acfc7094c5e803a445ade018b2506e2fd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#acfc7094c5e803a445ade018b2506e2fd">box</a> ($text, $foreground=null, $<a class="el" href="class_clibelt.html#af44c78ed546850491d49ed7c92938e4c">background</a>=null, $alignment=CENTER)</td></tr>
 <tr class="memdesc:acfc7094c5e803a445ade018b2506e2fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outputs the provided text in a box bordered by hashes.  <a href="#acfc7094c5e803a445ade018b2506e2fd">More...</a><br /></td></tr>
 <tr class="separator:acfc7094c5e803a445ade018b2506e2fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aadc6928ff265f9dd6d438521f6894a5f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#aadc6928ff265f9dd6d438521f6894a5f">printlist</a> ($listArray, $bulletsArray=[], $listIndentSize=4, $subListIndentSize=4)</td></tr>
+<tr class="memdesc:aadc6928ff265f9dd6d438521f6894a5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes an array and outputs it as a list.  <a href="#aadc6928ff265f9dd6d438521f6894a5f">More...</a><br /></td></tr>
+<tr class="separator:aadc6928ff265f9dd6d438521f6894a5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f01bdf605d7f99e61f5f238be6d09bd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a0f01bdf605d7f99e61f5f238be6d09bd">erase</a> ()</td></tr>
 <tr class="memdesc:a0f01bdf605d7f99e61f5f238be6d09bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases the output of the last call to either <a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545" title="Writes string to STDOUT with optional ANSI formatting. ">printout()</a> or <a class="el" href="class_clibelt.html#a9e75d2aa36480d5f62677da1a7fdcd83" title="Writes string to STDERR with option ANSI formatting. ">printerr()</a>  <a href="#a0f01bdf605d7f99e61f5f238be6d09bd">More...</a><br /></td></tr>
 <tr class="separator:a0f01bdf605d7f99e61f5f238be6d09bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -203,6 +206,15 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:af3d68df8f32f9dc3045bbf7e89f724bf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#af3d68df8f32f9dc3045bbf7e89f724bf">wrapToTerminalWidth</a> ($text, $padLength=0)</td></tr>
 <tr class="memdesc:af3d68df8f32f9dc3045bbf7e89f724bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps the supplied to the width of the terminal minus the supplied widith of padding.  <a href="#af3d68df8f32f9dc3045bbf7e89f724bf">More...</a><br /></td></tr>
 <tr class="separator:af3d68df8f32f9dc3045bbf7e89f724bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87f2e1129d4237ab10821a83ae7eeba8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a87f2e1129d4237ab10821a83ae7eeba8">getPrintlist</a> ($listArray, $countableBulletsArray, $listIndentSize, $subListIndentSize, $level=0, $printableArray=[])</td></tr>
+<tr class="memdesc:a87f2e1129d4237ab10821a83ae7eeba8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an array of a printlist ready for formatting and output.  <a href="#a87f2e1129d4237ab10821a83ae7eeba8">More...</a><br /></td></tr>
+<tr class="separator:a87f2e1129d4237ab10821a83ae7eeba8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a253adfcad1c5d0aa1776bb9768b0dd7b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a253adfcad1c5d0aa1776bb9768b0dd7b">getPrintlistBullet</a> ($bullet, $count)</td></tr>
+<tr class="memdesc:a253adfcad1c5d0aa1776bb9768b0dd7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a bullet type and count to an actual bullet.  <a href="#a253adfcad1c5d0aa1776bb9768b0dd7b">More...</a><br /></td></tr>
+<tr class="separator:a253adfcad1c5d0aa1776bb9768b0dd7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a67b8eab17de3383a06a13a13b25e04"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a2a67b8eab17de3383a06a13a13b25e04">getPrintlistBulletMaxLength</a> ($bullet, $count)</td></tr>
+<tr class="memdesc:a2a67b8eab17de3383a06a13a13b25e04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the length of the longest bullet in the range defined by 0 to $count for the bullet type $bullet.  <a href="#a2a67b8eab17de3383a06a13a13b25e04">More...</a><br /></td></tr>
+<tr class="separator:a2a67b8eab17de3383a06a13a13b25e04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -607,6 +619,167 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 
 </div>
 </div>
+<a class="anchor" id="a87f2e1129d4237ab10821a83ae7eeba8"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::getPrintlist </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$listArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$countableBulletsArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$listIndentSize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$subListIndentSize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$level</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$printableArray</em> = <code>[]</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an array of a printlist ready for formatting and output. </p>
+<p>This method uses recursion to navigate to arbitrary depth of sublists.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$listArray</td><td>Array. The array to listify as supplied by the user to <a class="el" href="class_clibelt.html#aadc6928ff265f9dd6d438521f6894a5f" title="Takes an array and outputs it as a list. ">printlist()</a> </td></tr>
+    <tr><td class="paramname">$countableBulletsArray</td><td>Array. An array, keyed by list level, of arrays for each bullet with 'bullet' and 'count' elemets. </td></tr>
+    <tr><td class="paramname">$listIndentSize</td><td>Int. The number of spaces to indent the entire list. </td></tr>
+    <tr><td class="paramname">$subListIndentSize</td><td>Int. The number of spaces to indent a sublist from its parent. </td></tr>
+    <tr><td class="paramname">$level</td><td>Int. The current level of the sublist </td></tr>
+    <tr><td class="paramname">$printableArray</td><td>Array. The array which is eventually returned. listed here for recursion. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Array </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a253adfcad1c5d0aa1776bb9768b0dd7b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::getPrintlistBullet </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$bullet</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$count</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Converts a bullet type and count to an actual bullet. </p>
+<p>ie, converts bullet 'i' and count '7' to 'vii' or bullt 'a' and count '5' to 'e)'</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$bullet</td><td>pre-defined constant. The type of bullet, one of BULLET_LETTER_UPPERCASE, BULLET_LETTER_LOWERCASE, BULLET_NUMBER, BULLET_ROMAN, BULLET_UNORDERED. Default BULLET_UNORDERED. </td></tr>
+    <tr><td class="paramname">$count</td><td>Int. The number to convert to a bullet. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a2a67b8eab17de3383a06a13a13b25e04"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::getPrintlistBulletMaxLength </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$bullet</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$count</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the length of the longest bullet in the range defined by 0 to $count for the bullet type $bullet. </p>
+<p>This is to ensure right vertical flushing. Return value is the int length of the longest bullet. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$bullet</td><td>pre-defined constant. The type of bullet, one of BULLET_LETTER_UPPERCASE, BULLET_LETTER_LOWERCASE, BULLET_NUMBER, BULLET_ROMAN, BULLET_UNORDERED. Default BULLET_UNORDERED. </td></tr>
+    <tr><td class="paramname">$count</td><td>Int. The end of the range 0..$count to test. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Int </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="abdace9b01160b56a82157615454b88ab"></a>
 <div class="memitem">
 <div class="memproto">
@@ -886,6 +1059,64 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 </ul>
 </td></tr>
     <tr><td class="paramname">$alignment</td><td>Pre-defined constant. Optional alignment for text. Default is left. Valid constant is CENTER </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aadc6928ff265f9dd6d438521f6894a5f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::printlist </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$listArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$bulletsArray</em> = <code>[]</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$listIndentSize</em> = <code>4</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$subListIndentSize</em> = <code>4</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Takes an array and outputs it as a list. </p>
+<p>The array can be of an arbitrary depth.</p>
+<p>The argument bulletsArray determines the type of bullet applied to the list level. It's values can be one of:</p><ul>
+<li>BULLET_UNORDERED</li>
+<li>BULLET_NUMBER</li>
+<li>BULLET_LETTER_LOWERCASE</li>
+<li>BULLET_LETTER_UPPERCASE</li>
+<li>BULLET_ROMAN</li>
+</ul>
+<p>Example usage: </p><div class="fragment"><div class="line">$cli = <span class="keyword">new</span> <a class="code" href="class_clibelt.html">Clibelt</a>();</div><div class="line"></div><div class="line"><span class="comment">// the array to print as a list. three deep</span></div><div class="line">$listArray = array (</div><div class="line">    <span class="stringliteral">&quot;first level list item 1&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;first level list item 2&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;first level list item 3\nsecond line of item 3.&quot;</span>,</div><div class="line">    array (</div><div class="line">        <span class="stringliteral">&quot;second level list item 1&quot;</span>,</div><div class="line">        array (</div><div class="line">            <span class="stringliteral">&quot;third level list item 1&quot;</span>,</div><div class="line">            <span class="stringliteral">&quot;third level list item 2&quot;</span></div><div class="line">        ),</div><div class="line">    ),</div><div class="line">    <span class="stringliteral">&quot;first level list last item&quot;</span></div><div class="line">);</div><div class="line"></div><div class="line"><span class="comment">// bullets, one for each level of the array</span></div><div class="line">$bulletsArray = array (</div><div class="line">    BULLET_LETTER_UPPERCASE,</div><div class="line">    BULLET_NUMBER,</div><div class="line">    BULLET_LETTER_LOWERCASE</div><div class="line">);</div><div class="line"></div><div class="line"><span class="comment">// call printlist()</span></div><div class="line">$cli-&gt;printlist($listArray, $bulletsArray, 4, 4);</div><div class="line"></div><div class="line"><span class="comment">// the output looks like this</span></div><div class="line"><span class="comment">//     A. first level list item 1</span></div><div class="line"><span class="comment">//     B. first level list item 2</span></div><div class="line"><span class="comment">//     C. first level list item 3</span></div><div class="line"><span class="comment">//        second line of item 3.</span></div><div class="line"><span class="comment">//         1. second level list item 1</span></div><div class="line"><span class="comment">//             a) third level list item 1</span></div><div class="line"><span class="comment">//             b) third level list item 2</span></div><div class="line"><span class="comment">//     D. first level list last item</span></div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$listArray</td><td>Array. The array of values to render as a list. </td></tr>
+    <tr><td class="paramname">$bulletsArray</td><td>Array. Optional array of bullet types. </td></tr>
+    <tr><td class="paramname">$listIndentSize</td><td>Int. Indentation of the entire list, number of spaces. </td></tr>
+    <tr><td class="paramname">$subListIndentSize</td><td>Int. Amount to indent sublists from the top level list, number of spaces </td></tr>
   </table>
   </dd>
 </dl>
@@ -1790,7 +2021,7 @@ Errors generated while preflighting the copy are stored in lastError </dd></dl>
 </div>
 </div>
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 12 2017 22:20:09 for Clibelt by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jan 17 2017 16:53:10 for Clibelt by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>
