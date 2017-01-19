@@ -584,6 +584,104 @@ class Clibelt
     } // menu
 
 
+    public function menuhorizontal($description,  $options, $align = LEFT, $foregroundColour = null, $backgroundColour = null)
+    {
+        // hightlight the first option in the menu to start
+        $selectedIndex = 0;
+
+        // retrieve the key by the index
+        $selectedKey = array_keys($options)[$selectedIndex];
+
+
+        $this->printoutMenuHorizontal($description, $options, $selectedKey, $align, $foregroundColour, $backgroundColour);
+
+        // loop awaiting user input
+        while (true) {
+            // get key down event from user
+            $userChoice = $this->getKeyDown();
+
+            // right arrow
+            if (ord($userChoice) == 67 || ord($userChoice) == 9) {
+                // delete ouput of menu
+                $this->erase();
+
+                // update the menu to highlight the next option
+                if ($selectedIndex < count($options)-1) {
+                    $selectedIndex++;
+                }
+                // wrap back to top
+                else {
+                    $selectedIndex = 0;
+                }
+
+                $this->printoutMenuHorizontal($description, $options, array_keys($options)[$selectedIndex], $align, $foregroundColour, $backgroundColour);
+            }
+
+            // left arrow
+            if (ord($userChoice) == 68) {
+                // delete ouput of menu
+                $this->erase();
+
+                // update the menu to highlight previous option
+                // wrap back to bottom
+                if ($selectedIndex == 0) {
+                    $selectedIndex = count($options)-1;
+                } else {
+                    $selectedIndex--;
+                }
+
+                $this->printoutMenuHorizontal($description, $options, array_keys($options)[$selectedIndex], $align, $foregroundColour, $backgroundColour);
+            }
+    
+            // select and return current key
+            // 10 return
+            if (ord($userChoice) == 10) {
+                $returnVal = array_keys($options)[$selectedIndex];
+                break;
+            }
+
+        }
+        return $returnVal;
+    }
+
+    private function printoutMenuHorizontal($description, $options, $selectedKey, $align, $foreground, $background)
+    {
+
+        // default prompt
+        // @todo make arg
+        $prompt = "(Use up and down arrow cards, hit RETURN to select)";
+
+        $optionSpacing = 2;
+
+        // build ANSI colour coding tags
+
+        // default foreground, background as supplied
+        $defaultAnsi = ESC."[".implode(";", [$foreground, $background+10])."m";
+
+        // the hightlight tag
+        $selectedAnsi = BOLD_ANSI.ESC."[".implode(";", [REVERSE])."m";
+
+        $prompt = "(Use left and right arrow keys, hit RETURN to select)";
+
+        $printableOptions = [];
+
+        while(list($key,$val) = each($options)) {
+            if($key == $selectedKey) {
+                $printableOptions[] = CLOSE_ANSI.$selectedAnsi.$val.CLOSE_ANSI.$defaultAnsi;
+            }
+            else {
+                $printableOptions[] = $val;
+            }
+        }
+
+            $p = $description.PHP_EOL.
+            join(str_pad("", $optionSpacing, " "), $printableOptions).PHP_EOL.
+            $prompt;
+
+        $this->printout($p, null, $foreground, $background, $align);
+
+    }
+
     ##
     # Methods to do formatted output
 
@@ -1572,7 +1670,7 @@ class Clibelt
 
         // default prompt
         // @todo make arg
-        $prompt = "(Use up and down arrow cards, hit RETURN to select)";
+        $prompt = "(Use up and down arrow keys, hit RETURN to select)";
 
         // since option keys are padded so that option vals are verticlly aligned, we need to know the length
         // of the longest key. used for padding and figuring out word wrap for option vals
