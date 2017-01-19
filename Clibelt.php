@@ -584,16 +584,45 @@ class Clibelt
     } // menu
 
 
-    public function menuhorizontal($description,  $options, $align = LEFT, $foregroundColour = null, $backgroundColour = null)
+    /**
+     * @brief A single-line menu, navigable by left/right arrows or tab key
+     *
+     * This method builds and displays a horizontal menu of the provided $options. The user can navigate the menu by either
+     *   * Using the left and right arrow keys to highlight the selection and hitting RETURN to select
+     *   * Using the tab key to scroll rightward through the menu and hitting RETURN to select
+     *
+     * The value returned is the key of the $options element that was selected.
+     *
+     * The menu continues to display until the user makes a correct selection.
+     *
+     * The foreground and backgroud colours of the menu can be set using the $foregroundColour and $backgroundColour
+     * arguments. Colours must be one of the pre-set ANSI constants: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN or WHITE.
+     *
+     * The menu option currently hightlighted by the user is shown by having the colour options reversed using ANSI REVERSE.
+     *
+     * @param $description String
+     * @param $options Array. List of options for this menu. The key of the selected item is returned.
+     * @param $selectedKey String. The key to set as the initial selected key.
+     * @param $align pre-defined constant. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER.
+     * @param $foregroundColour pre-defined constant. The foreground colour.
+     * @param $backgroundColour pre-defined constant. The background colour.
+     * @return String
+     */
+    public function menuhorizontal($description, $options, $selectedKey = null, $align = LEFT, $foregroundColour = null, $backgroundColour = null)
     {
-        // hightlight the first option in the menu to start
-        $selectedIndex = 0;
+        // set the selected key and index
 
-        // retrieve the key by the index
-        $selectedKey = array_keys($options)[$selectedIndex];
+        // if no selectedKey set or if it is invalid, default to the first key
+        if (!$selectedKey || !in_array($selectedKey, array_keys($options))) {
+            $selectedIndex = 0;
+            // retrieve the key by the index
+            $selectedKey = array_keys($options)[$selectedIndex];
+        } else {
+            $selectedIndex = array_search($selectedKey, array_keys($options));
+        }
 
-
-        $this->printoutMenuHorizontal($description, $options, $selectedKey, $align, $foregroundColour, $backgroundColour);
+        // print the menu for the first time
+        $this->printoutMenuhorizontal($description, $options, $selectedKey, $align, $foregroundColour, $backgroundColour);
 
         // loop awaiting user input
         while (true) {
@@ -614,7 +643,8 @@ class Clibelt
                     $selectedIndex = 0;
                 }
 
-                $this->printoutMenuHorizontal($description, $options, array_keys($options)[$selectedIndex], $align, $foregroundColour, $backgroundColour);
+                // redraw menu to update highlighting of selected key
+                $this->printoutMenuhorizontal($description, $options, array_keys($options)[$selectedIndex], $align, $foregroundColour, $backgroundColour);
             }
 
             // left arrow
@@ -630,57 +660,20 @@ class Clibelt
                     $selectedIndex--;
                 }
 
-                $this->printoutMenuHorizontal($description, $options, array_keys($options)[$selectedIndex], $align, $foregroundColour, $backgroundColour);
+                // redraw menu to update highlighting of selected key
+                $this->printoutMenuhorizontal($description, $options, array_keys($options)[$selectedIndex], $align, $foregroundColour, $backgroundColour);
             }
-    
+
             // select and return current key
             // 10 return
             if (ord($userChoice) == 10) {
                 $returnVal = array_keys($options)[$selectedIndex];
                 break;
             }
-
         }
+
         return $returnVal;
-    }
-
-    private function printoutMenuHorizontal($description, $options, $selectedKey, $align, $foreground, $background)
-    {
-
-        // default prompt
-        // @todo make arg
-        $prompt = "(Use up and down arrow cards, hit RETURN to select)";
-
-        $optionSpacing = 2;
-
-        // build ANSI colour coding tags
-
-        // default foreground, background as supplied
-        $defaultAnsi = ESC."[".implode(";", [$foreground, $background+10])."m";
-
-        // the hightlight tag
-        $selectedAnsi = BOLD_ANSI.ESC."[".implode(";", [REVERSE])."m";
-
-        $prompt = "(Use left and right arrow keys, hit RETURN to select)";
-
-        $printableOptions = [];
-
-        while(list($key,$val) = each($options)) {
-            if($key == $selectedKey) {
-                $printableOptions[] = CLOSE_ANSI.$selectedAnsi.$val.CLOSE_ANSI.$defaultAnsi;
-            }
-            else {
-                $printableOptions[] = $val;
-            }
-        }
-
-            $p = $description.PHP_EOL.
-            join(str_pad("", $optionSpacing, " "), $printableOptions).PHP_EOL.
-            $prompt;
-
-        $this->printout($p, null, $foreground, $background, $align);
-
-    }
+    } // menuhorizontal
 
     ##
     # Methods to do formatted output
@@ -2183,4 +2176,57 @@ class Clibelt
 
         return $maxLength;
     } // getPrintlistBulletMaxLength
+
+
+    /**
+     * @brief Builds and outputs the menu from menuhorizontal()
+     *
+     * @param $description String
+     * @param $options Array. List of options for this menu. The key of the selected item is returned.
+     * @param $selectedKey String. The key to set as the initial selected key.
+     * @param $align pre-defined constant. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER.
+     * @param $foreground pre-defined constant. The foreground colour.
+     * @param $background pre-defined constant. The background colour.
+     * @return void
+     */
+    private function printoutMenuhorizontal($description, $options, $selectedKey, $align, $foreground, $background)
+    {
+        // default prompt
+        // @todo make arg
+        $prompt = "(Use up and down arrow cards, hit RETURN to select)";
+
+        $optionSpacing = 2;
+
+        // build ANSI colour coding tags
+
+        // default foreground, background as supplied
+        $defaultAnsi = ESC."[".implode(";", [$foreground, $background+10])."m";
+
+        // the hightlight tag
+        $selectedAnsi = BOLD_ANSI.ESC."[".implode(";", [REVERSE])."m";
+
+        // default prompt
+        $prompt = "(Use left and right arrow keys, hit RETURN to select)";
+
+        $printableOptions = [];
+
+        // highlight the slected key
+        while (list($key, $val) = each($options)) {
+            if ($key == $selectedKey) {
+                $printableOptions[] = CLOSE_ANSI.$selectedAnsi.$val.CLOSE_ANSI.$defaultAnsi;
+            } else {
+                $printableOptions[] = $val;
+            }
+        }
+
+        // print out the menu
+        $this->printout(
+            $description.PHP_EOL.// the descriptions
+            implode(str_pad("", $optionSpacing, " "), $printableOptions).PHP_EOL.// the options as string
+            $prompt, // the prompt
+            null,  // level, always null
+            $foreground, // foreground colour constant
+            $background, // background constant constant
+            $align); // alignment constant
+    } // printoutMenuhorizontal
 } //Clibelt

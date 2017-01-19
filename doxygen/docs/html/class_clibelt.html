@@ -131,6 +131,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a35d53f4cd4909efd3f4aab39e255a337"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a35d53f4cd4909efd3f4aab39e255a337">menu</a> ($description, $options, $innerAlign=LEFT, $outerAlign=LEFT, $foregroundColour=null, $backgroundColour=null)</td></tr>
 <tr class="memdesc:a35d53f4cd4909efd3f4aab39e255a337"><td class="mdescLeft">&#160;</td><td class="mdescRight">Displays a menu, navigable with arrow or tab keys, with optional alignment and styling.  <a href="#a35d53f4cd4909efd3f4aab39e255a337">More...</a><br /></td></tr>
 <tr class="separator:a35d53f4cd4909efd3f4aab39e255a337"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3374ff562843cbb5c90a5d7a6acca42"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#aa3374ff562843cbb5c90a5d7a6acca42">menuhorizontal</a> ($description, $options, $selectedKey=null, $align=LEFT, $foregroundColour=null, $backgroundColour=null)</td></tr>
+<tr class="memdesc:aa3374ff562843cbb5c90a5d7a6acca42"><td class="mdescLeft">&#160;</td><td class="mdescRight">A single-line menu, navigable by left/right arrows or tab key.  <a href="#aa3374ff562843cbb5c90a5d7a6acca42">More...</a><br /></td></tr>
+<tr class="separator:aa3374ff562843cbb5c90a5d7a6acca42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad66e12cb4cc3f7481670f2549881a545"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545">printout</a> ($text, $level=null, $foreground=null, $<a class="el" href="class_clibelt.html#af44c78ed546850491d49ed7c92938e4c">background</a>=null, $alignment=null)</td></tr>
 <tr class="memdesc:ad66e12cb4cc3f7481670f2549881a545"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes string to STDOUT with optional ANSI formatting.  <a href="#ad66e12cb4cc3f7481670f2549881a545">More...</a><br /></td></tr>
 <tr class="separator:ad66e12cb4cc3f7481670f2549881a545"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,6 +167,9 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
+<tr class="memitem:a9c7420db45a3a70983dc206553c1f0d7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a9c7420db45a3a70983dc206553c1f0d7">printoutMenuhorizontal</a> ($description, $options, $selectedKey, $align, $foreground, $<a class="el" href="class_clibelt.html#af44c78ed546850491d49ed7c92938e4c">background</a>)</td></tr>
+<tr class="memdesc:a9c7420db45a3a70983dc206553c1f0d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">A single-line menu, navigable by left/right arrows or tab key Builds and outputs the menu from <a class="el" href="class_clibelt.html#aa3374ff562843cbb5c90a5d7a6acca42" title="A single-line menu, navigable by left/right arrows or tab key. ">menuhorizontal()</a>  <a href="#a9c7420db45a3a70983dc206553c1f0d7">More...</a><br /></td></tr>
+<tr class="separator:a9c7420db45a3a70983dc206553c1f0d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac57ab8329098f4ddc0b9e65ab5234bd3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#ac57ab8329098f4ddc0b9e65ab5234bd3">getLengthOfLongestLine</a> ($lines)</td></tr>
 <tr class="memdesc:ac57ab8329098f4ddc0b9e65ab5234bd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the strlen of the longest line in either the string or array passed.  <a href="#ac57ab8329098f4ddc0b9e65ab5234bd3">More...</a><br /></td></tr>
 <tr class="separator:ac57ab8329098f4ddc0b9e65ab5234bd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -887,6 +893,78 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 
 </div>
 </div>
+<a class="anchor" id="aa3374ff562843cbb5c90a5d7a6acca42"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::menuhorizontal </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$description</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$options</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$selectedKey</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$align</em> = <code>LEFT</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$foregroundColour</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$backgroundColour</em> = <code>null</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A single-line menu, navigable by left/right arrows or tab key. </p>
+<p>This method builds and displays a horizontal menu of the provided $options. The user can navigate the menu by either</p><ul>
+<li>Using the left and right arrow keys to highlight the selection and hitting RETURN to select</li>
+<li>Using the tab key to scroll rightward through the menu and hitting RETURN to select</li>
+</ul>
+<p>The value returned is the key of the $options element that was selected.</p>
+<p>The menu continues to display until the user makes a correct selection.</p>
+<p>The foreground and backgroud colours of the menu can be set using the $foregroundColour and $backgroundColour arguments. Colours must be one of the pre-set ANSI constants: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN or WHITE.</p>
+<p>The menu option currently hightlighted by the user is shown by having the colour options reversed using ANSI REVERSE.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$description</td><td>String </td></tr>
+    <tr><td class="paramname">$options</td><td>Array. List of options for this menu. The key of the selected item is returned. </td></tr>
+    <tr><td class="paramname">$selectedKey</td><td>String. The key to set as the initial selected key. </td></tr>
+    <tr><td class="paramname">$align</td><td>pre-defined constant. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER. </td></tr>
+    <tr><td class="paramname">$foregroundColour</td><td>pre-defined constant. The foreground colour. </td></tr>
+    <tr><td class="paramname">$backgroundColour</td><td>pre-defined constant. The background colour. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>String </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a9e99e911db513bb271f39c3369bbdb20"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1398,6 +1476,78 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>boolean </dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_clibelt.html#ae60ce4bd81570b9a0fc882a95eb101e0" title="Prints out the box of options, description and prompt that is a &#39;menu&#39;. ">printoutMenuBox</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a9c7420db45a3a70983dc206553c1f0d7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::printoutMenuhorizontal </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$description</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$options</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$selectedKey</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$align</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$foreground</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$background</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>A single-line menu, navigable by left/right arrows or tab key Builds and outputs the menu from <a class="el" href="class_clibelt.html#aa3374ff562843cbb5c90a5d7a6acca42" title="A single-line menu, navigable by left/right arrows or tab key. ">menuhorizontal()</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$description</td><td>String </td></tr>
+    <tr><td class="paramname">$options</td><td>Array. List of options for this menu. The key of the selected item is returned. </td></tr>
+    <tr><td class="paramname">$selectedKey</td><td>String. The key to set as the initial selected key. </td></tr>
+    <tr><td class="paramname">$align</td><td>pre-defined constant. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER. </td></tr>
+    <tr><td class="paramname">$foreground</td><td>pre-defined constant. The foreground colour. </td></tr>
+    <tr><td class="paramname">$background</td><td>pre-defined constant. The background colour. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
 </div>
@@ -2021,7 +2171,7 @@ Errors generated while preflighting the copy are stored in lastError </dd></dl>
 </div>
 </div>
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jan 17 2017 16:53:10 for Clibelt by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jan 18 2017 22:25:50 for Clibelt by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>
