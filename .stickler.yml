@@ -1,0 +1,4 @@
+linters:
+    phpcs:
+        extensions: '.php'
+        tab_width: 4
