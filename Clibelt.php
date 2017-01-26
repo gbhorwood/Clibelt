@@ -676,9 +676,56 @@ class Clibelt
     } // menuhorizontal
 
 
-	
+    /**
+     * @brief Displays a file selection interface, navigable with arrow or tab keys, with optional alignment and styling
+     *
+     * This method builds and displays a file selection menu with the initial direcotry defined by arg $directory
+     * The user can navigate the menu by either
+     * 		* Using the up arrow to scroll up the file list
+     * 		* Using the down arrow or tab key to scroll down the file list
+     * 		* Using the RETURN or 'o' key to open a directory
+     * 		* Using the RETURN or 'o' key to select a file
+     *
+     * This method returns the selected file as a string or boolean false on error.
+     *
+     * The fileselect interface continues to display until the user makes a valid selection.
+     *
+     * The foreground and backgroud colours of the menu can be set using the $foregroundColour and $backgroundColour
+     * arguments. Colours must be one of the pre-set ANSI constants: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN or WHITE.
+     *
+     * The current highlighted file is shown by having the colour options reversed using ANSI REVERSE.
+     *
+     * The fileselect interface box can be aligned in the terminal using the align argument; one of LEFT, RIGHT or CENTER.
+     * Default is LEFT.
+     *
+     * The string passed as $description may be word wrapped to fit the fileselect interface width.
+     *
+     * Example usage:
+     * @code
+     *	$cli = new Clibelt();
+     *	$selectedFile = $cli->fileselect(
+     *	    "/tmp/", // directory to open
+     *	    "select any file",  // description to put in fileselect box
+     *	    LEFT, // align in terminal
+     *	    WHITE, // foreground colour
+     *	    BLUE); // background colour
+     *
+     *	print "absolute path to select file is ".$selectedFile;
+     * @endcode
+     *
+     * @param $directory String. The initial directory opened in the fileselect interface.
+     * @param $description String. The text description to put in the fileselect interface.
+     * @param $align pre-defined Constant. Alignment of the fileselect interface in the terminal.
+     * @param $foregroundColour pre-defined Constant. Foreground colour of the text
+     * @param $backgroundColour pre-defined Constant. Background colour of the text
+     * @return Mixed. String or Boolean false on error
+     */
     public function fileselect($directory, $description = null, $align = LEFT, $foregroundColour = null, $backgroundColour = null)
     {
+        /**
+         * Initial index of highlighted file in directory is 2. This is because the first two entries are '.' and '..'
+         * and we want the highlighted entry to be the first one after that.
+         */
         $selectedIndex = 2;
 
         /**
@@ -711,10 +758,12 @@ class Clibelt
             $directory .= "/";
         }
 
+        // initial output of the file select interface
         $this->printoutFileselect($directory, $description, $selectedIndex, $align, $backgroundColour, $foregroundColour);
 
         // read user keydown until we get a valid response
         while (true) {
+            // read key
             $userChoice = $this->getKeyDown();
 
             // scroll down
@@ -724,6 +773,7 @@ class Clibelt
                 // delete ouput of menu
                 $this->erase();
 
+                // set next file down as selected
                 $selectedIndex++;
 
                 // stop overrun of bottom of directory list
@@ -731,189 +781,51 @@ class Clibelt
                     $selectedIndex = count(scandir($directory))-1;
                 }
 
+                // printout  fileselect interface
                 $this->printoutFileselect($directory, $description, $selectedIndex, $align, $backgroundColour, $foregroundColour);
-            } elseif (ord($userChoice) == 65) {
+            }
+
+            // scroll up
+            // 65 up arrow
+            elseif (ord($userChoice) == 65) {
                 // delete ouput of menu
                 $this->erase();
 
+                // set next file up as selected
                 $selectedIndex--;
 
+                // stop overrun off the top of directory list
                 if ($selectedIndex < 0) {
                     $selectedIndex = 0;
                 }
 
+                // printout  fileselect interface
                 $this->printoutFileselect($directory, $description, $selectedIndex, $align, $backgroundColour, $foregroundColour);
             }
 
+            // select event
             // 10 return
+            // 111 o
             elseif (ord($userChoice) == 10 || ord($userChoice) == 111) {
                 // the full path of the file or directory selected
                 $selectedItem = realpath($directory.scandir($directory)[$selectedIndex]);
 
+                // if selected element is a directory, draw fileselect interface for that directory
+                // and continue looping for keydown events
                 if (is_dir($selectedItem)) {
-                    $directory = $selectedItem."/";
-                    $selectedIndex = 2;
+                    $directory = $selectedItem."/"; // ensure trailing slash
+                    $selectedIndex = 2; // set index to first real file after '.' and '..'
                     $this->erase();
                     $this->printoutFileselect($directory, $description, $selectedIndex, $align, $backgroundColour, $foregroundColour);
-                } else {
+                }
+
+                // if selected element is a file, return it
+                else {
                     return $selectedItem;
                 }
             }
-        }
+        } // while(true)
     } // fileselect
-
-
-    private function printoutFileselect($directory, $description = null, $selectedIndex, $align = LEFT, $backgroundColour = null, $foregroundColour = null)
-    {
-        $listWindowSize = 5;
-
-        $boxMargin = 4;
-
-        if (!$description) {
-            $description = "Select a file";
-        }
-
-        $prompt = "(Use up and down arrow keys, 'o' to select, RETURN to open directory)";
-
-        // build ANSI colour coding tags
-
-        // default foreground, background as supplied
-        $defaultAnsi = ESC."[".implode(";", [$foregroundColour, $backgroundColour+10])."m";
-
-        // the hightlight tag
-        $selectedAnsi = BOLD_ANSI.ESC."[".implode(";", [REVERSE])."m";
-
-        $rawDirectoryScan = scandir($directory);
-
-        // stop overrun of bottom of directory list
-        if ($selectedIndex >= count($rawDirectoryScan)) {
-            $selectedIndex = count($rawDirectoryScan)-1;
-        }
-
-        if ($selectedIndex < 0) {
-            $selectedIndex = 0;
-        }
-
-        // create an array of the files in the directory
-        // key: the full path to the file, ie /path/to/file/foo.txt
-        // val: the name of the file, ie foo.txt
-        // append a "/" onto directories so they are identifiable as such
-        $directoryScan = array_map(
-            function ($lineScan, $directoryName) {
-                if (is_dir($directoryName.$lineScan)) {
-                    return [$directoryName.$lineScan."/" => "  ".$lineScan."/"];
-                }
-
-                return [$directoryName.$lineScan => "  ".$lineScan];
-            },
-            $rawDirectoryScan,
-            array_fill(0, count($rawDirectoryScan), $directory));
-
-        // get maximum width of all the lines to print to work out padding
-        // for the enclosing box
-        $maxWidth = 0;
-        $maxWidthTestArray = array_merge($rawDirectoryScan, [realpath($directory)]);
-        while (list(, $val) = each($maxWidthTestArray)) {
-            if ($this->strlenAnsiSafe($val)+2 > $maxWidth) {
-                $maxWidth = $this->strlenAnsiSafe($val)+2;
-            }
-        }
-
-        // the longest line may be quite short, creating a box that is very narrow and difficult to read
-        // bump to a minimum of one third the terminal width.
-        if (floor($this->getTerminalWidth()/3) > $maxWidth) {
-            $maxWidth = floor($this->getTerminalWidth()/3);
-        }
-
-        // the string of chars at the top and bottom of the box
-        $borderString = str_pad("", $maxWidth+($boxMargin*2)+2, "#");
-
-        // the string of '-' that divides the description, options and prompt
-        $dividerString = "#".str_pad("", $boxMargin, " ").str_pad("", $maxWidth, "-").str_pad("", $boxMargin, " ")."#";
-
-        // build the window bounds. these are the upper and lower array indexes that will
-        // be shown since we don't want to show all the files in the directory
-
-        $windowUpperBound = 0;
-        $windowLowerBound = $listWindowSize-1;
-
-        // don't draw window larger than the number of files
-        if (count($rawDirectoryScan) <= $windowLowerBound) {
-            $windowLowerBound = count($rawDirectoryScan)-1;
-        }
-
-        // don't let a downkey event run the selectedIndex off the lower bound of the window
-        if ($selectedIndex >= $listWindowSize) {
-            $windowLowerBound = $selectedIndex;
-            $windowUpperBound = $windowLowerBound-$listWindowSize+1;
-        }
-
-        // build array of options
-        $printableFileselectArray = [];
-        for ($i = $windowUpperBound;$i <= $windowLowerBound;$i++) {
-            $openAnsi = null;
-            $closeAnsi = null;
-            if ($i == $selectedIndex) {
-                $openAnsi = $selectedAnsi;
-                $closeAnsi = CLOSE_ANSI.$defaultAnsi;
-            }
-
-            $printableFileselectArray[] = "#".
-                str_pad("", $boxMargin, " ").
-                $openAnsi.
-                end($directoryScan[$i]).
-                $closeAnsi.
-                str_pad("", $boxMargin, " ").
-                str_pad("", $maxWidth-$this->strlenAnsiSafe(end($directoryScan[$i])), " ").
-                "#";
-        }
-
-        $descriptionLines = explode(PHP_EOL, wordwrap($description, $maxWidth));
-        $printableDescriptionArray = [];
-        while (list(, $val) = each($descriptionLines)) {
-            $printableDescriptionArray[] = "#".
-                str_pad("", $boxMargin, " ").
-                $val.
-                str_pad("", $boxMargin, " ").
-                str_pad("", $maxWidth-$this->strlenAnsiSafe($val), " ").
-                "#";
-        }
-        $printableDescriptionArray[] = $dividerString;
-
-        $currentDirectoryArray = ["#".
-            str_pad("", $boxMargin, " ").
-            realpath($directory).
-            str_pad("", $boxMargin, " ").
-            str_pad("", $maxWidth-$this->strlenAnsiSafe(realpath($directory)), " ").
-            "#", ];
-
-        $promptLines = explode(PHP_EOL, wordwrap($prompt, $maxWidth));
-        $printablePromptArray[] = $dividerString;
-        while (list(, $val) = each($promptLines)) {
-            $printablePromptArray[] = "#".
-                str_pad("", ceil(($maxWidth-$this->strlenAnsiSafe($val))/2), " ").
-                str_pad("", $boxMargin, " ").
-                $val.
-                str_pad("", $boxMargin, " ").
-                str_pad("", floor(($maxWidth-$this->strlenAnsiSafe($val))/2), " ").
-                "#";
-        }
-
-        $printableFileselectArray = array_merge(
-            [$borderString],
-            $printableDescriptionArray,
-            $currentDirectoryArray,
-            $printableFileselectArray,
-            $printablePromptArray,
-            [$borderString]);
-
-        $this->printout(
-            implode(PHP_EOL, $printableFileselectArray),
-            null,
-            $foregroundColour,
-            $backgroundColour,
-            $align);
-    } // printoutFileselect
 
 
     ##
@@ -2470,4 +2382,184 @@ class Clibelt
             $background, // background constant constant
             $align); // alignment constant
     } // printoutMenuhorizontal
+
+
+    /**
+     * @brief Outputs the fileselect interface
+     *
+     * @param $directory String. The initial directory opened in the fileselect interface.
+     * @param $description String. The text description to put in the fileselect interface.
+     * @param $selectedIndex Int. The index of the array of files in the directory that is currently selected.
+     * @param $align pre-defined Constant. Alignment of the fileselect interface in the terminal.
+     * @param $foregroundColour pre-defined Constant. Foreground colour of the text
+     * @param $backgroundColour pre-defined Constant. Background colour of the text
+     * @return Mixed. String or Boolean false on error
+     */
+    private function printoutFileselect($directory,
+        $description = "Select a file",
+        $selectedIndex,
+        $align = LEFT,
+        $backgroundColour = null,
+        $foregroundColour = null)
+    {
+        // the number of files visible in the fileselect interface box
+        $listWindowSize = 5;
+
+        // minimum space between the box border on left and right and the inner content
+        $boxMargin = 4;
+
+        // prompt to display below file list
+        $prompt = "(Use up and down arrow keys, 'o' to select, RETURN to open directory)";
+
+        // build ANSI colour coding tags
+
+        // default foreground, background using colours supplied supplied
+        $defaultAnsi = ESC."[".implode(";", [$foregroundColour, $backgroundColour+10])."m";
+
+        // ansi tag for highlighting selected file
+        $selectedAnsi = BOLD_ANSI.ESC."[".implode(";", [REVERSE])."m";
+
+        // array of all files and directories in the current directory
+        $rawDirectoryScan = scandir($directory);
+
+        // stop overrun of bottom of directory list
+        if ($selectedIndex >= count($rawDirectoryScan)) {
+            $selectedIndex = count($rawDirectoryScan)-1;
+        }
+
+        // stop of overrun off the top of directory list
+        if ($selectedIndex < 0) {
+            $selectedIndex = 0;
+        }
+
+        // create an array of the files in the directory
+        // key: the full path to the file, ie /path/to/file/foo.txt
+        // val: the name of the file, ie foo.txt
+        // append a "/" onto directories so they are identifiable as such
+        $directoryScan = array_map(
+            function ($lineScan, $directoryName) {
+                if (is_dir($directoryName.$lineScan)) {
+                    return [$directoryName.$lineScan."/" => "  ".$lineScan."/"];
+                }
+
+                return [$directoryName.$lineScan => "  ".$lineScan];
+            },
+            $rawDirectoryScan,
+            array_fill(0, count($rawDirectoryScan), $directory));
+
+        // get maximum width of all the lines to print to work out padding
+        // for the enclosing box
+        $maxWidth = 0;
+        $maxWidthTestArray = array_merge($rawDirectoryScan, [realpath($directory)]);
+        while (list(, $val) = each($maxWidthTestArray)) {
+            if ($this->strlenAnsiSafe($val)+2 > $maxWidth) {
+                $maxWidth = $this->strlenAnsiSafe($val)+2;
+            }
+        }
+
+        // the longest line may be quite short, creating a box that is very narrow and difficult to read
+        // bump to a minimum of one third the terminal width.
+        if (floor($this->getTerminalWidth()/3) > $maxWidth) {
+            $maxWidth = floor($this->getTerminalWidth()/3);
+        }
+
+        // the string of chars at the top and bottom of the box
+        $borderString = str_pad("", $maxWidth+($boxMargin*2)+2, "#");
+
+        // the string of '-' that divides the description, options and prompt
+        $dividerString = "#".str_pad("", $boxMargin, " ").str_pad("", $maxWidth, "-").str_pad("", $boxMargin, " ")."#";
+
+        // build the window bounds. these are the upper and lower array indexes that will
+        // be shown since we don't want to show all the files in the directory
+
+        $windowUpperBound = 0;
+        $windowLowerBound = $listWindowSize-1;
+
+        // don't draw window larger than the number of files
+        if (count($rawDirectoryScan) <= $windowLowerBound) {
+            $windowLowerBound = count($rawDirectoryScan)-1;
+        }
+
+        // don't let a downkey event run the selectedIndex off the lower bound of the window
+        if ($selectedIndex >= $listWindowSize) {
+            $windowLowerBound = $selectedIndex;
+            $windowUpperBound = $windowLowerBound-$listWindowSize+1;
+        }
+
+        // build array of options
+        $printableFileselectArray = [];
+        for ($i = $windowUpperBound;$i <= $windowLowerBound;$i++) {
+            $openAnsi = null;
+            $closeAnsi = null;
+            if ($i == $selectedIndex) {
+                $openAnsi = $selectedAnsi;
+                $closeAnsi = CLOSE_ANSI.$defaultAnsi;
+            }
+
+            $printableFileselectArray[] = "#".
+                str_pad("", $boxMargin, " ").
+                $openAnsi.
+                end($directoryScan[$i]).
+                $closeAnsi.
+                str_pad("", $boxMargin, " ").
+                str_pad("", $maxWidth-$this->strlenAnsiSafe(end($directoryScan[$i])), " ").
+                "#";
+        }
+
+        // format the description
+        // wrap the description to the width of the box and split by lines to array
+        $descriptionLines = explode(PHP_EOL, wordwrap($description, $maxWidth));
+        // build array of printable description lines, with padding and box borders.
+        $printableDescriptionArray = [];
+        while (list(, $val) = each($descriptionLines)) {
+            $printableDescriptionArray[] = "#".
+                str_pad("", $boxMargin, " ").
+                $val.
+                str_pad("", $boxMargin, " ").
+                str_pad("", $maxWidth-$this->strlenAnsiSafe($val), " ").
+                "#";
+        }
+        // add the divider at the bottom of the description
+        $printableDescriptionArray[] = $dividerString;
+
+        // format the list of files with padding and box borders. one line per array element.
+        $currentDirectoryArray = ["#".
+            str_pad("", $boxMargin, " ").
+            realpath($directory).
+            str_pad("", $boxMargin, " ").
+            str_pad("", $maxWidth-$this->strlenAnsiSafe(realpath($directory)), " ").
+            "#", ];
+
+        // format the prompt
+        // wrap the prompt to the width of the box and split by lines to array
+        $promptLines = explode(PHP_EOL, wordwrap($prompt, $maxWidth));
+        // build array of printable prompt lines, with padding and box borders.
+        $printablePromptArray[] = $dividerString;
+        while (list(, $val) = each($promptLines)) {
+            $printablePromptArray[] = "#".
+                str_pad("", ceil(($maxWidth-$this->strlenAnsiSafe($val))/2), " ").
+                str_pad("", $boxMargin, " ").
+                $val.
+                str_pad("", $boxMargin, " ").
+                str_pad("", floor(($maxWidth-$this->strlenAnsiSafe($val))/2), " ").
+                "#";
+        }
+
+        // put all the arrays together to create an array of all the lines of the box
+        $printableFileselectArray = array_merge(
+            [$borderString], // top border
+            $printableDescriptionArray, // the description
+            $currentDirectoryArray, // string of the current directory
+            $printableFileselectArray, // all the files in current directory
+            $printablePromptArray, // the prompt
+            [$borderString]); // bottom border
+
+        // output
+        $this->printout(
+            implode(PHP_EOL, $printableFileselectArray),
+            null,
+            $foregroundColour,
+            $backgroundColour,
+            $align);
+    } // printoutFileselect
 } //Clibelt

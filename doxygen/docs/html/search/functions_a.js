@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['wraptoterminalwidth',['wrapToTerminalWidth',['../class_clibelt.html#af3d68df8f32f9dc3045bbf7e89f724bf',1,'Clibelt']]],
-  ['write',['write',['../class_clibelt.html#ae2bf9f3d3d56241108d9d2c46728b95a',1,'Clibelt']]]
+  ['safecopy',['safeCopy',['../class_clibelt.html#a14e38bbd822a154551b9a41411e95dc7',1,'Clibelt']]],
+  ['spin',['spin',['../class_clibelt.html#adf469d77973da15ab118206d2c84347e',1,'Clibelt']]],
+  ['strlenansisafe',['strlenAnsiSafe',['../class_clibelt.html#aacafa278b93d53cb1aa0ee2f8da3c31b',1,'Clibelt']]]
 ];
