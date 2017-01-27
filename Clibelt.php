@@ -227,26 +227,17 @@ class Clibelt
         if (!$prompt) {
             $prompt = "Hit any key to continue: ";
         }
-        readline_callback_handler_install($prompt, function () { });
-        while (true) {
-            $r = array(STDIN);
-            $w = null;
-            $e = null;
-            $n = stream_select($r, $w, $e, null);
-            if ($n && in_array(STDIN, $r)) {
-                $c = stream_get_contents(STDIN, 1);
-                fwrite(STDOUT, PHP_EOL);
-                break;
-            }
-        }
+        fwrite(STDOUT,$prompt);
+        $this->getKeyDown();
+        fwrite(STDOUT, PHP_EOL);
     } // anyKey
 
 
     /**
      * @brief Convenience method wrapping promptChoice() to offer yes/no choice as [y,n]
      *
-     * @param $prompt The optional string to display as a prompt to the user. Default "Choose 'yes' or 'no'"
-     * @param $default Optional. Either 'y' or 'n'. The value to return if the user selects an invalid option or hits RETURN
+     * @param $prompt String. Optional. The optional string to display as a prompt to the user. Default "Choose 'yes' or 'no'"
+     * @param $default Char. Optional. Either 'y' or 'n'. The value to return if the user selects an invalid option or hits RETURN
      * @return String. Either 'y' or 'n'. Lowercase.
      */
     public function promptChoiceYn($prompt = "Choose 'yes' or 'no'", $default = null)
@@ -278,28 +269,24 @@ class Clibelt
      * If no default value is set and the script user chooses and invalid option, the prompt is displayed again and will be
      * continued to be dispalyed until a valid option is selected.
      *
-     * @param $prompt The string to display as a prompt to the user. Default "Choose one"
-     * @param $options An array of chars representing the options. Deafault ["y","n"]
-     * @param $default A char representing the default option if the user selects something not in the $options array. Default null.
+     * @param $prompt String. Optional. The string to display as a prompt to the user. Default "Choose one"
+     * @param $options Array. Optional. An array of chars representing the options. Deafault ["y","n"]
+     * @param $default Char. Optional. A char representing the default option if the user selects something not in the $options array. Default null.
      * @return String The value selected by the user as a single char
      * @note Only single chars are used as options and selections
      */
     public function promptChoice($prompt = "Choose one", $options = array("y", "n"), $default = null)
     {
-        /**
-         * The options[] argument is forced to an array of chars. If an array of strings is passed only the
-         * the first letter is used. Since this method takes keystroke input without requiring a RETURN, it by
-         * necessity can only work with single chars.
-         */
+        // The options[] argument is forced to an array of chars. If an array of strings is passed only the
+        // the first letter is used. Since this method takes keystroke input without requiring a RETURN, it by
+        // necessity can only work with single chars.
         $testOptions = array_map(function ($option) {
                 return $option[0];
             },
             $options);
 
-        /**
-         * A string of the options is appended to the prompt, with the default option in bold
-         * (if the terminal supports it).
-         */
+        // A string of the options is appended to the prompt, with the default option in bold
+        // (if the terminal supports it).
         $defaults = array_fill(0, count($options), $default);
         $displayOptions = implode(",", array_map(function ($option, $default) {
                 if ($option[0] == @$default[0]) {
@@ -311,9 +298,7 @@ class Clibelt
             $options,
             $defaults));
 
-        /**
-         * The prompt displays the list of options as well as the default option, if it is set, in brackets afterwards
-         */
+        // The prompt displays the list of options as well as the default option, if it is set, in brackets afterwards
         $displayPrompt =  $prompt." [".$displayOptions."]";
         if ($default) {
             $displayPrompt .= "(Default $default)";
@@ -327,6 +312,8 @@ class Clibelt
 
         // read user keydown until we get a valid response
         while (true) {
+
+            // read the key down
             $userChoice = $this->getKeyDown();
 
             // selection not in list, use the default if one has been set
@@ -349,7 +336,7 @@ class Clibelt
             }
         }
 
-        print PHP_EOL;
+        fwrite(STDOUT, PHP_EOL);
 
         // log the user choice in lastInput so it can be retrieved after the return event
         $this->lastInput = $userChoice;
@@ -537,7 +524,13 @@ class Clibelt
                 }
 
                 // draw the new menu
-                $this->printoutMenuBox($description, $options, array_keys($options)[$selectedIndex], $innerAlign, $outerAlign, $foregroundColour, $backgroundColour);
+                $this->printoutMenuBox($description, 
+                    $options, 
+                    array_keys($options)[$selectedIndex], 
+                    $innerAlign, 
+                    $outerAlign, 
+                    $foregroundColour, 
+                    $backgroundColour);
             }
 
             // scroll up
@@ -555,7 +548,13 @@ class Clibelt
                 }
 
                 // draw the new menu
-                $this->printoutMenuBox($description, $options, array_keys($options)[$selectedIndex], $innerAlign, $outerAlign, $foregroundColour, $backgroundColour);
+                $this->printoutMenuBox($description, 
+                    $options, 
+                    array_keys($options)[$selectedIndex], 
+                    $innerAlign, 
+                    $outerAlign, 
+                    $foregroundColour, 
+                    $backgroundColour);
             }
 
             // select and return current key
@@ -602,13 +601,13 @@ class Clibelt
      *
      * @param $description String
      * @param $options Array. List of options for this menu. The key of the selected item is returned.
-     * @param $selectedKey String. The key to set as the initial selected key.
-     * @param $align pre-defined constant. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER.
-     * @param $foregroundColour pre-defined constant. The foreground colour.
-     * @param $backgroundColour pre-defined constant. The background colour.
+     * @param $selectedKey String. Optional. The key to set as the initial selected key.
+     * @param $alignment pre-defined constant. Optional. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER.
+     * @param $foregroundColour pre-defined constant. Optional. The foreground colour.
+     * @param $backgroundColour pre-defined constant. Optional. The background colour.
      * @return String
      */
-    public function menuhorizontal($description, $options, $selectedKey = null, $align = LEFT, $foregroundColour = null, $backgroundColour = null)
+    public function menuhorizontal($description, $options, $selectedKey = null, $alignment = LEFT, $foregroundColour = null, $backgroundColour = null)
     {
         // set the selected key and index
 
@@ -622,7 +621,7 @@ class Clibelt
         }
 
         // print the menu for the first time
-        $this->printoutMenuhorizontal($description, $options, $selectedKey, $align, $foregroundColour, $backgroundColour);
+        $this->printoutMenuhorizontal($description, $options, $selectedKey, $alignment, $foregroundColour, $backgroundColour);
 
         // loop awaiting user input
         while (true) {
@@ -644,7 +643,12 @@ class Clibelt
                 }
 
                 // redraw menu to update highlighting of selected key
-                $this->printoutMenuhorizontal($description, $options, array_keys($options)[$selectedIndex], $align, $foregroundColour, $backgroundColour);
+                $this->printoutMenuhorizontal($description, 
+                    $options, 
+                    array_keys($options)[$selectedIndex], 
+                    $alignment, 
+                    $foregroundColour, 
+                    $backgroundColour);
             }
 
             // left arrow
@@ -661,7 +665,12 @@ class Clibelt
                 }
 
                 // redraw menu to update highlighting of selected key
-                $this->printoutMenuhorizontal($description, $options, array_keys($options)[$selectedIndex], $align, $foregroundColour, $backgroundColour);
+                $this->printoutMenuhorizontal($description, 
+                    $options, 
+                    array_keys($options)[$selectedIndex], 
+                    $alignment, 
+                    $foregroundColour, 
+                    $backgroundColour);
             }
 
             // select and return current key
@@ -672,6 +681,7 @@ class Clibelt
             }
         }
 
+        $this->lastInput = $returnVal;
         return $returnVal;
     } // menuhorizontal
 
@@ -714,13 +724,19 @@ class Clibelt
      * @endcode
      *
      * @param $directory String. The initial directory opened in the fileselect interface.
-     * @param $description String. The text description to put in the fileselect interface.
-     * @param $align pre-defined Constant. Alignment of the fileselect interface in the terminal.
-     * @param $foregroundColour pre-defined Constant. Foreground colour of the text
-     * @param $backgroundColour pre-defined Constant. Background colour of the text
+     * @param $description String. Optional. The text description to put in the fileselect interface.
+     * @param $alignment pre-defined Constant. Optional. Alignment of the fileselect interface in the terminal.
+     * @param $foregroundColour pre-defined Constant. Optional. Foreground colour of the text
+     * @param $backgroundColour pre-defined Constant. Optional. Background colour of the text
+	 * @param $returnDirectory Boolean. Optional. 
      * @return Mixed. String or Boolean false on error
      */
-    public function fileselect($directory, $description = null, $align = LEFT, $foregroundColour = null, $backgroundColour = null)
+    public function fileselect($directory,
+		$description = null, 
+		$alignment = LEFT, 
+		$foregroundColour = null, 
+		$backgroundColour = null,
+		$returnDirectory = false)
     {
         /**
          * Initial index of highlighted file in directory is 2. This is because the first two entries are '.' and '..'
@@ -759,11 +775,11 @@ class Clibelt
         }
 
         // initial output of the file select interface
-        $this->printoutFileselect($directory, $description, $selectedIndex, $align, $backgroundColour, $foregroundColour);
+        $this->printoutFileselect($directory, $description, $selectedIndex, $alignment, $backgroundColour, $foregroundColour);
 
         // read user keydown until we get a valid response
         while (true) {
-            // read key
+            // get key down event from user
             $userChoice = $this->getKeyDown();
 
             // scroll down
@@ -781,8 +797,13 @@ class Clibelt
                     $selectedIndex = count(scandir($directory))-1;
                 }
 
-                // printout  fileselect interface
-                $this->printoutFileselect($directory, $description, $selectedIndex, $align, $backgroundColour, $foregroundColour);
+                // printout fileselect interface
+                $this->printoutFileselect($directory, 
+                    $description, 
+                    $selectedIndex, 
+                    $alignment, 
+                    $backgroundColour, 
+                    $foregroundColour);
             }
 
             // scroll up
@@ -800,7 +821,12 @@ class Clibelt
                 }
 
                 // printout  fileselect interface
-                $this->printoutFileselect($directory, $description, $selectedIndex, $align, $backgroundColour, $foregroundColour);
+                $this->printoutFileselect($directory, 
+                    $description, 
+                    $selectedIndex, 
+                    $alignment, 
+                    $backgroundColour, 
+                    $foregroundColour);
             }
 
             // select event
@@ -812,15 +838,21 @@ class Clibelt
 
                 // if selected element is a directory, draw fileselect interface for that directory
                 // and continue looping for keydown events
-                if (is_dir($selectedItem)) {
+                if (is_dir($selectedItem) && !$returnDirectory) {
                     $directory = $selectedItem."/"; // ensure trailing slash
                     $selectedIndex = 2; // set index to first real file after '.' and '..'
                     $this->erase();
-                    $this->printoutFileselect($directory, $description, $selectedIndex, $align, $backgroundColour, $foregroundColour);
+                    $this->printoutFileselect($directory, 
+                        $description, 
+                        $selectedIndex, 
+                        $alignment, 
+                        $backgroundColour, 
+                        $foregroundColour);
                 }
 
                 // if selected element is a file, return it
                 else {
+                    $this->lastInput = $selectedItem;
                     return $selectedItem;
                 }
             }
@@ -950,9 +982,9 @@ class Clibelt
      *
      * Box is aligned centre by default.
      * @param $text String.
-     * @param $foreground Pre-defined constant. A color constant as used in printout()
-     * @param $background Pre-defined constant. A color constant as used in printout()
-     * @param $alignment Pre-defined constant. An alignment constant as used in printout()
+     * @param $foreground Pre-defined constant. Optional. A color constant as used in printout()
+     * @param $background Pre-defined constant. Optional. A color constant as used in printout()
+     * @param $alignment Pre-defined constant. Optional. An alignment constant as used in printout()
      * @return void
      * @todo make boxMargin settable by arg
      */
@@ -961,6 +993,7 @@ class Clibelt
         // inner left and right margin, in spaces
         $boxMargin = 4;
 
+        // wrap text to fit inside box
         $text = $this->wrapToTerminalWidth($text, ($boxMargin*2) +2);
 
         // get the length of the longest line if there are more than one.
@@ -997,21 +1030,21 @@ class Clibelt
             array_fill(0, count(explode(PHP_EOL, $text)), $boxMargin),
             explode(PHP_EOL, $text));
 
-            // print top bar of box
-            $this->write(implode("", array(str_pad("", $lengthOfLongestLine+($boxMargin *2)+2, "#"))),
-             STDOUT, null, $foreground, $background, $alignment);
+        // print top bar of box
+        $this->write(implode("", array(str_pad("", $lengthOfLongestLine+($boxMargin *2)+2, "#"))),
+            STDOUT, null, $foreground, $background, $alignment);
 
-            // print contents of box
-            while (list(, $line) = each($box)) {
-                $this->write($line, STDOUT, null, $foreground, $background, $alignment);
-            }
+        // print contents of box
+        while (list(, $line) = each($box)) {
+            $this->write($line, STDOUT, null, $foreground, $background, $alignment);
+        }
 
-            // print bottom bar of box
-            $this->write(implode("", array(str_pad("", $lengthOfLongestLine+($boxMargin *2)+2, "#"))),
-             STDOUT, null, $foreground, $background, $alignment);
+        // print bottom bar of box
+        $this->write(implode("", array(str_pad("", $lengthOfLongestLine+($boxMargin *2)+2, "#"))),
+         STDOUT, null, $foreground, $background, $alignment);
 
-            // override lastPrintLineCount for erase()
-            $this->lastPrintLineCount = count($box)+2;
+        // override lastPrintLineCount for erase()
+        $this->lastPrintLineCount = count($box)+2;
     } // box
 
 
@@ -1070,8 +1103,8 @@ class Clibelt
      *
      * @param $listArray Array. The array of values to render as a list.
      * @param $bulletsArray Array. Optional array of bullet types.
-     * @param $listIndentSize Int. Indentation of the entire list, number of spaces.
-     * @param $subListIndentSize Int. Amount to indent sublists from the top level list, number of spaces
+     * @param $listIndentSize Int. Optional. Indentation of the entire list, number of spaces.
+     * @param $subListIndentSize Int. Optional. Amount to indent sublists from the top level list, number of spaces
      * @return void
      */
     public function printlist($listArray, $bulletsArray = [], $listIndentSize = 4, $subListIndentSize = 4)
@@ -1089,7 +1122,7 @@ class Clibelt
             $listIndentSize,
             $subListIndentSize);
 
-        // wrap the vlaue to fit terminal width
+        // wrap the value to fit terminal width
         // bust value into array of lines so right vertical flushing can be done
         while (list($key, $val) = each($list)) {
             $list[$key]["value"] = explode(PHP_EOL, $this->wrapToTerminalWidth($val["value"], $this->strlenAnsiSafe($val["bullet"])));
@@ -1228,7 +1261,7 @@ class Clibelt
          */
         posix_kill($pid, SIGKILL);
 
-        print PHP_EOL;
+        fwrite(STDOUT, PHP_EOL);
 
         return $returnedVal;
     } // background
@@ -1532,6 +1565,7 @@ class Clibelt
      */
     private function getLengthOfLongestLine($lines)
     {
+        // if string, make an array
         if (is_string($lines)) {
             $lines = explode(PHP_EOL, $lines);
         }
@@ -1581,7 +1615,7 @@ class Clibelt
      * @brief Writes to a stream, either STDOUT or STDERR, user-supplied text with optional color and formatting
      *
      * @param $text String. The string to write to the stream.
-     * @param $stream Pre-defined constant. The stream to write to; either STDOUT or STDERR. Default STDOUT
+     * @param $stream Pre-defined constant. Optional. The stream to write to; either STDOUT or STDERR. Default STDOUT
      * @param $level Pre-defined constant. Optional. The PSR-2 logging level. Default NULL. Refer to the defined constants for printout or printerr.
      * @param $foreground Pre-defined constant. Optional foreground color of text. Refer to the defined constants for printout or printerr.
      * @param $background Pre-defined constant. Optional background color or font style. Refer to the defined constants for printout or printerr.
@@ -1666,7 +1700,7 @@ class Clibelt
         fwrite(STDOUT, $chars[0]);
 
         // infinite loop to be killed by child process
-        while (1) {
+        while (true) {
             for ($i = 0;$i<5;$i++) {
                 while (list(, $char) = each($chars)) {
                     fwrite(STDOUT, BACKSPACE);  // erase previous frame
@@ -1695,7 +1729,7 @@ class Clibelt
         fwrite(STDOUT, "#");
 
         // infinite loop to be killed by child process
-        while (1) {
+        while (true) {
             fwrite(STDOUT, BACKSPACE);
             usleep($delay);
             fwrite(STDOUT, "#>");
@@ -1721,7 +1755,7 @@ class Clibelt
     private function progressFilesizeTrack($destFile, $targetSize, $delay = DELAY_VERY_FAST)
     {
         // loop until this child process is killed by the calling method
-        while (1) {
+        while (true) {
             // PHP caches data on file sizes. In order to get realtime update on file size of $destFile, clear cache
             clearstatcache();
 
@@ -2337,12 +2371,12 @@ class Clibelt
      * @param $description String
      * @param $options Array. List of options for this menu. The key of the selected item is returned.
      * @param $selectedKey String. The key to set as the initial selected key.
-     * @param $align pre-defined constant. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER.
+     * @param $alignment pre-defined constant. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER.
      * @param $foreground pre-defined constant. The foreground colour.
      * @param $background pre-defined constant. The background colour.
      * @return void
      */
-    private function printoutMenuhorizontal($description, $options, $selectedKey, $align, $foreground, $background)
+    private function printoutMenuhorizontal($description, $options, $selectedKey, $alignment, $foreground, $background)
     {
         // default prompt
         // @todo make arg
@@ -2380,7 +2414,7 @@ class Clibelt
             null,  // level, always null
             $foreground, // foreground colour constant
             $background, // background constant constant
-            $align); // alignment constant
+            $alignment); // alignment constant
     } // printoutMenuhorizontal
 
 
@@ -2390,15 +2424,16 @@ class Clibelt
      * @param $directory String. The initial directory opened in the fileselect interface.
      * @param $description String. The text description to put in the fileselect interface.
      * @param $selectedIndex Int. The index of the array of files in the directory that is currently selected.
-     * @param $align pre-defined Constant. Alignment of the fileselect interface in the terminal.
+     * @param $alignment pre-defined Constant. Alignment of the fileselect interface in the terminal.
      * @param $foregroundColour pre-defined Constant. Foreground colour of the text
      * @param $backgroundColour pre-defined Constant. Background colour of the text
      * @return Mixed. String or Boolean false on error
+	 * @see fileselect
      */
     private function printoutFileselect($directory,
         $description = "Select a file",
         $selectedIndex,
-        $align = LEFT,
+        $alignment = LEFT,
         $backgroundColour = null,
         $foregroundColour = null)
     {
@@ -2560,6 +2595,6 @@ class Clibelt
             null,
             $foregroundColour,
             $backgroundColour,
-            $align);
+            $alignment);
     } // printoutFileselect
 } //Clibelt
