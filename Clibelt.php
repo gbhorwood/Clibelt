@@ -833,12 +833,24 @@ class Clibelt
             // 10 return
             // 111 o
             elseif (ord($userChoice) == 10 || ord($userChoice) == 111) {
+
                 // the full path of the file or directory selected
                 $selectedItem = realpath($directory.scandir($directory)[$selectedIndex]);
 
-                // if selected element is a directory, draw fileselect interface for that directory
-                // and continue looping for keydown events
-                if (is_dir($selectedItem) && !$returnDirectory) {
+                // element is a file, always return element
+                if (is_file($selectedItem)) {
+                    $this->lastInput = $selectedItem;
+                    return $selectedItem;
+                }
+
+                // element is a directory, select event is 'o', return element
+                else if ($returnDirectory && ord($userChoice) == 111) {
+                    $this->lastInput = $selectedItem;
+                    return $selectedItem;
+                }
+
+                // element is directory, select event is RETURN, open directory and continue with fileselect interface
+                else {
                     $directory = $selectedItem."/"; // ensure trailing slash
                     $selectedIndex = 2; // set index to first real file after '.' and '..'
                     $this->erase();
@@ -848,12 +860,6 @@ class Clibelt
                         $alignment, 
                         $backgroundColour, 
                         $foregroundColour);
-                }
-
-                // if selected element is a file, return it
-                else {
-                    $this->lastInput = $selectedItem;
-                    return $selectedItem;
                 }
             }
         } // while(true)
