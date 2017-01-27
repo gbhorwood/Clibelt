@@ -95,6 +95,16 @@ define('BULLET_LETTER_UPPERCASE', 2);
 define('BULLET_LETTER_LOWERCASE', 3);
 define('BULLET_ROMAN', 4);
 
+define('KEY_RETURN', 10);
+define('KEY_UP_ARROW', 65);
+define('KEY_DOWN_ARROW', 66);
+define('KEY_RIGHT_ARROW', 67);
+define('KEY_LEFT_ARROW', 68);
+define('KEY_TAB', 9);
+define('KEY_BACKSPACE', 127);
+define('KEY_DELETE', 126);
+define('KEY_O', 111);
+
 /**
  * Clibelt
  *
@@ -419,13 +429,14 @@ class Clibelt
             // read user key down event into enteredChar for adding to array and testing
             // for special keys
             $enteredChar = $this->getKeyDown();
+
             // RETURN key. break loop to return entered text
-            if (ord($enteredChar) == 10) {
+            if (ord($enteredChar) == KEY_RETURN) {
                 break;
             }
 
             // backspace key. delete previous char and backspace previous output star
-            elseif (ord($enteredChar) == 127 || ord($enteredChar) == 126) {
+            elseif (ord($enteredChar) == KEY_BACKSPACE || ord($enteredChar) == KEY_DELETE) {
                 array_pop($enteredCharsArray);
                 fwrite(STDOUT, BACKSPACE);
                 fwrite(STDOUT,  "\033[0K"); // erase line
@@ -510,7 +521,7 @@ class Clibelt
             // scroll down
             // 66 down arrow
             // 9 tab
-            if (ord($userChoice) == 66 || ord($userChoice) == 9) {
+            if (ord($userChoice) == KEY_DOWN_ARROW || ord($userChoice) == KEY_TAB) {
                 // delete ouput of menu
                 $this->erase();
 
@@ -535,7 +546,7 @@ class Clibelt
 
             // scroll up
             // 65 up arrow
-            if (ord($userChoice) == 65) {
+            if (ord($userChoice) == KEY_UP_ARROW) {
                 // delete output of menu
                 $this->erase();
 
@@ -559,7 +570,7 @@ class Clibelt
 
             // select and return current key
             // 10 return
-            if (ord($userChoice) == 10) {
+            if (ord($userChoice) == KEY_RETURN) {
                 $returnVal = array_keys($options)[$selectedIndex];
                 break;
             }
@@ -629,7 +640,7 @@ class Clibelt
             $userChoice = $this->getKeyDown();
 
             // right arrow
-            if (ord($userChoice) == 67 || ord($userChoice) == 9) {
+            if (ord($userChoice) == KEY_RIGHT_ARROW || ord($userChoice) == KEY_TAB) {
                 // delete ouput of menu
                 $this->erase();
 
@@ -652,7 +663,7 @@ class Clibelt
             }
 
             // left arrow
-            if (ord($userChoice) == 68) {
+            if (ord($userChoice) == KEY_LEFT_ARROW) {
                 // delete ouput of menu
                 $this->erase();
 
@@ -675,7 +686,7 @@ class Clibelt
 
             // select and return current key
             // 10 return
-            if (ord($userChoice) == 10) {
+            if (ord($userChoice) == KEY_RETURN) {
                 $returnVal = array_keys($options)[$selectedIndex];
                 break;
             }
@@ -738,11 +749,6 @@ class Clibelt
 		$backgroundColour = null,
 		$returnDirectory = false)
     {
-        /**
-         * Initial index of highlighted file in directory is 2. This is because the first two entries are '.' and '..'
-         * and we want the highlighted entry to be the first one after that.
-         */
-        $selectedIndex = 2;
 
         /**
          * If starting directory is not a valid directory, error
@@ -774,6 +780,9 @@ class Clibelt
             $directory .= "/";
         }
 
+        // get index of the first file, for setting default select highlight
+        $selectedIndex = $this->getIndexOfFirstFile($directory);
+
         // initial output of the file select interface
         $this->printoutFileselect($directory, $description, $selectedIndex, $alignment, $backgroundColour, $foregroundColour);
 
@@ -783,9 +792,7 @@ class Clibelt
             $userChoice = $this->getKeyDown();
 
             // scroll down
-            // 66 down arrow
-            // 9 tab
-            if (ord($userChoice) == 66 || ord($userChoice) == 9) {
+            if (ord($userChoice) == KEY_DOWN_ARROW || ord($userChoice) == KEY_TAB) {
                 // delete ouput of menu
                 $this->erase();
 
@@ -807,8 +814,7 @@ class Clibelt
             }
 
             // scroll up
-            // 65 up arrow
-            elseif (ord($userChoice) == 65) {
+            elseif (ord($userChoice) == KEY_UP_ARROW) {
                 // delete ouput of menu
                 $this->erase();
 
@@ -830,9 +836,7 @@ class Clibelt
             }
 
             // select event
-            // 10 return
-            // 111 o
-            elseif (ord($userChoice) == 10 || ord($userChoice) == 111) {
+            elseif (ord($userChoice) == KEY_RETURN || ord($userChoice) == KEY_O) {
 
                 // the full path of the file or directory selected
                 $selectedItem = realpath($directory.scandir($directory)[$selectedIndex]);
@@ -844,7 +848,7 @@ class Clibelt
                 }
 
                 // element is a directory, select event is 'o', return element
-                else if ($returnDirectory && ord($userChoice) == 111) {
+                else if ($returnDirectory && ord($userChoice) == KEY_O) {
                     $this->lastInput = $selectedItem;
                     return $selectedItem;
                 }
@@ -852,7 +856,7 @@ class Clibelt
                 // element is directory, select event is RETURN, open directory and continue with fileselect interface
                 else {
                     $directory = $selectedItem."/"; // ensure trailing slash
-                    $selectedIndex = 2; // set index to first real file after '.' and '..'
+                    $selectedIndex = $this->getIndexOfFirstFile($directory); // set index to first real file after '.' and '..'
                     $this->erase();
                     $this->printoutFileselect($directory, 
                         $description, 
@@ -864,7 +868,6 @@ class Clibelt
             }
         } // while(true)
     } // fileselect
-
 
     ##
     # Methods to do formatted output
@@ -2603,4 +2606,23 @@ class Clibelt
             $backgroundColour,
             $alignment);
     } // printoutFileselect
+
+
+    /**
+     * @brief Returns the index of the first file of the provided directory
+     *
+     * Returns the index of the first file in a directory listing after '.' and '..', or the index of '..' if the file is emtpy
+     *
+     * @param $directory String. The path to the directory to check
+     * @return Int
+     * @see fileselect
+     */
+    private function getIndexOfFirstFile($directory)
+    {
+        $firstIndex = count(scandir($directory))-1;
+        if ($firstIndex > 2) {
+            $firstIndex = 2;
+        }
+        return $firstIndex;
+    } // getIndexOfFirstFile
 } //Clibelt
