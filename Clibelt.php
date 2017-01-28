@@ -95,6 +95,16 @@ define('BULLET_LETTER_UPPERCASE', 2);
 define('BULLET_LETTER_LOWERCASE', 3);
 define('BULLET_ROMAN', 4);
 
+define('KEY_RETURN', 10);
+define('KEY_UP_ARROW', 65);
+define('KEY_DOWN_ARROW', 66);
+define('KEY_RIGHT_ARROW', 67);
+define('KEY_LEFT_ARROW', 68);
+define('KEY_TAB', 9);
+define('KEY_BACKSPACE', 127);
+define('KEY_DELETE', 126);
+define('KEY_O', 111);
+
 /**
  * Clibelt
  *
@@ -227,26 +237,18 @@ class Clibelt
         if (!$prompt) {
             $prompt = "Hit any key to continue: ";
         }
-        readline_callback_handler_install($prompt, function () { });
-        while (true) {
-            $r = array(STDIN);
-            $w = null;
-            $e = null;
-            $n = stream_select($r, $w, $e, null);
-            if ($n && in_array(STDIN, $r)) {
-                $c = stream_get_contents(STDIN, 1);
-                fwrite(STDOUT, PHP_EOL);
-                break;
-            }
-        }
+        fwrite(STDOUT, $prompt);
+        $this->getKeyDown();
+        fwrite(STDOUT, PHP_EOL);
     } // anyKey
 
 
     /**
      * @brief Convenience method wrapping promptChoice() to offer yes/no choice as [y,n]
      *
-     * @param $prompt The optional string to display as a prompt to the user. Default "Choose 'yes' or 'no'"
-     * @param $default Optional. Either 'y' or 'n'. The value to return if the user selects an invalid option or hits RETURN
+     * @param $prompt String. Optional. The optional string to display as a prompt to the user. Default "Choose 'yes' or 'no'"
+     * @param $default Char. Optional. Either 'y' or 'n'. 
+     *  The value to return if the user selects an invalid option or hits RETURN
      * @return String. Either 'y' or 'n'. Lowercase.
      */
     public function promptChoiceYn($prompt = "Choose 'yes' or 'no'", $default = null)
@@ -278,28 +280,25 @@ class Clibelt
      * If no default value is set and the script user chooses and invalid option, the prompt is displayed again and will be
      * continued to be dispalyed until a valid option is selected.
      *
-     * @param $prompt The string to display as a prompt to the user. Default "Choose one"
-     * @param $options An array of chars representing the options. Deafault ["y","n"]
-     * @param $default A char representing the default option if the user selects something not in the $options array. Default null.
+     * @param $prompt String. Optional. The string to display as a prompt to the user. Default "Choose one"
+     * @param $options Array. Optional. An array of chars representing the options. Deafault ["y","n"]
+     * @param $default Char. Optional. A char representing the default option if the user selects something 
+     *  not in the $options array. Default null.
      * @return String The value selected by the user as a single char
      * @note Only single chars are used as options and selections
      */
     public function promptChoice($prompt = "Choose one", $options = array("y", "n"), $default = null)
     {
-        /**
-         * The options[] argument is forced to an array of chars. If an array of strings is passed only the
-         * the first letter is used. Since this method takes keystroke input without requiring a RETURN, it by
-         * necessity can only work with single chars.
-         */
+        // The options[] argument is forced to an array of chars. If an array of strings is passed only the
+        // the first letter is used. Since this method takes keystroke input without requiring a RETURN, it by
+        // necessity can only work with single chars.
         $testOptions = array_map(function ($option) {
                 return $option[0];
             },
             $options);
 
-        /**
-         * A string of the options is appended to the prompt, with the default option in bold
-         * (if the terminal supports it).
-         */
+        // A string of the options is appended to the prompt, with the default option in bold
+        // (if the terminal supports it).
         $defaults = array_fill(0, count($options), $default);
         $displayOptions = implode(",", array_map(function ($option, $default) {
                 if ($option[0] == @$default[0]) {
@@ -311,9 +310,7 @@ class Clibelt
             $options,
             $defaults));
 
-        /**
-         * The prompt displays the list of options as well as the default option, if it is set, in brackets afterwards
-         */
+        // The prompt displays the list of options as well as the default option, if it is set, in brackets afterwards
         $displayPrompt =  $prompt." [".$displayOptions."]";
         if ($default) {
             $displayPrompt .= "(Default $default)";
@@ -327,6 +324,8 @@ class Clibelt
 
         // read user keydown until we get a valid response
         while (true) {
+
+            // read the key down
             $userChoice = $this->getKeyDown();
 
             // selection not in list, use the default if one has been set
@@ -349,7 +348,7 @@ class Clibelt
             }
         }
 
-        print PHP_EOL;
+        fwrite(STDOUT, PHP_EOL);
 
         // log the user choice in lastInput so it can be retrieved after the return event
         $this->lastInput = $userChoice;
@@ -432,13 +431,14 @@ class Clibelt
             // read user key down event into enteredChar for adding to array and testing
             // for special keys
             $enteredChar = $this->getKeyDown();
+
             // RETURN key. break loop to return entered text
-            if (ord($enteredChar) == 10) {
+            if (ord($enteredChar) == KEY_RETURN) {
                 break;
             }
 
             // backspace key. delete previous char and backspace previous output star
-            elseif (ord($enteredChar) == 127 || ord($enteredChar) == 126) {
+            elseif (ord($enteredChar) == KEY_BACKSPACE || ord($enteredChar) == KEY_DELETE) {
                 array_pop($enteredCharsArray);
                 fwrite(STDOUT, BACKSPACE);
                 fwrite(STDOUT,  "\033[0K"); // erase line
@@ -523,7 +523,7 @@ class Clibelt
             // scroll down
             // 66 down arrow
             // 9 tab
-            if (ord($userChoice) == 66 || ord($userChoice) == 9) {
+            if (ord($userChoice) == KEY_DOWN_ARROW || ord($userChoice) == KEY_TAB) {
                 // delete ouput of menu
                 $this->erase();
 
@@ -537,12 +537,19 @@ class Clibelt
                 }
 
                 // draw the new menu
-                $this->printoutMenuBox($description, $options, array_keys($options)[$selectedIndex], $innerAlign, $outerAlign, $foregroundColour, $backgroundColour);
+                $this->printoutMenuBox(
+                    $description,
+                    $options,
+                    array_keys($options)[$selectedIndex],
+                    $innerAlign,
+                    $outerAlign,
+                    $foregroundColour,
+                    $backgroundColour);
             }
 
             // scroll up
             // 65 up arrow
-            if (ord($userChoice) == 65) {
+            if (ord($userChoice) == KEY_UP_ARROW) {
                 // delete output of menu
                 $this->erase();
 
@@ -555,12 +562,19 @@ class Clibelt
                 }
 
                 // draw the new menu
-                $this->printoutMenuBox($description, $options, array_keys($options)[$selectedIndex], $innerAlign, $outerAlign, $foregroundColour, $backgroundColour);
+                $this->printoutMenuBox(
+                    $description,
+                    $options,
+                    array_keys($options)[$selectedIndex],
+                    $innerAlign,
+                    $outerAlign,
+                    $foregroundColour,
+                    $backgroundColour);
             }
 
             // select and return current key
             // 10 return
-            if (ord($userChoice) == 10) {
+            if (ord($userChoice) == KEY_RETURN) {
                 $returnVal = array_keys($options)[$selectedIndex];
                 break;
             }
@@ -602,13 +616,14 @@ class Clibelt
      *
      * @param $description String
      * @param $options Array. List of options for this menu. The key of the selected item is returned.
-     * @param $selectedKey String. The key to set as the initial selected key.
-     * @param $align pre-defined constant. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER.
-     * @param $foregroundColour pre-defined constant. The foreground colour.
-     * @param $backgroundColour pre-defined constant. The background colour.
+     * @param $selectedKey String. Optional. The key to set as the initial selected key.
+     * @param $alignment pre-defined constant. Optional. The alignment of the menu in the terminal.
+     *  One of LEFT, RIGHT or CENTER.
+     * @param $foregroundColour pre-defined constant. Optional. The foreground colour.
+     * @param $backgroundColour pre-defined constant. Optional. The background colour.
      * @return String
      */
-    public function menuhorizontal($description, $options, $selectedKey = null, $align = LEFT, $foregroundColour = null, $backgroundColour = null)
+    public function menuhorizontal($description, $options, $selectedKey = null, $alignment = LEFT, $foregroundColour = null, $backgroundColour = null)
     {
         // set the selected key and index
 
@@ -622,7 +637,7 @@ class Clibelt
         }
 
         // print the menu for the first time
-        $this->printoutMenuhorizontal($description, $options, $selectedKey, $align, $foregroundColour, $backgroundColour);
+        $this->printoutMenuhorizontal($description, $options, $selectedKey, $alignment, $foregroundColour, $backgroundColour);
 
         // loop awaiting user input
         while (true) {
@@ -630,7 +645,7 @@ class Clibelt
             $userChoice = $this->getKeyDown();
 
             // right arrow
-            if (ord($userChoice) == 67 || ord($userChoice) == 9) {
+            if (ord($userChoice) == KEY_RIGHT_ARROW || ord($userChoice) == KEY_TAB) {
                 // delete ouput of menu
                 $this->erase();
 
@@ -644,11 +659,17 @@ class Clibelt
                 }
 
                 // redraw menu to update highlighting of selected key
-                $this->printoutMenuhorizontal($description, $options, array_keys($options)[$selectedIndex], $align, $foregroundColour, $backgroundColour);
+                $this->printoutMenuhorizontal(
+                    $description,
+                    $options,
+                    array_keys($options)[$selectedIndex],
+                    $alignment,
+                    $foregroundColour,
+                    $backgroundColour);
             }
 
             // left arrow
-            if (ord($userChoice) == 68) {
+            if (ord($userChoice) == KEY_LEFT_ARROW) {
                 // delete ouput of menu
                 $this->erase();
 
@@ -661,19 +682,199 @@ class Clibelt
                 }
 
                 // redraw menu to update highlighting of selected key
-                $this->printoutMenuhorizontal($description, $options, array_keys($options)[$selectedIndex], $align, $foregroundColour, $backgroundColour);
+                $this->printoutMenuhorizontal(
+                    $description,
+                    $options,
+                    array_keys($options)[$selectedIndex],
+                    $alignment,
+                    $foregroundColour,
+                    $backgroundColour);
             }
 
             // select and return current key
             // 10 return
-            if (ord($userChoice) == 10) {
+            if (ord($userChoice) == KEY_RETURN) {
                 $returnVal = array_keys($options)[$selectedIndex];
                 break;
             }
         }
 
+        $this->lastInput = $returnVal;
         return $returnVal;
     } // menuhorizontal
+
+
+    /**
+     * @brief Displays a file selection interface, navigable with arrow or tab keys, with optional alignment and styling
+     *
+     * This method builds and displays a file selection menu with the initial direcotry defined by arg $directory
+     * The user can navigate the menu by either
+     * 		* Using the up arrow to scroll up the file list
+     * 		* Using the down arrow or tab key to scroll down the file list
+     * 		* Using the RETURN or 'o' key to open a directory
+     * 		* Using the RETURN or 'o' key to select a file
+     *
+     * This method returns the selected file as a string or boolean false on error.
+     *
+     * The fileselect interface continues to display until the user makes a valid selection.
+     *
+     * The foreground and backgroud colours of the menu can be set using the $foregroundColour and $backgroundColour
+     * arguments. Colours must be one of the pre-set ANSI constants: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN or WHITE.
+     *
+     * The current highlighted file is shown by having the colour options reversed using ANSI REVERSE.
+     *
+     * The fileselect interface box can be aligned in the terminal using the align argument; one of LEFT, RIGHT or CENTER.
+     * Default is LEFT.
+     *
+     * The string passed as $description may be word wrapped to fit the fileselect interface width.
+     *
+     * Example usage:
+     * @code
+     *	$cli = new Clibelt();
+     *	$selectedFile = $cli->fileselect(
+     *	    "/tmp/", // directory to open
+     *	    "select any file",  // description to put in fileselect box
+     *	    LEFT, // align in terminal
+     *	    WHITE, // foreground colour
+     *	    BLUE); // background colour
+     *
+     *	print "absolute path to select file is ".$selectedFile;
+     * @endcode
+     *
+     * @param $directory String. The initial directory opened in the fileselect interface.
+     * @param $description String. Optional. The text description to put in the fileselect interface.
+     * @param $alignment pre-defined Constant. Optional. Alignment of the fileselect interface in the terminal.
+     * @param $foregroundColour pre-defined Constant. Optional. Foreground colour of the text
+     * @param $backgroundColour pre-defined Constant. Optional. Background colour of the text
+	 * @param $returnDirectory Boolean. Optional. 
+     * @return Mixed. String or Boolean false on error
+     */
+    public function fileselect($directory,
+		$description = null, 
+		$alignment = LEFT, 
+		$foregroundColour = null, 
+		$backgroundColour = null,
+		$returnDirectory = false)
+    {
+
+        /**
+         * If starting directory is not a valid directory, error
+         * Sets lastError to 9 on failure and returns false.
+         */
+        if (!is_dir($directory)) {
+            $this->lastError["code"] = 9;
+            $this->lastError["func"] = __FUNCTION__;
+            $this->lastError["desc"] = "starting directory $directory is not a directory";
+
+            return false;
+        }
+
+        /**
+         * If starting directory is not readable, error
+         * Sets lastError to 10 on failure and returns false.
+         */
+        if (!is_readable($directory)) {
+            $this->lastError["code"] = 10;
+            $this->lastError["func"] = __FUNCTION__;
+            $this->lastError["desc"] = "starting directory $directory is not readable";
+
+            return false;
+        }
+
+        // remove whitespace and enforce trailing "/" on directory
+        $directory = trim($directory);
+        if (substr($directory, -1) != "/") {
+            $directory .= "/";
+        }
+
+        // get index of the first file, for setting default select highlight
+        $selectedIndex = $this->getIndexOfFirstFile($directory);
+
+        // initial output of the file select interface
+        $this->printoutFileselect($directory, $description, $selectedIndex, $alignment, $backgroundColour, $foregroundColour);
+
+        // read user keydown until we get a valid response
+        while (true) {
+            // get key down event from user
+            $userChoice = $this->getKeyDown();
+
+            // scroll down
+            if (ord($userChoice) == KEY_DOWN_ARROW || ord($userChoice) == KEY_TAB) {
+                // delete ouput of menu
+                $this->erase();
+
+                // set next file down as selected
+                $selectedIndex++;
+
+                // stop overrun of bottom of directory list
+                if ($selectedIndex >= count(scandir($directory))) {
+                    $selectedIndex = count(scandir($directory))-1;
+                }
+
+                // printout fileselect interface
+                $this->printoutFileselect($directory, 
+                    $description, 
+                    $selectedIndex, 
+                    $alignment, 
+                    $backgroundColour, 
+                    $foregroundColour);
+            }
+
+            // scroll up
+            elseif (ord($userChoice) == KEY_UP_ARROW) {
+                // delete ouput of menu
+                $this->erase();
+
+                // set next file up as selected
+                $selectedIndex--;
+
+                // stop overrun off the top of directory list
+                if ($selectedIndex < 0) {
+                    $selectedIndex = 0;
+                }
+
+                // printout  fileselect interface
+                $this->printoutFileselect($directory, 
+                    $description, 
+                    $selectedIndex, 
+                    $alignment, 
+                    $backgroundColour, 
+                    $foregroundColour);
+            }
+
+            // select event
+            elseif (ord($userChoice) == KEY_RETURN || ord($userChoice) == KEY_O) {
+
+                // the full path of the file or directory selected
+                $selectedItem = realpath($directory.scandir($directory)[$selectedIndex]);
+
+                // element is a file, always return element
+                if (is_file($selectedItem)) {
+                    $this->lastInput = $selectedItem;
+                    return $selectedItem;
+                }
+
+                // element is a directory, select event is 'o', return element
+                else if ($returnDirectory && ord($userChoice) == KEY_O) {
+                    $this->lastInput = $selectedItem;
+                    return $selectedItem;
+                }
+
+                // element is directory, select event is RETURN, open directory and continue with fileselect interface
+                else {
+                    $directory = $selectedItem."/"; // ensure trailing slash
+                    $selectedIndex = $this->getIndexOfFirstFile($directory); // set index to first real file after '.' and '..'
+                    $this->erase();
+                    $this->printoutFileselect($directory, 
+                        $description, 
+                        $selectedIndex, 
+                        $alignment, 
+                        $backgroundColour, 
+                        $foregroundColour);
+                }
+            }
+        } // while(true)
+    } // fileselect
 
     ##
     # Methods to do formatted output
@@ -797,9 +998,9 @@ class Clibelt
      *
      * Box is aligned centre by default.
      * @param $text String.
-     * @param $foreground Pre-defined constant. A color constant as used in printout()
-     * @param $background Pre-defined constant. A color constant as used in printout()
-     * @param $alignment Pre-defined constant. An alignment constant as used in printout()
+     * @param $foreground Pre-defined constant. Optional. A color constant as used in printout()
+     * @param $background Pre-defined constant. Optional. A color constant as used in printout()
+     * @param $alignment Pre-defined constant. Optional. An alignment constant as used in printout()
      * @return void
      * @todo make boxMargin settable by arg
      */
@@ -808,6 +1009,7 @@ class Clibelt
         // inner left and right margin, in spaces
         $boxMargin = 4;
 
+        // wrap text to fit inside box
         $text = $this->wrapToTerminalWidth($text, ($boxMargin*2) +2);
 
         // get the length of the longest line if there are more than one.
@@ -844,21 +1046,21 @@ class Clibelt
             array_fill(0, count(explode(PHP_EOL, $text)), $boxMargin),
             explode(PHP_EOL, $text));
 
-            // print top bar of box
-            $this->write(implode("", array(str_pad("", $lengthOfLongestLine+($boxMargin *2)+2, "#"))),
-             STDOUT, null, $foreground, $background, $alignment);
+        // print top bar of box
+        $this->write(implode("", array(str_pad("", $lengthOfLongestLine+($boxMargin *2)+2, "#"))),
+            STDOUT, null, $foreground, $background, $alignment);
 
-            // print contents of box
-            while (list(, $line) = each($box)) {
-                $this->write($line, STDOUT, null, $foreground, $background, $alignment);
-            }
+        // print contents of box
+        while (list(, $line) = each($box)) {
+            $this->write($line, STDOUT, null, $foreground, $background, $alignment);
+        }
 
-            // print bottom bar of box
-            $this->write(implode("", array(str_pad("", $lengthOfLongestLine+($boxMargin *2)+2, "#"))),
-             STDOUT, null, $foreground, $background, $alignment);
+        // print bottom bar of box
+        $this->write(implode("", array(str_pad("", $lengthOfLongestLine+($boxMargin *2)+2, "#"))),
+         STDOUT, null, $foreground, $background, $alignment);
 
-            // override lastPrintLineCount for erase()
-            $this->lastPrintLineCount = count($box)+2;
+        // override lastPrintLineCount for erase()
+        $this->lastPrintLineCount = count($box)+2;
     } // box
 
 
@@ -917,8 +1119,8 @@ class Clibelt
      *
      * @param $listArray Array. The array of values to render as a list.
      * @param $bulletsArray Array. Optional array of bullet types.
-     * @param $listIndentSize Int. Indentation of the entire list, number of spaces.
-     * @param $subListIndentSize Int. Amount to indent sublists from the top level list, number of spaces
+     * @param $listIndentSize Int. Optional. Indentation of the entire list, number of spaces.
+     * @param $subListIndentSize Int. Optional. Amount to indent sublists from the top level list, number of spaces
      * @return void
      */
     public function printlist($listArray, $bulletsArray = [], $listIndentSize = 4, $subListIndentSize = 4)
@@ -936,7 +1138,7 @@ class Clibelt
             $listIndentSize,
             $subListIndentSize);
 
-        // wrap the vlaue to fit terminal width
+        // wrap the value to fit terminal width
         // bust value into array of lines so right vertical flushing can be done
         while (list($key, $val) = each($list)) {
             $list[$key]["value"] = explode(PHP_EOL, $this->wrapToTerminalWidth($val["value"], $this->strlenAnsiSafe($val["bullet"])));
@@ -1075,7 +1277,7 @@ class Clibelt
          */
         posix_kill($pid, SIGKILL);
 
-        print PHP_EOL;
+        fwrite(STDOUT, PHP_EOL);
 
         return $returnedVal;
     } // background
@@ -1379,6 +1581,7 @@ class Clibelt
      */
     private function getLengthOfLongestLine($lines)
     {
+        // if string, make an array
         if (is_string($lines)) {
             $lines = explode(PHP_EOL, $lines);
         }
@@ -1428,7 +1631,7 @@ class Clibelt
      * @brief Writes to a stream, either STDOUT or STDERR, user-supplied text with optional color and formatting
      *
      * @param $text String. The string to write to the stream.
-     * @param $stream Pre-defined constant. The stream to write to; either STDOUT or STDERR. Default STDOUT
+     * @param $stream Pre-defined constant. Optional. The stream to write to; either STDOUT or STDERR. Default STDOUT
      * @param $level Pre-defined constant. Optional. The PSR-2 logging level. Default NULL. Refer to the defined constants for printout or printerr.
      * @param $foreground Pre-defined constant. Optional foreground color of text. Refer to the defined constants for printout or printerr.
      * @param $background Pre-defined constant. Optional background color or font style. Refer to the defined constants for printout or printerr.
@@ -1513,7 +1716,7 @@ class Clibelt
         fwrite(STDOUT, $chars[0]);
 
         // infinite loop to be killed by child process
-        while (1) {
+        while (true) {
             for ($i = 0;$i<5;$i++) {
                 while (list(, $char) = each($chars)) {
                     fwrite(STDOUT, BACKSPACE);  // erase previous frame
@@ -1542,7 +1745,7 @@ class Clibelt
         fwrite(STDOUT, "#");
 
         // infinite loop to be killed by child process
-        while (1) {
+        while (true) {
             fwrite(STDOUT, BACKSPACE);
             usleep($delay);
             fwrite(STDOUT, "#>");
@@ -1568,7 +1771,7 @@ class Clibelt
     private function progressFilesizeTrack($destFile, $targetSize, $delay = DELAY_VERY_FAST)
     {
         // loop until this child process is killed by the calling method
-        while (1) {
+        while (true) {
             // PHP caches data on file sizes. In order to get realtime update on file size of $destFile, clear cache
             clearstatcache();
 
@@ -2184,12 +2387,12 @@ class Clibelt
      * @param $description String
      * @param $options Array. List of options for this menu. The key of the selected item is returned.
      * @param $selectedKey String. The key to set as the initial selected key.
-     * @param $align pre-defined constant. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER.
+     * @param $alignment pre-defined constant. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER.
      * @param $foreground pre-defined constant. The foreground colour.
      * @param $background pre-defined constant. The background colour.
      * @return void
      */
-    private function printoutMenuhorizontal($description, $options, $selectedKey, $align, $foreground, $background)
+    private function printoutMenuhorizontal($description, $options, $selectedKey, $alignment, $foreground, $background)
     {
         // default prompt
         // @todo make arg
@@ -2227,6 +2430,206 @@ class Clibelt
             null,  // level, always null
             $foreground, // foreground colour constant
             $background, // background constant constant
-            $align); // alignment constant
+            $alignment); // alignment constant
     } // printoutMenuhorizontal
+
+
+    /**
+     * @brief Outputs the fileselect interface
+     *
+     * @param $directory String. The initial directory opened in the fileselect interface.
+     * @param $description String. The text description to put in the fileselect interface.
+     * @param $selectedIndex Int. The index of the array of files in the directory that is currently selected.
+     * @param $alignment pre-defined Constant. Alignment of the fileselect interface in the terminal.
+     * @param $foregroundColour pre-defined Constant. Foreground colour of the text
+     * @param $backgroundColour pre-defined Constant. Background colour of the text
+     * @return Mixed. String or Boolean false on error
+	 * @see fileselect
+     */
+    private function printoutFileselect($directory,
+        $description = "Select a file",
+        $selectedIndex,
+        $alignment = LEFT,
+        $backgroundColour = null,
+        $foregroundColour = null)
+    {
+        // the number of files visible in the fileselect interface box
+        $listWindowSize = 5;
+
+        // minimum space between the box border on left and right and the inner content
+        $boxMargin = 4;
+
+        // prompt to display below file list
+        $prompt = "(Use up and down arrow keys, 'o' to select, RETURN to open directory)";
+
+        // build ANSI colour coding tags
+
+        // default foreground, background using colours supplied supplied
+        $defaultAnsi = ESC."[".implode(";", [$foregroundColour, $backgroundColour+10])."m";
+
+        // ansi tag for highlighting selected file
+        $selectedAnsi = BOLD_ANSI.ESC."[".implode(";", [REVERSE])."m";
+
+        // array of all files and directories in the current directory
+        $rawDirectoryScan = scandir($directory);
+
+        // stop overrun of bottom of directory list
+        if ($selectedIndex >= count($rawDirectoryScan)) {
+            $selectedIndex = count($rawDirectoryScan)-1;
+        }
+
+        // stop of overrun off the top of directory list
+        if ($selectedIndex < 0) {
+            $selectedIndex = 0;
+        }
+
+        // create an array of the files in the directory
+        // key: the full path to the file, ie /path/to/file/foo.txt
+        // val: the name of the file, ie foo.txt
+        // append a "/" onto directories so they are identifiable as such
+        $directoryScan = array_map(
+            function ($lineScan, $directoryName) {
+                if (is_dir($directoryName.$lineScan)) {
+                    return [$directoryName.$lineScan."/" => "  ".$lineScan."/"];
+                }
+
+                return [$directoryName.$lineScan => "  ".$lineScan];
+            },
+            $rawDirectoryScan,
+            array_fill(0, count($rawDirectoryScan), $directory));
+
+        // get maximum width of all the lines to print to work out padding
+        // for the enclosing box
+        $maxWidth = 0;
+        $maxWidthTestArray = array_merge($rawDirectoryScan, [realpath($directory)]);
+        while (list(, $val) = each($maxWidthTestArray)) {
+            if ($this->strlenAnsiSafe($val)+2 > $maxWidth) {
+                $maxWidth = $this->strlenAnsiSafe($val)+2;
+            }
+        }
+
+        // the longest line may be quite short, creating a box that is very narrow and difficult to read
+        // bump to a minimum of one third the terminal width.
+        if (floor($this->getTerminalWidth()/3) > $maxWidth) {
+            $maxWidth = floor($this->getTerminalWidth()/3);
+        }
+
+        // the string of chars at the top and bottom of the box
+        $borderString = str_pad("", $maxWidth+($boxMargin*2)+2, "#");
+
+        // the string of '-' that divides the description, options and prompt
+        $dividerString = "#".str_pad("", $boxMargin, " ").str_pad("", $maxWidth, "-").str_pad("", $boxMargin, " ")."#";
+
+        // build the window bounds. these are the upper and lower array indexes that will
+        // be shown since we don't want to show all the files in the directory
+
+        $windowUpperBound = 0;
+        $windowLowerBound = $listWindowSize-1;
+
+        // don't draw window larger than the number of files
+        if (count($rawDirectoryScan) <= $windowLowerBound) {
+            $windowLowerBound = count($rawDirectoryScan)-1;
+        }
+
+        // don't let a downkey event run the selectedIndex off the lower bound of the window
+        if ($selectedIndex >= $listWindowSize) {
+            $windowLowerBound = $selectedIndex;
+            $windowUpperBound = $windowLowerBound-$listWindowSize+1;
+        }
+
+        // build array of options
+        $printableFileselectArray = [];
+        for ($i = $windowUpperBound;$i <= $windowLowerBound;$i++) {
+            $openAnsi = null;
+            $closeAnsi = null;
+            if ($i == $selectedIndex) {
+                $openAnsi = $selectedAnsi;
+                $closeAnsi = CLOSE_ANSI.$defaultAnsi;
+            }
+
+            $printableFileselectArray[] = "#".
+                str_pad("", $boxMargin, " ").
+                $openAnsi.
+                end($directoryScan[$i]).
+                $closeAnsi.
+                str_pad("", $boxMargin, " ").
+                str_pad("", $maxWidth-$this->strlenAnsiSafe(end($directoryScan[$i])), " ").
+                "#";
+        }
+
+        // format the description
+        // wrap the description to the width of the box and split by lines to array
+        $descriptionLines = explode(PHP_EOL, wordwrap($description, $maxWidth));
+        // build array of printable description lines, with padding and box borders.
+        $printableDescriptionArray = [];
+        while (list(, $val) = each($descriptionLines)) {
+            $printableDescriptionArray[] = "#".
+                str_pad("", $boxMargin, " ").
+                $val.
+                str_pad("", $boxMargin, " ").
+                str_pad("", $maxWidth-$this->strlenAnsiSafe($val), " ").
+                "#";
+        }
+        // add the divider at the bottom of the description
+        $printableDescriptionArray[] = $dividerString;
+
+        // format the list of files with padding and box borders. one line per array element.
+        $currentDirectoryArray = ["#".
+            str_pad("", $boxMargin, " ").
+            realpath($directory).
+            str_pad("", $boxMargin, " ").
+            str_pad("", $maxWidth-$this->strlenAnsiSafe(realpath($directory)), " ").
+            "#", ];
+
+        // format the prompt
+        // wrap the prompt to the width of the box and split by lines to array
+        $promptLines = explode(PHP_EOL, wordwrap($prompt, $maxWidth));
+        // build array of printable prompt lines, with padding and box borders.
+        $printablePromptArray[] = $dividerString;
+        while (list(, $val) = each($promptLines)) {
+            $printablePromptArray[] = "#".
+                str_pad("", ceil(($maxWidth-$this->strlenAnsiSafe($val))/2), " ").
+                str_pad("", $boxMargin, " ").
+                $val.
+                str_pad("", $boxMargin, " ").
+                str_pad("", floor(($maxWidth-$this->strlenAnsiSafe($val))/2), " ").
+                "#";
+        }
+
+        // put all the arrays together to create an array of all the lines of the box
+        $printableFileselectArray = array_merge(
+            [$borderString], // top border
+            $printableDescriptionArray, // the description
+            $currentDirectoryArray, // string of the current directory
+            $printableFileselectArray, // all the files in current directory
+            $printablePromptArray, // the prompt
+            [$borderString]); // bottom border
+
+        // output
+        $this->printout(
+            implode(PHP_EOL, $printableFileselectArray),
+            null,
+            $foregroundColour,
+            $backgroundColour,
+            $alignment);
+    } // printoutFileselect
+
+
+    /**
+     * @brief Returns the index of the first file of the provided directory
+     *
+     * Returns the index of the first file in a directory listing after '.' and '..', or the index of '..' if the file is emtpy
+     *
+     * @param $directory String. The path to the directory to check
+     * @return Int
+     * @see fileselect
+     */
+    private function getIndexOfFirstFile($directory)
+    {
+        $firstIndex = count(scandir($directory))-1;
+        if ($firstIndex > 2) {
+            $firstIndex = 2;
+        }
+        return $firstIndex;
+    } // getIndexOfFirstFile
 } //Clibelt
