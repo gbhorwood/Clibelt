@@ -237,7 +237,7 @@ class Clibelt
         if (!$prompt) {
             $prompt = "Hit any key to continue: ";
         }
-        fwrite(STDOUT,$prompt);
+        fwrite(STDOUT, $prompt);
         $this->getKeyDown();
         fwrite(STDOUT, PHP_EOL);
     } // anyKey
@@ -247,7 +247,8 @@ class Clibelt
      * @brief Convenience method wrapping promptChoice() to offer yes/no choice as [y,n]
      *
      * @param $prompt String. Optional. The optional string to display as a prompt to the user. Default "Choose 'yes' or 'no'"
-     * @param $default Char. Optional. Either 'y' or 'n'. The value to return if the user selects an invalid option or hits RETURN
+     * @param $default Char. Optional. Either 'y' or 'n'. 
+     *  The value to return if the user selects an invalid option or hits RETURN
      * @return String. Either 'y' or 'n'. Lowercase.
      */
     public function promptChoiceYn($prompt = "Choose 'yes' or 'no'", $default = null)
@@ -281,7 +282,8 @@ class Clibelt
      *
      * @param $prompt String. Optional. The string to display as a prompt to the user. Default "Choose one"
      * @param $options Array. Optional. An array of chars representing the options. Deafault ["y","n"]
-     * @param $default Char. Optional. A char representing the default option if the user selects something not in the $options array. Default null.
+     * @param $default Char. Optional. A char representing the default option if the user selects something 
+     *  not in the $options array. Default null.
      * @return String The value selected by the user as a single char
      * @note Only single chars are used as options and selections
      */
@@ -535,12 +537,13 @@ class Clibelt
                 }
 
                 // draw the new menu
-                $this->printoutMenuBox($description, 
-                    $options, 
-                    array_keys($options)[$selectedIndex], 
-                    $innerAlign, 
-                    $outerAlign, 
-                    $foregroundColour, 
+                $this->printoutMenuBox(
+                    $description,
+                    $options,
+                    array_keys($options)[$selectedIndex],
+                    $innerAlign,
+                    $outerAlign,
+                    $foregroundColour,
                     $backgroundColour);
             }
 
@@ -559,12 +562,13 @@ class Clibelt
                 }
 
                 // draw the new menu
-                $this->printoutMenuBox($description, 
-                    $options, 
-                    array_keys($options)[$selectedIndex], 
-                    $innerAlign, 
-                    $outerAlign, 
-                    $foregroundColour, 
+                $this->printoutMenuBox(
+                    $description,
+                    $options,
+                    array_keys($options)[$selectedIndex],
+                    $innerAlign,
+                    $outerAlign,
+                    $foregroundColour,
                     $backgroundColour);
             }
 
@@ -613,7 +617,8 @@ class Clibelt
      * @param $description String
      * @param $options Array. List of options for this menu. The key of the selected item is returned.
      * @param $selectedKey String. Optional. The key to set as the initial selected key.
-     * @param $alignment pre-defined constant. Optional. The alignment of the menu in the terminal. One of LEFT, RIGHT or CENTER.
+     * @param $alignment pre-defined constant. Optional. The alignment of the menu in the terminal.
+     *  One of LEFT, RIGHT or CENTER.
      * @param $foregroundColour pre-defined constant. Optional. The foreground colour.
      * @param $backgroundColour pre-defined constant. Optional. The background colour.
      * @return String
@@ -654,11 +659,12 @@ class Clibelt
                 }
 
                 // redraw menu to update highlighting of selected key
-                $this->printoutMenuhorizontal($description, 
-                    $options, 
-                    array_keys($options)[$selectedIndex], 
-                    $alignment, 
-                    $foregroundColour, 
+                $this->printoutMenuhorizontal(
+                    $description,
+                    $options,
+                    array_keys($options)[$selectedIndex],
+                    $alignment,
+                    $foregroundColour,
                     $backgroundColour);
             }
 
@@ -676,11 +682,12 @@ class Clibelt
                 }
 
                 // redraw menu to update highlighting of selected key
-                $this->printoutMenuhorizontal($description, 
-                    $options, 
-                    array_keys($options)[$selectedIndex], 
-                    $alignment, 
-                    $foregroundColour, 
+                $this->printoutMenuhorizontal(
+                    $description,
+                    $options,
+                    array_keys($options)[$selectedIndex],
+                    $alignment,
+                    $foregroundColour,
                     $backgroundColour);
             }
 
