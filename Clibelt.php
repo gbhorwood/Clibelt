@@ -247,7 +247,7 @@ class Clibelt
      * @brief Convenience method wrapping promptChoice() to offer yes/no choice as [y,n]
      *
      * @param $prompt String. Optional. The optional string to display as a prompt to the user. Default "Choose 'yes' or 'no'"
-     * @param $default Char. Optional. Either 'y' or 'n'. 
+     * @param $default Char. Optional. Either 'y' or 'n'.
      *  The value to return if the user selects an invalid option or hits RETURN
      * @return String. Either 'y' or 'n'. Lowercase.
      */
@@ -282,7 +282,7 @@ class Clibelt
      *
      * @param $prompt String. Optional. The string to display as a prompt to the user. Default "Choose one"
      * @param $options Array. Optional. An array of chars representing the options. Deafault ["y","n"]
-     * @param $default Char. Optional. A char representing the default option if the user selects something 
+     * @param $default Char. Optional. A char representing the default option if the user selects something
      *  not in the $options array. Default null.
      * @return String The value selected by the user as a single char
      * @note Only single chars are used as options and selections
@@ -324,7 +324,6 @@ class Clibelt
 
         // read user keydown until we get a valid response
         while (true) {
-
             // read the key down
             $userChoice = $this->getKeyDown();
 
@@ -700,6 +699,7 @@ class Clibelt
         }
 
         $this->lastInput = $returnVal;
+
         return $returnVal;
     } // menuhorizontal
 
@@ -746,17 +746,16 @@ class Clibelt
      * @param $alignment pre-defined Constant. Optional. Alignment of the fileselect interface in the terminal.
      * @param $foregroundColour pre-defined Constant. Optional. Foreground colour of the text
      * @param $backgroundColour pre-defined Constant. Optional. Background colour of the text
-	 * @param $returnDirectory Boolean. Optional. 
+     * @param $returnDirectory Boolean. Optional.
      * @return Mixed. String or Boolean false on error
      */
     public function fileselect($directory,
-		$description = null, 
-		$alignment = LEFT, 
-		$foregroundColour = null, 
-		$backgroundColour = null,
-		$returnDirectory = false)
+        $description = null,
+        $alignment = LEFT,
+        $foregroundColour = null,
+        $backgroundColour = null,
+        $returnDirectory = false)
     {
-
         /**
          * If starting directory is not a valid directory, error
          * Sets lastError to 9 on failure and returns false.
@@ -812,11 +811,11 @@ class Clibelt
                 }
 
                 // printout fileselect interface
-                $this->printoutFileselect($directory, 
-                    $description, 
-                    $selectedIndex, 
-                    $alignment, 
-                    $backgroundColour, 
+                $this->printoutFileselect($directory,
+                    $description,
+                    $selectedIndex,
+                    $alignment,
+                    $backgroundColour,
                     $foregroundColour);
             }
 
@@ -834,29 +833,30 @@ class Clibelt
                 }
 
                 // printout  fileselect interface
-                $this->printoutFileselect($directory, 
-                    $description, 
-                    $selectedIndex, 
-                    $alignment, 
-                    $backgroundColour, 
+                $this->printoutFileselect($directory,
+                    $description,
+                    $selectedIndex,
+                    $alignment,
+                    $backgroundColour,
                     $foregroundColour);
             }
 
             // select event
             elseif (ord($userChoice) == KEY_RETURN || ord($userChoice) == KEY_O) {
-
                 // the full path of the file or directory selected
                 $selectedItem = realpath($directory.scandir($directory)[$selectedIndex]);
 
                 // element is a file, always return element
                 if (is_file($selectedItem)) {
                     $this->lastInput = $selectedItem;
+
                     return $selectedItem;
                 }
 
                 // element is a directory, select event is 'o', return element
-                else if ($returnDirectory && ord($userChoice) == KEY_O) {
+                elseif ($returnDirectory && ord($userChoice) == KEY_O) {
                     $this->lastInput = $selectedItem;
+
                     return $selectedItem;
                 }
 
@@ -865,11 +865,11 @@ class Clibelt
                     $directory = $selectedItem."/"; // ensure trailing slash
                     $selectedIndex = $this->getIndexOfFirstFile($directory); // set index to first real file after '.' and '..'
                     $this->erase();
-                    $this->printoutFileselect($directory, 
-                        $description, 
-                        $selectedIndex, 
-                        $alignment, 
-                        $backgroundColour, 
+                    $this->printoutFileselect($directory,
+                        $description,
+                        $selectedIndex,
+                        $alignment,
+                        $backgroundColour,
                         $foregroundColour);
                 }
             }
@@ -887,11 +887,10 @@ class Clibelt
      */
     public function datepicker($prompt = "Select a date")
     {
-        
         // date array set to initial state of today
-        $dateArray = [(int)date("Y"),
-            (int)date("m"),
-            (int)date("j")];
+        $dateArray = [(int) date("Y"),
+            (int) date("m"),
+            (int) date("j"), ];
 
         // pre-select year
         $currentIndex = 0;
@@ -899,14 +898,21 @@ class Clibelt
         // output the datepicker interface
         $this->printDatepicker($prompt, $dateArray, $currentIndex);
 
+        $userInputArray = [];
+
         // loop while taking user input
         while (true) {
-
             // get user key event
             $userInput = $this->getKeyDown();
 
+            // break to return statement
+            if (ord($userInput) == KEY_RETURN) {
+                break;
+            }
+
             // move to the next date segment on tab or right arrow
-            if (ord($userInput) == KEY_TAB || ord($userInput) == KEY_RIGHT_ARROW) {
+            elseif (ord($userInput) == KEY_TAB || ord($userInput) == KEY_RIGHT_ARROW) {
+                $userInputArray = [];
                 $currentIndex++;
                 if ($currentIndex > 2) {
                     $currentIndex = 0;
@@ -916,7 +922,8 @@ class Clibelt
             }
 
             // move to the previous date segment on left arrow
-            if ( ord($userInput) == KEY_LEFT_ARROW) {
+            elseif (ord($userInput) == KEY_LEFT_ARROW) {
+                $userInputArray = [];
                 $currentIndex--;
                 if ($currentIndex < 0) {
                     $currentIndex = 2;
@@ -926,28 +933,35 @@ class Clibelt
             }
 
             // decrement the date by one step
-            if (ord($userInput) == KEY_DOWN_ARROW) {
+            elseif (ord($userInput) == KEY_DOWN_ARROW) {
+                $userInputArray = [];
                 $dateArray = $this->decrementDate($dateArray, $currentIndex);
                 $this->erase();
                 $this->printDatepicker($prompt, $dateArray, $currentIndex);
             }
 
             // increment the date by one step
-            if (ord($userInput) == KEY_UP_ARROW) {
+            elseif (ord($userInput) == KEY_UP_ARROW) {
+                $userInputArray = [];
                 $dateArray = $this->incrementDate($dateArray, $currentIndex);
                 $this->erase();
                 $this->printDatepicker($prompt, $dateArray, $currentIndex);
+            } elseif (ctype_alnum($userInput)) {
+                $userInputArray[] = $userInput;
+                $dateArray = $this->updateDate($dateArray, $currentIndex, $userInputArray);
+                $this->erase();
+                $this->printDatepicker($prompt, $dateArray, $currentIndex);
+            } elseif (ord($userInput) == KEY_BACKSPACE) {
+                array_pop($userInputArray);
+                $dateArray = $this->updateDate($dateArray, $currentIndex, $userInputArray);
+                $this->erase();
+                $this->printDatepicker($prompt, $dateArray, $currentIndex);
             }
-
-            // break to return statement 
-            if (ord($userInput) == KEY_RETURN) {
-                break;
-            }
-    
         }
 
-        return new DateTime(join("-", $dateArray));
+        return new DateTime(implode("-", $dateArray));
     } // datepicker
+
 
     ##
     # Methods to do formatted output
@@ -2517,7 +2531,7 @@ class Clibelt
      * @param $foregroundColour pre-defined Constant. Foreground colour of the text
      * @param $backgroundColour pre-defined Constant. Background colour of the text
      * @return Mixed. String or Boolean false on error
-	 * @see fileselect
+     * @see fileselect
      */
     private function printoutFileselect($directory,
         $description = "Select a file",
@@ -2703,6 +2717,7 @@ class Clibelt
         if ($firstIndex > 2) {
             $firstIndex = 2;
         }
+
         return $firstIndex;
     } // getIndexOfFirstFile
 
@@ -2717,8 +2732,7 @@ class Clibelt
      */
     private function decrementDate($dateArray, $currentIndex)
     {
-
-        switch($currentIndex) {
+        switch ($currentIndex) {
             // year
             case 0:
                 $dateArray[0]--;
@@ -2728,12 +2742,12 @@ class Clibelt
             case 1:
                 // month wrap
                 $dateArray[1]--;
-                if($dateArray[1] < 1) {
+                if ($dateArray[1] < 1) {
                     $dateArray[1] = 12;
                 }
 
                 // prevent day overrunning max for the month
-                $maxDay = (int)date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
+                $maxDay = (int) date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
                 if ($dateArray[2] > $maxDay) {
                     $dateArray[2] = $maxDay;
                 }
@@ -2744,12 +2758,13 @@ class Clibelt
                 $dateArray[2]--;
 
                 // day wrap
-                $maxDay = (int)date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
+                $maxDay = (int) date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
                 if ($dateArray[2] < 1) {
                     $dateArray[2] = $maxDay;
                 }
-                
+
         }
+
         return $dateArray;
     } // decrementDate
 
@@ -2763,8 +2778,7 @@ class Clibelt
      */
     private function incrementDate($dateArray, $currentIndex)
     {
-
-        switch($currentIndex) {
+        switch ($currentIndex) {
             // year
             case 0:
                 $dateArray[0]++;
@@ -2774,12 +2788,12 @@ class Clibelt
             case 1:
                 // month wrap
                 $dateArray[1]++;
-                if($dateArray[1] > 12) {
+                if ($dateArray[1] > 12) {
                     $dateArray[1] = 1;
                 }
 
                 // prevent day overrunning max for the month
-                $maxDay = (int)date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
+                $maxDay = (int) date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
                 if ($dateArray[2] > $maxDay) {
                     $dateArray[2] = $maxDay;
                 }
@@ -2790,12 +2804,13 @@ class Clibelt
                 $dateArray[2]++;
 
                 // day wrap
-                $maxDay = (int)date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
+                $maxDay = (int) date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
                 if ($dateArray[2] > $maxDay) {
                     $dateArray[2] = 1;
                 }
-                
+
         }
+
         return $dateArray;
     } // incrementDate
 
@@ -2809,22 +2824,22 @@ class Clibelt
     private function getDatePickerAnsiFormats($currentIndex)
     {
         $ansiFormats = [];
-        for($i=0;$i<3;$i++) { 
+        for ($i = 0;$i<3;$i++) {
             if ($i == $currentIndex) {
                 $ansiFormats[$i]["open"] = BOLD_ANSI.ESC."[".implode(";", [REVERSE])."m";
                 $ansiFormats[$i]["close"] = CLOSE_ANSI;
-            }
-            else {
+            } else {
                 $ansiFormats[$i]["open"] = null;
                 $ansiFormats[$i]["close"] = null;
             }
         }
+
         return $ansiFormats;
     } // getDatePickerAnsiFormats
 
 
     /**
-     * @brief Converts month number to equivalent month String. 
+     * @brief Converts month number to equivalent month String.
      *
      * ie, 1 to 'Jan'.
      * @param $monthNumber Int
@@ -2832,7 +2847,7 @@ class Clibelt
      */
     private function getDisplayMonth($monthNumber)
     {
-        return date('M', mktime(0, 0, 0, $monthNumber, 10)); 
+        return date('M', mktime(0, 0, 0, $monthNumber, 10));
     } // getDisplayMonth
 
 
@@ -2844,7 +2859,7 @@ class Clibelt
      * @param $currentIndex Int
      * @return void
      * @see datepicker
-     */ 
+     */
     private function printDatepicker($prompt, $dateArray, $currentIndex)
     {
         // get array of ANSI formatting tags to apply to output
@@ -2863,4 +2878,84 @@ class Clibelt
     } // printDatepicker
 
 
+    /**
+     * @brief Updates the datepicker date from events other than increment and decrement
+     *
+     * Instead of just scrolling date elements up and down, users can enter direct keystrokes (ie
+     * 'mar' for 'March'). This method handles those keystrokes and updates the dateArray accordingly.
+     *
+     * User key input is passed as the userInputArray, with one element per key pressed. ie, for 'mar'
+     * ['m', 'a', 'r'], since each key press is a separate event.
+     *
+     * Arrow up, down, left, right and tab key events clear the userInputArray so that keys used to select
+     * eg the year do not carry over to selecting the month
+     *
+     * @param $dateArray Array. The array showing the currently-selected date.
+     * @param $currentIndex Int. The index of the dateArray currently be affected. 0 for year, 1 for month, 2 for day.
+     * @param $userInputArray Array. Keys pressed by user.
+     * @return Array
+     * @see datepicker
+     */
+    private function updateDate($dateArray, $currentIndex, $userInputArray)
+    {
+        switch ($currentIndex) {
+            // year
+            case 0:
+                // only 4 chars in a year, hit a fifth, we reset to current year
+                if (count($userInputArray) > 4) {
+                    $dateArray[0] = (int) date("Y");
+                }
+                // build year for the number of keystrokes. ie '19' builds year '1900'
+                else {
+                    $dateArray[0] = (int) str_pad(implode(null, $userInputArray), 4, "0", STR_PAD_RIGHT);
+                }
+                break;
+
+            // month
+            case 1:
+                // user input array to a string. lowercase for matching convenience.
+                $userInputString = strtolower(implode(null, $userInputArray));
+
+                // an array of month names to match against user input. lowercase for matching convenience.
+                $monthNames = array_map(function ($i) {
+                        return strtolower($this->getDisplayMonth($i));
+                    },
+                    range(1, 13));
+
+                // match user input to month name. partial matches first instance of months in
+                // chronological order, ie 'ma' matches 'march', not 'may'.
+                while (list($key, $val) = each($monthNames)) {
+                    if ($userInputString == substr($val, 0, strlen($userInputString))) {
+                        $dateArray[1] = $key+1;
+                        break;
+                    }
+                }
+
+                // prevent day overrunning max for the month. ie, if day is set to 30 and then user
+                // selects 'Feb' for month, set day to 28 (or 29 for leap)
+                $maxDay = (int) date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
+                if ($dateArray[2] > $maxDay) {
+                    $dateArray[2] = $maxDay;
+                }
+                break;
+
+            // day
+            case 2:
+                $maxDay = (int) date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
+                // max 2 chars in day, hit a third reset to current day
+                if (count($userInputArray) > 2) {
+                    $dateArray[2] = (int) date("j");
+                } else {
+                    $userEnteredDate = (int) str_pad(implode(null, $userInputArray), 2, "0", STR_PAD_RIGHT);
+                    // attempts to overrun highest day for current month sets day to max day for current month
+                    if ($userEnteredDate > $maxDay) {
+                        $userEnteredDate = $maxDay;
+                    }
+                    $dateArray[2] = $userEnteredDate;
+                }
+                break;
+        }
+
+        return $dateArray;
+    } // updateDate
 } //Clibelt
