@@ -876,6 +876,79 @@ class Clibelt
         } // while(true)
     } // fileselect
 
+
+    /**
+     * @brief Displays a datepicker interface and returns selected date as DateTime object
+     *
+     * Returned DateTime object is set to the timezone of the system
+     *
+     * @param $prompt String. Optional. The prompt to display in the datepicker interface. Defalt "Select a date".
+     * @return DateTime
+     */
+    public function datepicker($prompt = "Select a date")
+    {
+        
+        // date array set to initial state of today
+        $dateArray = [(int)date("Y"),
+            (int)date("m"),
+            (int)date("j")];
+
+        // pre-select year
+        $currentIndex = 0;
+
+        // output the datepicker interface
+        $this->printDatepicker($prompt, $dateArray, $currentIndex);
+
+        // loop while taking user input
+        while (true) {
+
+            // get user key event
+            $userInput = $this->getKeyDown();
+
+            // move to the next date segment on tab or right arrow
+            if (ord($userInput) == KEY_TAB || ord($userInput) == KEY_RIGHT_ARROW) {
+                $currentIndex++;
+                if ($currentIndex > 2) {
+                    $currentIndex = 0;
+                }
+                $this->erase();
+                $this->printDatepicker($prompt, $dateArray, $currentIndex);
+            }
+
+            // move to the previous date segment on left arrow
+            if ( ord($userInput) == KEY_LEFT_ARROW) {
+                $currentIndex--;
+                if ($currentIndex < 0) {
+                    $currentIndex = 2;
+                }
+                $this->erase();
+                $this->printDatepicker($prompt, $dateArray, $currentIndex);
+            }
+
+            // decrement the date by one step
+            if (ord($userInput) == KEY_DOWN_ARROW) {
+                $dateArray = $this->decrementDate($dateArray, $currentIndex);
+                $this->erase();
+                $this->printDatepicker($prompt, $dateArray, $currentIndex);
+            }
+
+            // increment the date by one step
+            if (ord($userInput) == KEY_UP_ARROW) {
+                $dateArray = $this->incrementDate($dateArray, $currentIndex);
+                $this->erase();
+                $this->printDatepicker($prompt, $dateArray, $currentIndex);
+            }
+
+            // break to return statement 
+            if (ord($userInput) == KEY_RETURN) {
+                break;
+            }
+    
+        }
+
+        return new DateTime(join("-", $dateArray));
+    } // datepicker
+
     ##
     # Methods to do formatted output
 
@@ -2632,4 +2705,162 @@ class Clibelt
         }
         return $firstIndex;
     } // getIndexOfFirstFile
+
+
+    /**
+     * @brief Decrement date from down arrow key event
+     *
+     * Returns a new date array that is decremented, suitable for display.
+     * @param $dateArray Array. Array of integers numerically keyed to represent date as yyyy mm dd
+     * @param $currentIndex Int. The index of the dateArray that is being decremented
+     * @return Array
+     */
+    private function decrementDate($dateArray, $currentIndex)
+    {
+
+        switch($currentIndex) {
+            // year
+            case 0:
+                $dateArray[0]--;
+                break;
+
+            // month
+            case 1:
+                // month wrap
+                $dateArray[1]--;
+                if($dateArray[1] < 1) {
+                    $dateArray[1] = 12;
+                }
+
+                // prevent day overrunning max for the month
+                $maxDay = (int)date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
+                if ($dateArray[2] > $maxDay) {
+                    $dateArray[2] = $maxDay;
+                }
+                break;
+
+            // day
+            case 2:
+                $dateArray[2]--;
+
+                // day wrap
+                $maxDay = (int)date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
+                if ($dateArray[2] < 1) {
+                    $dateArray[2] = $maxDay;
+                }
+                
+        }
+        return $dateArray;
+    } // decrementDate
+
+    /**
+     * @brief Increment date from up arrow key event
+     *
+     * Returns a new date array that is incremented, suitable for display.
+     * @param $dateArray Array. Array of integers numerically keyed to represent date as yyyy mm dd
+     * @param $currentIndex Int. The index of the dateArray that is being incremented
+     * @return Array
+     */
+    private function incrementDate($dateArray, $currentIndex)
+    {
+
+        switch($currentIndex) {
+            // year
+            case 0:
+                $dateArray[0]++;
+                break;
+
+            // month
+            case 1:
+                // month wrap
+                $dateArray[1]++;
+                if($dateArray[1] > 12) {
+                    $dateArray[1] = 1;
+                }
+
+                // prevent day overrunning max for the month
+                $maxDay = (int)date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
+                if ($dateArray[2] > $maxDay) {
+                    $dateArray[2] = $maxDay;
+                }
+                break;
+
+            // day
+            case 2:
+                $dateArray[2]++;
+
+                // day wrap
+                $maxDay = (int)date("t", strtotime($dateArray[0]."-".$dateArray[1]."-"."1"));
+                if ($dateArray[2] > $maxDay) {
+                    $dateArray[2] = 1;
+                }
+                
+        }
+        return $dateArray;
+    } // incrementDate
+
+
+    /**
+     * @brief Gets an array of ANSI tags for formatting datepicker output
+     *
+     * @param $currentIndex Int. The element of the dateArray to format as highlighted
+     * @see printDatepicker
+     */
+    private function getDatePickerAnsiFormats($currentIndex)
+    {
+        $ansiFormats = [];
+        for($i=0;$i<3;$i++) { 
+            if ($i == $currentIndex) {
+                $ansiFormats[$i]["open"] = BOLD_ANSI.ESC."[".implode(";", [REVERSE])."m";
+                $ansiFormats[$i]["close"] = CLOSE_ANSI;
+            }
+            else {
+                $ansiFormats[$i]["open"] = null;
+                $ansiFormats[$i]["close"] = null;
+            }
+        }
+        return $ansiFormats;
+    } // getDatePickerAnsiFormats
+
+
+    /**
+     * @brief Converts month number to equivalent month String. 
+     *
+     * ie, 1 to 'Jan'.
+     * @param $monthNumber Int
+     * @return String
+     */
+    private function getDisplayMonth($monthNumber)
+    {
+        return date('M', mktime(0, 0, 0, $monthNumber, 10)); 
+    } // getDisplayMonth
+
+
+    /**
+     * @brief Displays the datepicker interface
+     *
+     * @param $prompt String
+     * @param $dateArray Array
+     * @param $currentIndex Int
+     * @return void
+     * @see datepicker
+     */ 
+    private function printDatepicker($prompt, $dateArray, $currentIndex)
+    {
+        // get array of ANSI formatting tags to apply to output
+        $ansiFormats = $this->getDatePickerAnsiFormats($currentIndex);
+
+        $printableString =
+            $prompt.PHP_EOL.
+            // year
+            $ansiFormats[0]["open"].$dateArray[0].$ansiFormats[0]["close"]." ".
+            // month
+            $ansiFormats[1]["open"].$this->getDisplayMonth($dateArray[1]).$ansiFormats[1]["close"]." ".
+            // day
+            $ansiFormats[2]["open"].$dateArray[2].$ansiFormats[2]["close"];
+
+        $this->printout($printableString);
+    } // printDatepicker
+
+
 } //Clibelt
