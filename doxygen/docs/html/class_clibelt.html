@@ -137,6 +137,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a51d16fe59f2786d7309c6c40e799f68f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a51d16fe59f2786d7309c6c40e799f68f">fileselect</a> ($directory, $description=null, $alignment=LEFT, $foregroundColour=null, $backgroundColour=null, $returnDirectory=false)</td></tr>
 <tr class="memdesc:a51d16fe59f2786d7309c6c40e799f68f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Displays a file selection interface, navigable with arrow or tab keys, with optional alignment and styling.  <a href="#a51d16fe59f2786d7309c6c40e799f68f">More...</a><br /></td></tr>
 <tr class="separator:a51d16fe59f2786d7309c6c40e799f68f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1edc1acb1404a444d975afb31189ac6a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a1edc1acb1404a444d975afb31189ac6a">datepicker</a> ($prompt=&quot;Select a date&quot;)</td></tr>
+<tr class="memdesc:a1edc1acb1404a444d975afb31189ac6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Displays a datepicker interface and returns selected date as DateTime object.  <a href="#a1edc1acb1404a444d975afb31189ac6a">More...</a><br /></td></tr>
+<tr class="separator:a1edc1acb1404a444d975afb31189ac6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad66e12cb4cc3f7481670f2549881a545"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#ad66e12cb4cc3f7481670f2549881a545">printout</a> ($text, $level=null, $foreground=null, $<a class="el" href="class_clibelt.html#af44c78ed546850491d49ed7c92938e4c">background</a>=null, $alignment=null)</td></tr>
 <tr class="memdesc:ad66e12cb4cc3f7481670f2549881a545"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes string to STDOUT with optional ANSI formatting.  <a href="#ad66e12cb4cc3f7481670f2549881a545">More...</a><br /></td></tr>
 <tr class="separator:ad66e12cb4cc3f7481670f2549881a545"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -227,6 +230,27 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:ac16a7e644cb03b959d0a3b0aa8cc34b0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#ac16a7e644cb03b959d0a3b0aa8cc34b0">printoutFileselect</a> ($directory, $description=&quot;Select a file&quot;, $selectedIndex, $alignment=LEFT, $backgroundColour=null, $foregroundColour=null)</td></tr>
 <tr class="memdesc:ac16a7e644cb03b959d0a3b0aa8cc34b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outputs the fileselect interface.  <a href="#ac16a7e644cb03b959d0a3b0aa8cc34b0">More...</a><br /></td></tr>
 <tr class="separator:ac16a7e644cb03b959d0a3b0aa8cc34b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ccdfc028985dfa2cad493cf576225ee"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a1ccdfc028985dfa2cad493cf576225ee">getIndexOfFirstFile</a> ($directory)</td></tr>
+<tr class="memdesc:a1ccdfc028985dfa2cad493cf576225ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the index of the first file of the provided directory.  <a href="#a1ccdfc028985dfa2cad493cf576225ee">More...</a><br /></td></tr>
+<tr class="separator:a1ccdfc028985dfa2cad493cf576225ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f07cf181a40890b146be080c49a6717"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a6f07cf181a40890b146be080c49a6717">decrementDate</a> ($dateArray, $currentIndex)</td></tr>
+<tr class="memdesc:a6f07cf181a40890b146be080c49a6717"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrement date from down arrow key event.  <a href="#a6f07cf181a40890b146be080c49a6717">More...</a><br /></td></tr>
+<tr class="separator:a6f07cf181a40890b146be080c49a6717"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a247e3e310a2d488690629b58892d33b0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a247e3e310a2d488690629b58892d33b0">incrementDate</a> ($dateArray, $currentIndex)</td></tr>
+<tr class="memdesc:a247e3e310a2d488690629b58892d33b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increment date from up arrow key event.  <a href="#a247e3e310a2d488690629b58892d33b0">More...</a><br /></td></tr>
+<tr class="separator:a247e3e310a2d488690629b58892d33b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa435defc3e674e970ea06bc3fbe07016"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#aa435defc3e674e970ea06bc3fbe07016">getDatePickerAnsiFormats</a> ($currentIndex)</td></tr>
+<tr class="memdesc:aa435defc3e674e970ea06bc3fbe07016"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an array of ANSI tags for formatting datepicker output.  <a href="#aa435defc3e674e970ea06bc3fbe07016">More...</a><br /></td></tr>
+<tr class="separator:aa435defc3e674e970ea06bc3fbe07016"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56d03827c7164ed331fd4209c3d6c138"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#a56d03827c7164ed331fd4209c3d6c138">getDisplayMonth</a> ($monthNumber)</td></tr>
+<tr class="memdesc:a56d03827c7164ed331fd4209c3d6c138"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts month number to equivalent month String.  <a href="#a56d03827c7164ed331fd4209c3d6c138">More...</a><br /></td></tr>
+<tr class="separator:a56d03827c7164ed331fd4209c3d6c138"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaed1d2e3cd4ac69737496d1d308e193d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#aaed1d2e3cd4ac69737496d1d308e193d">printDatepicker</a> ($prompt, $dateArray, $currentIndex)</td></tr>
+<tr class="memdesc:aaed1d2e3cd4ac69737496d1d308e193d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Displays the datepicker interface.  <a href="#aaed1d2e3cd4ac69737496d1d308e193d">More...</a><br /></td></tr>
+<tr class="separator:aaed1d2e3cd4ac69737496d1d308e193d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1e7786d440f4ef2c5e10ec19279de9d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_clibelt.html#ad1e7786d440f4ef2c5e10ec19279de9d">updateDate</a> ($dateArray, $currentIndex, $userInputArray)</td></tr>
+<tr class="memdesc:ad1e7786d440f4ef2c5e10ec19279de9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the datepicker date from events other than increment and decrement.  <a href="#ad1e7786d440f4ef2c5e10ec19279de9d">More...</a><br /></td></tr>
+<tr class="separator:ad1e7786d440f4ef2c5e10ec19279de9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -426,6 +450,76 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a1edc1acb1404a444d975afb31189ac6a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::datepicker </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$prompt</em> = <code>&quot;Select&#160;a&#160;date&quot;</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Displays a datepicker interface and returns selected date as DateTime object. </p>
+<p>Returned DateTime object is set to the timezone of the system</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$prompt</td><td>String. Optional. The prompt to display in the datepicker interface. Defalt "Select a date". </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>DateTime </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6f07cf181a40890b146be080c49a6717"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::decrementDate </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$dateArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$currentIndex</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Decrement date from down arrow key event. </p>
+<p>Returns a new date array that is decremented, suitable for display. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$dateArray</td><td>Array. Array of integers numerically keyed to represent date as yyyy mm dd </td></tr>
+    <tr><td class="paramname">$currentIndex</td><td>Int. The index of the dateArray that is being decremented </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Array </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="ab3081a0dc758b29515d13bb26cebca68"></a>
 <div class="memitem">
 <div class="memproto">
@@ -569,9 +663,109 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Mixed. String or Boolean false on error </dd></dl>
-<p>Initial index of highlighted file in directory is 2. This is because the first two entries are '.' and '..' and we want the highlighted entry to be the first one after that.</p>
 <p>If starting directory is not a valid directory, error Sets lastError to 9 on failure and returns false.</p>
 <p>If starting directory is not readable, error Sets lastError to 10 on failure and returns false.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa435defc3e674e970ea06bc3fbe07016"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::getDatePickerAnsiFormats </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$currentIndex</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets an array of ANSI tags for formatting datepicker output. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$currentIndex</td><td>Int. The element of the dateArray to format as highlighted </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_clibelt.html#aaed1d2e3cd4ac69737496d1d308e193d" title="Displays the datepicker interface. ">printDatepicker</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a56d03827c7164ed331fd4209c3d6c138"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::getDisplayMonth </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$monthNumber</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Converts month number to equivalent month String. </p>
+<p>ie, 1 to 'Jan'. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$monthNumber</td><td>Int </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>String </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1ccdfc028985dfa2cad493cf576225ee"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::getIndexOfFirstFile </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$directory</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the index of the first file of the provided directory. </p>
+<p>Returns the index of the first file in a directory listing after '.' and '..', or the index of '..' if the file is emtpy</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$directory</td><td>String. The path to the directory to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Int </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_clibelt.html#a51d16fe59f2786d7309c6c40e799f68f" title="Displays a file selection interface, navigable with arrow or tab keys, with optional alignment and st...">fileselect</a> </dd></dl>
 
 </div>
 </div>
@@ -902,6 +1096,50 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
 
 </div>
 </div>
+<a class="anchor" id="a247e3e310a2d488690629b58892d33b0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::incrementDate </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$dateArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$currentIndex</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Increment date from up arrow key event. </p>
+<p>Returns a new date array that is incremented, suitable for display. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$dateArray</td><td>Array. Array of integers numerically keyed to represent date as yyyy mm dd </td></tr>
+    <tr><td class="paramname">$currentIndex</td><td>Int. The index of the dateArray that is being incremented </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Array </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a35d53f4cd4909efd3f4aab39e255a337"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1132,6 +1370,58 @@ test with <a href="http://ipv4.download.thinkbroadband.com/512MB.zip">http://ipv
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Array An array of arguments usable by <a class="el" href="class_clibelt.html#af44c78ed546850491d49ed7c92938e4c" title="Runs executable PHP code in the background with an optional progress animation. ">background()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aaed1d2e3cd4ac69737496d1d308e193d"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::printDatepicker </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$prompt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$dateArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$currentIndex</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Displays the datepicker interface. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$prompt</td><td>String </td></tr>
+    <tr><td class="paramname">$dateArray</td><td>Array </td></tr>
+    <tr><td class="paramname">$currentIndex</td><td>Int </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_clibelt.html#a1edc1acb1404a444d975afb31189ac6a" title="Displays a datepicker interface and returns selected date as DateTime object. ">datepicker</a> </dd></dl>
 
 </div>
 </div>
@@ -2089,6 +2379,61 @@ Errors generated while preflighting the copy are stored in lastError </dd></dl>
 
 </div>
 </div>
+<a class="anchor" id="ad1e7786d440f4ef2c5e10ec19279de9d"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Clibelt::updateDate </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$dateArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$currentIndex</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$userInputArray</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Updates the datepicker date from events other than increment and decrement. </p>
+<p>Instead of just scrolling date elements up and down, users can enter direct keystrokes (ie 'mar' for 'March'). This method handles those keystrokes and updates the dateArray accordingly.</p>
+<p>User key input is passed as the userInputArray, with one element per key pressed. ie, for 'mar' ['m', 'a', 'r'], since each key press is a separate event.</p>
+<p>Arrow up, down, left, right and tab key events clear the userInputArray so that keys used to select eg the year do not carry over to selecting the month</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$dateArray</td><td>Array. The array showing the currently-selected date. </td></tr>
+    <tr><td class="paramname">$currentIndex</td><td>Int. The index of the dateArray currently be affected. 0 for year, 1 for month, 2 for day. </td></tr>
+    <tr><td class="paramname">$userInputArray</td><td>Array. Keys pressed by user. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Array </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_clibelt.html#a1edc1acb1404a444d975afb31189ac6a" title="Displays a datepicker interface and returns selected date as DateTime object. ">datepicker</a> </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="af3d68df8f32f9dc3045bbf7e89f724bf"></a>
 <div class="memitem">
 <div class="memproto">
@@ -2326,7 +2671,7 @@ Errors generated while preflighting the copy are stored in lastError </dd></dl>
 </div>
 </div>
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 26 2017 21:17:41 for Clibelt by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Feb 1 2017 14:35:22 for Clibelt by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>
