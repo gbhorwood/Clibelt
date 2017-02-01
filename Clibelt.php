@@ -111,7 +111,9 @@ define('KEY_O', 111);
  * @author gbh
  *
  * needs: php-curl
+ *
  * needs: stty
+ *
  * may need: ANSI
  *
  * @todo preflight
@@ -187,7 +189,7 @@ class Clibelt
     # Methods to read input piped in
 
     /**
-     * @brief Returns the content of data piped in on stdin as a string
+     * @brief Returns the content of data piped in on STDIN as a string
      *
      * @return String
      */
@@ -203,7 +205,7 @@ class Clibelt
 
 
     /**
-     * @brief Returns an iteratable stream of data piped in on stdin
+     * @brief Returns an iteratable stream of data piped in on STDIN
      *
      * The stream returned from this method can be iterated over using foreach()
      * @code
@@ -459,7 +461,7 @@ class Clibelt
 
 
     /**
-     * @brief Displays a menu, navigable with arrow or tab keys, with optional alignment and styling
+     * @brief Outputs a menu, navigable with arrow or tab keys, with optional alignment and styling
      *
      * This method builds and displays a menu of the provided $options. The user can navigate the menu by either
      *   * Using the up and down arrow keys to highlight the selection and hitting RETURN to select
@@ -705,7 +707,7 @@ class Clibelt
 
 
     /**
-     * @brief Displays a file selection interface, navigable with arrow or tab keys, with optional alignment and styling
+     * @brief Outputs a file selection interface, navigable with arrow or tab keys, with optional alignment and styling
      *
      * This method builds and displays a file selection menu with the initial direcotry defined by arg $directory
      * The user can navigate the menu by either
@@ -878,12 +880,13 @@ class Clibelt
 
 
     /**
-     * @brief Displays a datepicker interface and returns selected date as DateTime object
+     * @brief Outputs a datepicker interface and returns selected date as DateTime object
      *
      * Returned DateTime object is set to the timezone of the system
      *
      * @param $prompt String. Optional. The prompt to display in the datepicker interface. Defalt "Select a date".
      * @return DateTime
+     * @todo Add alignment and styling
      */
     public function datepicker($prompt = "Select a date")
     {
@@ -1371,7 +1374,7 @@ class Clibelt
 
 
     /**
-     * @brief A somewhat safe file copy method with option update animation.
+     * @brief A somewhat safe file copy method with optional update animation.
      *
      * Animation is based on file size of destination file and is moderatley accurate.
      *
@@ -2852,7 +2855,7 @@ class Clibelt
 
 
     /**
-     * @brief Displays the datepicker interface
+     * @brief Outputs the datepicker interface
      *
      * @param $prompt String
      * @param $dateArray Array
