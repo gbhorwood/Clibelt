@@ -404,8 +404,8 @@ class Clibelt
     public function read($prompt)
     {
         $this->printout($prompt.":");
-
         $userInput = trim(fgets(STDIN));
+
         // log the user choice in lastInput so it can be retrieved after the return event
         $this->lastInput = $userInput;
 
@@ -505,7 +505,7 @@ class Clibelt
      * @param $backgroundColour Pre-defined constant. Optional. The colour of the background of the text. One of the pre-set ANSI colours.
      * @return String
      */
-    public function menu($description,  $options, $innerAlign = LEFT, $outerAlign = LEFT, $foregroundColour = null, $backgroundColour = null)
+    public function menu($description, $options, $innerAlign = LEFT, $outerAlign = LEFT, $foregroundColour = null, $backgroundColour = null)
     {
         // hightlight the first option in the menu to start
         $selectedIndex = 0;
@@ -2344,7 +2344,7 @@ class Clibelt
     {
         // to keep the values vertically flushed, we pad out to the length of the longest key
         // get length of the longest key for this level
-        $longestBulletLength = $this->getPrintlistBulletMaxLength($countableBulletsArray[$level]["bullet"], count($listArray));
+        $longestBulletLength = $this->getPrintlistBulletMaxLength(@$countableBulletsArray[$level]["bullet"], count($listArray));
 
         // process this level of the list. list entries can be either scalar values for addition to the printableArray
         // or an array, indicating a sublist
@@ -2352,10 +2352,10 @@ class Clibelt
             // an element to add to the list in printableArray
             if (!is_array($val)) {
                 // increment the count in countableBulletsArray so that eg. 'a' becomes 'b' and 'i' becomes 'ii'
-                $countableBulletsArray[$level]["count"]++;
+                @$countableBulletsArray[$level]["count"]++;
 
                 // get the actual bullet for this list entry, ie 'a)' or 'vii.'
-                $bullet = $this->getPrintlistBullet($countableBulletsArray[$level]["bullet"], $countableBulletsArray[$level]["count"]);
+                $bullet = $this->getPrintlistBullet(@$countableBulletsArray[$level]["bullet"], $countableBulletsArray[$level]["count"]);
 
                 // pad for right vertical flush of values
                 $bulletPad = str_pad("", $longestBulletLength-$this->strlenAnsiSafe($bullet), " ");
@@ -2458,6 +2458,9 @@ class Clibelt
      */
     private function getPrintlistBulletMaxLength($bullet, $count)
     {
+		if(!isset($bullet)) {
+			return 1;
+		}
         $maxLength = 0;
 
         for ($i = 0;$i<$count;$i++) {
