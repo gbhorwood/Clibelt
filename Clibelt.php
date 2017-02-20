@@ -189,6 +189,20 @@ class Clibelt
     # Methods to read input piped in
 
     /**
+     * @brief Tests whether there is piped input incoming on STDIN, returns boolean
+     *
+     * @return Boolean
+     */
+    public function testStdin()
+    {
+        $streamArray = [STDIN];
+        $writeArray = [];
+        $exceptArray = [];
+        $streamCount = @stream_select($streamArray, $writeArray, $exceptArray, 0); // zero seconds on timeout since this is just for testing
+        return (boolean)$streamCount;
+    } // testStdin
+
+    /**
      * @brief Returns the content of data piped in on STDIN as a string
      *
      * @return String
@@ -196,6 +210,12 @@ class Clibelt
     public function readStdin()
     {
         $returnStdin = null;
+
+        // prevents infinite loop if no stream.
+        if(!$this->testStdin()) {
+            return null;
+        }
+
         while ($line = fgets(STDIN)) {
             $returnStdin .= $line;
         }
@@ -218,6 +238,11 @@ class Clibelt
      */
     public function readStdinStream()
     {
+
+        // prevents infinite loop if no stream.
+        if(!$this->testStdin()) {
+            return [];
+        }
         while ($line = fgets(STDIN)) {
             yield $line;
         }
@@ -403,6 +428,9 @@ class Clibelt
      */
     public function read($prompt)
     {
+        // force echo on
+        system("stty echo");
+
         $this->printout($prompt.":");
         $userInput = trim(fgets(STDIN));
 
@@ -451,6 +479,8 @@ class Clibelt
                 fwrite(STDOUT, "*");
             }
         } // while(true)
+
+        fwrite(STDOUT, PHP_EOL);
 
         // log the user choice in lastInput so it can be retrieved after the return event
         $this->lastInput = implode("", $enteredCharsArray);
@@ -1306,7 +1336,7 @@ class Clibelt
      * @param $delay The speed at which the optional animation runs. One of DELAY_SLOW, DELAY_MED, DELAY_FAST or DELAY_VERY_FAST
      * @return mixed
      */
-    public function background($function, $args, $progressType = SPIN, $delay = DELAY_MED)
+    public function background($function, $args=[], $progressType = SPIN, $delay = DELAY_MED)
     {
         // args may be sent as either an array of args, ie for call_user_func_array(), a string containg the value of
         // one arg, or null. Prepare args into an array for usage.
@@ -1346,7 +1376,8 @@ class Clibelt
             }
 
             // a string of PHP code is passed
-            elseif (is_string($this->function)) {
+            //elseif (is_string($this->function)) {
+            elseif (is_string($function)) {
                 $returnedVal = eval($function);
             }
         }
