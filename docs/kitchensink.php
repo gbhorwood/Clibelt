@@ -1,9 +1,7 @@
 <?php
-include(__dir__."/../Clibelt.php");
+include __dir__."/../Clibelt.php";
 
 $cli = new Clibelt();
-
-
 
 /**
  * Clibelt kitchensink
@@ -14,11 +12,11 @@ $cli = new Clibelt();
  * Table of contents
  *
  *   Output methods
- *   
+ *
  *    1.  Simple outputs
  *          a. Level outputs
- *          b. Colorized outputs  
- *          c. Stylized outputs  
+ *          b. Colorized outputs
+ *          c. Stylized outputs
  *          d. Aligned output
  *    2.  Box output
  *          a. Colorized box output
@@ -26,7 +24,7 @@ $cli = new Clibelt();
  *    3.  List outputs
  *          a. With different bullets
  *          b. Lists with sub lists
- *          c. List indentations 
+ *          c. List indentations
  *    4.  Erase
  *    5.  Clear Line
  *    6.  Clear Screen
@@ -68,23 +66,16 @@ $cli = new Clibelt();
  *
  *    Copy and download methods
  *    20. Copy a file somewhat safely
+ *    21. Download a file somewhat safely
  *
  */
-$returnedValue = $cli->background($longFunction, $args, PROGRESS);
-
-
-/**
- * 19d. Background an anonymous function with custom animation speed
- *
- */
-
 
 /**
  * Output methods
  */
 
 /**
- * 1. Simple outputs 
+ * 1. Simple outputs
  * Command line applications can output to one of two streams: standard out (STDOUT) or standard error (STDERR)
  * @see http://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO-3.html
  */
@@ -97,15 +88,15 @@ $cli->printerr("this is printed to STDERR");
 
 /**
  * 1a.Level output
- * Output to either STDOUT or STDERR can be decorated with a colorized reference to one of 
+ * Output to either STDOUT or STDERR can be decorated with a colorized reference to one of
  * eight RFC 5424 levels plus 'OK'.
  */
 
 $cli->printout("ok sent to standard out", OK);
 $cli->printerr("ok sent to standard error", OK);
 
-$cli->printout("debug sent to standard out", DEBUG); 
-$cli->printerr("debug sent to standard error", DEBUG); 
+$cli->printout("debug sent to standard out", DEBUG);
+$cli->printerr("debug sent to standard error", DEBUG);
 
 $cli->printout("info sent to standard out", INFO);
 $cli->printerr("info sent to standard error", INFO);
@@ -197,7 +188,7 @@ $cli->printout("this text is aligned left", null, null, null, LEFT);
 $cli->printout("this text is also aligned left");
 
 /**
- * all of these output arguments can be combined 
+ * all of these output arguments can be combined
  */
 $cli->printout("centered ok text, green text on white background", OK, GREEN, WHITE, CENTER);
 
@@ -208,7 +199,7 @@ $cli->printout("centered ok text, green text on white background", OK, GREEN, WH
 
 $cli->box("this text is in a box");
 
-$someText =<<<TXT
+$someText = <<<TXT
 this is multiline
 text put in a box
 TXT;
@@ -237,7 +228,6 @@ $cli->box("white text on green background\naligned left", WHITE, GREEN, LEFT);
 
 $cli->box("white text on green background\naligned left", WHITE, GREEN, RIGHT);
 
-
 /**
  * 3. List outputs
  * Arrays can be converted to lists, similar to the ul and ol tags
@@ -246,7 +236,6 @@ $cli->box("white text on green background\naligned left", WHITE, GREEN, RIGHT);
 // an unordered list from an array
 $listArray = ["first item", "second item", "third item"];
 $cli->printlist($listArray);
-
 
 /**
  * 3a. List outputs with different bullets
@@ -278,7 +267,6 @@ $cli->printlist($listArray, [BULLET_LETTER_LOWERCASE]);
 // ordered by roman numerals
 $cli->printlist($listArray, [BULLET_ROMAN]);
 
-
 /**
  * 3b. List outputs with sub-lists
  * Lists can have an arbitrary number of sub-lists made from sub arrays.
@@ -300,16 +288,16 @@ $listArray = ["top level first item",
     "top level second item",
         ["second level first item",
         "second level second item"],
-    "top levelthird item"];
+    "top levelthird item", ];
 
 // first level is displayed with BULLET_LETTER_UPPERCASE, second level is displayed with BULLET_ROMAN
 $cli->printlist($listArray, [BULLET_LETTER_UPPERCASE, BULLET_ROMAN]);
 
 /**
  * 3c. List indentations
- * The list can be indented a user-defined number of spaces from the left of the terminal. Sub-lists 
+ * The list can be indented a user-defined number of spaces from the left of the terminal. Sub-lists
  * indentation from the top-level list can also be set.
- * 
+ *
  * printlist(array, [bullet types], number of space to indent whole list, number of spaces to indent sub-lists);
  */
 
@@ -319,16 +307,15 @@ $cli->printlist($listArray, [BULLET_LETTER_UPPERCASE, BULLET_ROMAN], 12);
 // indent whole list 12 spaces and indent sub-list 9 spaces from top level list. default 4.
 $cli->printlist($listArray, [BULLET_LETTER_UPPERCASE, BULLET_ROMAN], 12, 9);
 
-
 /**
  * 4. Erase
  * Any previous output can be erased with erase()
- * 
- * erase() will only work on the last output. multiple calls do nothing. 
+ *
+ * erase() will only work on the last output. multiple calls do nothing.
  */
 
 // output three lines of text
-$someText =<<<TXT
+$someText = <<<TXT
 multiline
 text
 output
@@ -338,14 +325,13 @@ $cli->printout($someText);
 // delete the three lines output by the last call to printout() or any other output method.
 $cli->erase();
 
-
 /**
  * 5. Clear Line
  * Clears the last line of output. Only clears one line
  */
 
 // output three lines of text
-$someText =<<<TXT
+$someText = <<<TXT
 multiline
 text
 output
@@ -355,14 +341,12 @@ $cli->printout($someText);
 // delete just the last line of the output
 $cli->clearLine();
 
-
 /**
  * 6. Clear Screen
- * Clears the entire terminal window and re-homes the cursor 
+ * Clears the entire terminal window and re-homes the cursor
  */
 
 $cli->clear();
-
 
 /**
  * User input methods
@@ -383,9 +367,9 @@ $cli->anykey("A custom any key prompt");
 
 /**
  * 8. Prompt user choice
- * Prompts user to input choice from supplied array of options 
+ * Prompts user to input choice from supplied array of options
  * Prompt continues until user makes valid selection
- * 
+ *
  * promptChoice(optional prompt, optional array of char options, optional default choice)
  */
 
@@ -394,7 +378,7 @@ $userChoice = $cli->promptChoice();
 $cli->printout("user chose ".$userChoice);
 
 // custom prompt, list of choosable options. "Pick a vowel [a, e, i, o, u]:"
-$userChoice = $cli->promptChoice("Pick a vowel", ['a','e','i','o','u']);
+$userChoice = $cli->promptChoice("Pick a vowel", ['a', 'e', 'i', 'o', 'u']);
 $cli->printout("user chose ".$userChoice);
 
 /**
@@ -403,7 +387,7 @@ $cli->printout("user chose ".$userChoice);
  */
 
 // default option. "Pick a vowel [a, e, i, o, u](default i):"
-$userChoice = $cli->promptChoice("Pick a vowel", ['a','e','i','o','u'], 'i');
+$userChoice = $cli->promptChoice("Pick a vowel", ['a', 'e', 'i', 'o', 'u'], 'i');
 $cli->printout("user chose ".$userChoice);
 
 /**
@@ -421,7 +405,6 @@ $userChoice = $cli->promptChoiceYn("Choose yes or no", 'y');
 $userChoice = $cli->promptChoiceYn("A custom y/n prompt", 'y');
 $cli->printout("user entered $userChoice");
 
-
 /**
  * 9. Read user input
  * Reads one line of user input, submitted by the RETURN key, after the prompt.
@@ -432,13 +415,12 @@ $cli->printout("user entered $userChoice");
 $userInput = $cli->read("enter some text");
 $cli->printout("user entered $userInput");
 
-
 // validating input on read()
 
 // assign user input to variable and test it's an integer
-while($userInput = filter_var($cli->read("please enter an integer"), FILTER_VALIDATE_INT) === false) {
+while ($userInput = filter_var($cli->read("please enter an integer"), FILTER_VALIDATE_INT) === false) {
     $userInput = $cli->clearLine(); // clears user's input so they can start again
-    $cli->printerr("must be an integer...",ERROR); // display error message
+    $cli->printerr("must be an integer...", ERROR); // display error message
 }
 $cli->printout("user entered ".$userInput); // here's the good input
 
@@ -447,20 +429,19 @@ do {
     $userInput = $cli->read("enter between 5 and 10 chars");
 
     // error on first validation fail
-    if(strlen($userInput) < 5) {
+    if (strlen($userInput) < 5) {
         $cli->clearLine();
         $cli->printout("too short", ERROR);
     }
 
     // error on second validation fail
-    if(strlen($userInput) > 10) {
+    if (strlen($userInput) > 10) {
         $cli->clearLine();
         $cli->printout("too long", ERROR);
     }
 }
 // any validation fail starts the loop again
-while(strlen($userInput) < 5 || strlen($userInput) > 10);
-
+while (strlen($userInput) < 5 || strlen($userInput) > 10);
 
 /**
  * 10. Read user input password
@@ -468,7 +449,6 @@ while(strlen($userInput) < 5 || strlen($userInput) > 10);
  */
 
 $userInput = $cli->readPassword("enter a secret");
-
 
 /**
  * 11. Menu
@@ -481,7 +461,7 @@ $userInput = $cli->readPassword("enter a secret");
 $options = array(
     "a" => "New York Dolls",
     "b" => "Rocket from the Tombs",
-    "c" => "Death"
+    "c" => "Death",
 );
 $selectedKey = $cli->menu("Which band is the first true punk rock band?", $options);
 
@@ -528,7 +508,7 @@ $selectedKey = $cli->menu("Which band is the first true punk rock band?", $optio
 $options = array(
     "a" => "Previous",
     "b" => "Home",
-    "c" => "Back"
+    "c" => "Back",
 );
 $selectedKey = $cli->menuhorizontal("where to next?", $options);
 
@@ -573,9 +553,18 @@ $selectedKey = $cli->menuhorizontal("where to next?", $options, null, null, WHIT
  * A file selection interface that returns a string to the full path of the selected file.
  * The interface is displayed in a box with configurable alignment and colors.
  *
- * fileselect(initial directory to open, the prompt displayed)
+ * $cli->fileselect(initial directory to open, the prompt displayed)
+ *
+ * ClibeltException can be thrown:
+ *  * Starting directory does not exist
+ *  * Starting directory is not readable
  */
-$selectedFile = $cli->fileselect("/tmp", "Select a file");
+try {
+    $selectedFile = $cli->fileselect("/tmp", "Select a file");
+}
+catch(ClibeltException $cbe) {
+    // handle error
+}
 
 /**
  * 13a. Align file selector
@@ -615,7 +604,6 @@ $selectedFile = $cli->fileselect("/tmp", "Select a file", null, GREEN);
 // default fileselect that allows directory select
 $selectedFile = $cli->fileselect("/tmp", "Select a file", null, null, true);
 
-
 /**
  * 14. Date selector
  * A date selector interface that returns a Date object of the seected date
@@ -628,7 +616,6 @@ $dateObject = $cli->datepicker("pick a date");
  */
 $lastThingUserEntered = $cli->getLastInput();
 
-
 /**
  * Stream input methods
  * For reading from STDIN piped into the script, eg
@@ -639,7 +626,7 @@ $lastThingUserEntered = $cli->getLastInput();
 
 /**
  * 16. read STDIN to string
- * Read all of the STDIN into a string. 
+ * Read all of the STDIN into a string.
  * Returns a null string if no input.
  */
 $pipedInput = $cli->readStdin();
@@ -649,7 +636,7 @@ $pipedInput = $cli->readStdin();
  * Read STDIN input into a stream. This is the preferred way as piped-in input
  * can be of an arbitrary length. Returns an empty iterable if no input.
  */
-foreach($cli->readStdinStream() as $pipedInputLine){
+foreach ($cli->readStdinStream() as $pipedInputLine) {
     $cli->printout($pipedInputLine);
 }
 
@@ -658,7 +645,6 @@ foreach($cli->readStdinStream() as $pipedInputLine){
  * Test to see if there is any piped input
  */
 $stdinBoolean = $cli->testStdin();
-
 
 /**
  * Backgrounding a function or executable code
@@ -669,33 +655,54 @@ $stdinBoolean = $cli->testStdin();
  * 19. Background an anonymous function
  * Run an anonymous function with the default spinner progress animation and
  * get the return value
+ *
+ * ClibeltException can be thrown:
+ *  * Invalid code for background execution
  */
-$longFunction = function() {
+$longFunction = function () {
     sleep(2);
     return "returned from longFunction";
 };
-$returnedValue = $cli->background($longFunction);
+
+try {
+    $returnedValue = $cli->background($longFunction);
+}
+catch(ClibeltException $cbe) {
+    // catch errors
+}
 
 /**
  * 19a. Background an anonymous function with a single argument
  */
-$longFunction = function($duration) {
+$longFunction = function ($duration) {
     sleep($duration);
+
     return "returned from longFunction";
 };
 $arg = 4;
-$returnedValue = $cli->background($longFunction, $arg);
+try {
+    $returnedValue = $cli->background($longFunction, $arg);
+}
+catch(ClibeltException $cbe) {
+    // catch errors
+}
 
 /**
  * 19b. Background an anonymous function with multiple args
  */
-$longFunction = function($duration1, $duration2) {
+$longFunction = function ($duration1, $duration2) {
     sleep($duration1);
     sleep($duration2);
+
     return "returned from longFunction";
 };
 $args = [2,3];
-$returnedValue = $cli->background($longFunction, $args);
+try {
+    $returnedValue = $cli->background($longFunction, $args);
+}
+catch(ClibeltException $cbe) {
+    // catch errors
+}
 
 /**
  * 19c. Background an anonymous function with different animation style
@@ -704,27 +711,39 @@ $returnedValue = $cli->background($longFunction, $args);
  * PROGRESS
  * default is SPIN
  */
-$returnedValue = $cli->background($longFunction, $args, PROGRESS);
-
+try {
+    $returnedValue = $cli->background($longFunction, $args, PROGRESS);
+}
+catch(ClibeltException $cbe) {
+    // catch errors
+}
 
 /**
  * 19d. Background an anonymous function with custom animation speed
  * animation speed options are
- * DELAY_SLOW  
- * DELAY_MED  
- * DELAY_FAST  
- * DELAY_VERY_FAST  
+ * DELAY_SLOW
+ * DELAY_MED
+ * DELAY_FAST
+ * DELAY_VERY_FAST
  * default is DELAY_MED
  */
-$returnedValue = $cli->background($longFunction, $args, PROGRESS, DELAY_VERY_FAST);
-
+try {
+    $returnedValue = $cli->background($longFunction, $args, PROGRESS, DELAY_VERY_FAST);
+}
+catch(ClibeltException $cbe) {
+    // catch errors
+}
 
 /**
  * 19e. Background an evalable string
  * valid PHP code in a string can be run in the background
  */
-$cli->background("sleep(2);print 'slept for 2 seconds';");
-
+try {
+    $cli->background("sleep(2);print 'slept for 2 seconds';");
+}
+catch(ClibeltException $cbe) {
+    // catch errors
+}
 
 /**
  * Copy and download methods
@@ -732,14 +751,38 @@ $cli->background("sleep(2);print 'slept for 2 seconds';");
 
 /**
  * 20. Copy a file somewhat safely
- * Tests readability of source, writeability of desination, disk space 
+ * Tests readability of source, writeability of desination, disk space
+ *
+ * ClibeltException can be thrown:
+ *  * Source file does not exist
+ *  * Source file is not readable
+ *  * Destination directory does not exist
+ *  * Destination directory is not readable
+ *  * Insufficent disk space
  */
-$copyCheck = $cli->safeCopy("/path/to/sourcefile", "/path/to/destinationfile");
+try {
+    $cli->safeCopy("/path/to/sourcefile", "/path/to/destinationfile");
+}
+catch(ClibeltException $cbe) {
+    // handle error
+}
 
 /**
- * 20a. Get error from failed copy
- * Tests readability of source, writeability of desination, disk space 
+ * 21. Download a file somewhat safely
+ * Tests Desitnation before starting download
+ *
+ * ClibeltException can be thrown:
+ *  * Destination directory does not exist
+ *  * Destination directory is not writeable
+ *  * Insufficent disk space
+ *  * Download error
  */
+try {
+    $cli->download("http://ipv4.download.thinkbroadband.com/512MB.zip", "/tmp/bar/wig.zip");
+} catch(ClibeltException $cbe) {
+    // handle error
+}
+
 
 
 /**
