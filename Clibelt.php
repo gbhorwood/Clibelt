@@ -1601,8 +1601,106 @@ class Clibelt
         return $destFile;
     } // download
 
+    /**
+     * @brief
+     *
+     * @param $displayString String. The string to displ as figlet banner
+     * @param $figlet String. Path to figlet file
+     * @throws ClibeltException
+     */
+    public function figlet($displayString, $figletFilePath)
+    {
+
+        // load the fi
+        $flf2aArray = $this->loadFigletFile($figletFilePath);
+
+        $foo = $this->getFigletChar('J',$flf2aArray);
+
+    } // figlet
+
     ##
     # Private methods
+
+    /**
+     * @brief Returns an array of lines for the figlet char
+     *
+     * @param $char Char. The character to get the figlet char array of. If a string of lenght > 1 is passed only char[0] will be used.
+     * @param $function Array. The array of the flf file as built by loadFigletFile
+     * @return Array
+     * @see loadFigletFile
+     */
+    private function getFigletChar($char, $flf2aArray)
+    {
+        // Enforce that only one char is used by taking the first index
+        $char = $char[0];
+
+        // build the index of the first element of the figlet char in flf2aArray
+        // ord()-32 is used to convert ASCII number to the alphabet number
+        // +1 is to skip past the header line
+        $startIndex = ((ord($char) - 32) * $flf2aArray['height']) + $flf2aArray['commentLine'] + 1;
+
+        // for each line of the figlet char lines array, replace the null space, hardblank and return chars
+        return array_map(function($flf2aLine, $hardBlank) {
+                return str_replace( ['@', $hardBlank, PHP_EOL], ['', ' ', ''], $flf2aLine);
+            },
+            array_slice($flf2aArray['flf2a'], $startIndex, $flf2aArray['height']),
+            array_fill(0,$flf2aArray['height'], $flf2aArray['hardBlank']));
+    } // getFigletChar
+
+    /**
+     * @brief Loads a figlet .flf file into an array
+     *
+     * Parses out the header values into named keys, puts the full .flf file into a value at
+     * key 'flf2a'.
+     *
+     * Throws ClibeltException on:
+     *  * File not found
+     *  * File not readable
+     *  * File not an .flf file
+     *
+     * @param $figletFilePath String. Path to the figlet file to load
+     * @throws ClibeltException
+     * @return Array
+     */
+    private function loadFigletFile($figletFilePath)
+    {
+        $returnArray = [];
+
+        // ClibeltException error code 3 on figlet file does not exist
+        if (!@file_exists($figletFilePath)) {
+            throw new ClibeltException("Figlet file at \"$figletFilePath\" does not exist", 3, __FUNCTION__);
+        }
+
+        // ClibeltException error code 2 on figlet file is not readable
+        if (!@is_readable($figletFilePath)) {
+            throw new ClibeltException("Figlet file at \"$figletFilePath\" is not readable", 2, __FUNCTION__);
+        }
+
+        // Load figlet file into an array of lines
+        $flf2a = file($figletFilePath);
+
+        // ClibeltException error code 11 on figlet is not valid: does not start with flf2a
+        if(substr($flf2a[0],0,strlen('flf2a')) != 'flf2a') {
+            throw new ClibeltException("Figlet file at \"$figletFilePath\" is not a valid flf file", 11, __FUNCTION__);
+        }
+
+        // Break header line out into array elements named for what they are
+        list($returnArray['hardBlank'],
+            $returnArray['height'],
+            $returnArray['heightDescenderless'],
+            $returnArray['maxWidth'],
+            $returnArray['defaultSmush'],
+            $returnArray['commentLine'],
+            $returnArray['rightToLeft'],
+            $returnArray['fontSmush']) =  preg_split('/ /', preg_replace('/flf2a/', '', $flf2a[0])) ;
+
+        // Put entire figlet file lines array into element at flf2a
+        $returnArray['flf2a'] = $flf2a;
+
+        /** @todo error check height, maxWidth and similar */
+
+        return $returnArray;
+    } // loadFigletFile
 
     /**
      * @brief Returns the strlen of the longest line in either the string or array passed
