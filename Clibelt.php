@@ -1343,8 +1343,7 @@ class Clibelt
             elseif (is_string($function)) {
                 try {
                     $returnedVal = @eval($function);
-                }
-                catch(ParseError $pe) {
+                } catch (ParseError $pe) {
                     $parseError = true;
                 }
             }
@@ -1366,7 +1365,7 @@ class Clibelt
          */
         posix_kill($pid, SIGKILL);
 
-        if($parseError) {
+        if ($parseError) {
             throw new ClibeltException("Invalid code for background operation", 6, __FUNCTION__);
         }
 
@@ -1602,20 +1601,46 @@ class Clibelt
     } // download
 
     /**
-     * @brief
+     * @brief Outputs a string using a figlet font
      *
      * @param $displayString String. The string to displ as figlet banner
      * @param $figlet String. Path to figlet file
+     * @param $foregroundColour Pre-defined Constant.
+     * @param $backgroundColour Pre-defined Constant.
      * @throws ClibeltException
+     * @see loadFigletFile
+     * @see getFigletChar
      */
-    public function figlet($displayString, $figletFilePath)
+    public function figlet($displayString, $figletFilePath, $foregroundColour = null, $backgroundColour = null)
     {
-
-        // load the fi
+        // load the flf file into an array
         $flf2aArray = $this->loadFigletFile($figletFilePath);
 
-        $foo = $this->getFigletChar('J',$flf2aArray);
+        // turn the string of chars to output as figlet into an array of chars
+        $charArray = str_split($displayString);
 
+        // convert that array of chars into an array of figlet char arrays
+        $figletArray = array_walk($charArray,
+            function (&$char, $key, $flf2aArray) {
+                $char = $this->getFigletChar($char, $flf2aArray);
+            },
+            $flf2aArray);
+
+        // build an array of each of the lines, from top to bottom, to print out
+        // we do this pre-step to make center and right justifying easier later
+        $linesArray = [];
+        for ($i = 0;$i<$flf2aArray['height'];$i++) {
+            $accumulator = null;
+            for ($j = 0;$j<count($charArray);$j++) {
+                $accumulator .= $charArray[$j][$i];
+            }
+            $linesArray[] = $accumulator;
+        }
+
+        // output with colouring
+        while (list(, $val) = each($linesArray)) {
+            $this->printout($val, null, $foregroundColour, $backgroundColour);
+        }
     } // figlet
 
     ##
@@ -1640,11 +1665,11 @@ class Clibelt
         $startIndex = ((ord($char) - 32) * $flf2aArray['height']) + $flf2aArray['commentLine'] + 1;
 
         // for each line of the figlet char lines array, replace the null space, hardblank and return chars
-        return array_map(function($flf2aLine, $hardBlank) {
-                return str_replace( ['@', $hardBlank, PHP_EOL], ['', ' ', ''], $flf2aLine);
+        return array_map(function ($flf2aLine, $hardBlank) {
+                return str_replace(['@', $hardBlank, PHP_EOL], ['', ' ', ''], $flf2aLine);
             },
             array_slice($flf2aArray['flf2a'], $startIndex, $flf2aArray['height']),
-            array_fill(0,$flf2aArray['height'], $flf2aArray['hardBlank']));
+            array_fill(0, $flf2aArray['height'], $flf2aArray['hardBlank']));
     } // getFigletChar
 
     /**
@@ -1680,7 +1705,7 @@ class Clibelt
         $flf2a = file($figletFilePath);
 
         // ClibeltException error code 11 on figlet is not valid: does not start with flf2a
-        if(substr($flf2a[0],0,strlen('flf2a')) != 'flf2a') {
+        if (substr($flf2a[0], 0, strlen('flf2a')) != 'flf2a') {
             throw new ClibeltException("Figlet file at \"$figletFilePath\" is not a valid flf file", 11, __FUNCTION__);
         }
 
@@ -1692,7 +1717,7 @@ class Clibelt
             $returnArray['defaultSmush'],
             $returnArray['commentLine'],
             $returnArray['rightToLeft'],
-            $returnArray['fontSmush']) =  preg_split('/ /', preg_replace('/flf2a/', '', $flf2a[0])) ;
+            $returnArray['fontSmush']) =  preg_split('/ /', preg_replace('/flf2a/', '', $flf2a[0]));
 
         // Put entire figlet file lines array into element at flf2a
         $returnArray['flf2a'] = $flf2a;
