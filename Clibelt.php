@@ -1343,8 +1343,7 @@ class Clibelt
             elseif (is_string($function)) {
                 try {
                     $returnedVal = @eval($function);
-                }
-                catch(ParseError $pe) {
+                } catch (ParseError $pe) {
                     $parseError = true;
                 }
             }
@@ -1366,7 +1365,7 @@ class Clibelt
          */
         posix_kill($pid, SIGKILL);
 
-        if($parseError) {
+        if ($parseError) {
             throw new ClibeltException("Invalid code for background operation", 6, __FUNCTION__);
         }
 
@@ -1602,20 +1601,93 @@ class Clibelt
     } // download
 
     /**
-     * @brief
+     * @brief Outputs a string using a figlet font
+     *
+     * Outputs a string in a 'figlet' style large, stylized font.
+     *
+     * Font files in the flf2a format with .flf extensions can be loaded either from a file on disk
+     * or via an url.
+     *
+     * For example
+     * @code
+     * try {
+     *     $cli->figlet("a font loaded from a file", "/path/to/banner.flf");
+     *     // or
+     *     $cli->figlet("a font loaded from an url", "http://www.figlet.org/fonts/stellar.flf");
+     * }
+     * catch(ClibeltException $cbe) {
+     *     // error handling here
+     * }
+     * @endcode
+     * Note that fonts load over the internet result in slower execution and their continued availability cannot
+     * be guaranteed.
+     *
+     * Like other output methods, figlet() can by styled with foreground and background colours and aligned LEFT (default),
+     * RIGHT or CENTER.
+     *
+     * For information on figlet, see http://www.figlet.org
      *
      * @param $displayString String. The string to displ as figlet banner
-     * @param $figlet String. Path to figlet file
+     * @param $figletFileOrUrl String. Optional. Path or url to figlet file.
+     * @param $foregroundColour Pre-defined Constant. Optional.
+     * @param $backgroundColour Pre-defined Constant. Optional.
+     * @param $alignment Pre-defined Constant. Optional. Default LEFT
      * @throws ClibeltException
+     * @see loadFigletFile
+     * @see getFigletChar
+     * @see http://www.figlet.org/fontdb.cgi
      */
-    public function figlet($displayString, $figletFilePath)
+    public function figlet($displayString, $figletFileOrUrl, $foregroundColour = null, $backgroundColour = null, $alignment = null)
     {
+        // load the flf file into an array
+        if (is_string($figletFileOrUrl)) {
+            $flf2aArray = $this->loadFigletFile($figletFileOrUrl);
+        }
 
-        // load the fi
-        $flf2aArray = $this->loadFigletFile($figletFilePath);
+        // turn the string of chars to output as figlet into an array of chars
+        $charArray = str_split($displayString);
 
-        $foo = $this->getFigletChar('J',$flf2aArray);
+        // convert that array of chars into an array of figlet char arrays
+        $figletArray = array_walk($charArray,
+            function (&$char, $key, $flf2aArray) {
+                $char = $this->getFigletChar($char, $flf2aArray);
+            },
+            $flf2aArray);
 
+        // build an array of each of the lines, from top to bottom, to print out
+        // we do this pre-step to make center and right justifying easier later
+        $linesArray = [];
+        for ($i = 0;$i<$flf2aArray['height'];$i++) {
+            $accumulator = null;
+            for ($j = 0;$j<count($charArray);$j++) {
+                $accumulator .= $charArray[$j][$i];
+            }
+            $linesArray[] = $accumulator;
+        }
+
+        // output with colouring
+        // note that alignment is done manually here instead of using the alignment feature in
+        // printout(). this is because figlet needs leading and trailing spaces for letter line
+        // alignment and pad() strips those.
+        while (list(, $val) = each($linesArray)) {
+            // pad to right
+            // terminal width minus length of printable line
+            if ($alignment == RIGHT) {
+                $padLength = $this->getTerminalWidth()-strlen($val);
+                fwrite(STDOUT, str_pad("", $padLength));
+            }
+
+            // pad to center
+            // half of terminal width minus length of printable line
+            elseif ($alignment == CENTER) {
+                // ceil, because there's no .5 of a space
+                $padLength = ceil(($this->getTerminalWidth()-strlen($val))/2);
+                fwrite(STDOUT, str_pad("", $padLength));
+            }
+
+            // output
+            $this->printout($val, null, $foregroundColour, $backgroundColour);
+        }
     } // figlet
 
     ##
@@ -1640,11 +1712,11 @@ class Clibelt
         $startIndex = ((ord($char) - 32) * $flf2aArray['height']) + $flf2aArray['commentLine'] + 1;
 
         // for each line of the figlet char lines array, replace the null space, hardblank and return chars
-        return array_map(function($flf2aLine, $hardBlank) {
-                return str_replace( ['@', $hardBlank, PHP_EOL], ['', ' ', ''], $flf2aLine);
+        return array_map(function ($flf2aLine, $hardBlank) {
+                return str_replace(['@', $hardBlank, PHP_EOL], ['', ' ', ''], $flf2aLine);
             },
             array_slice($flf2aArray['flf2a'], $startIndex, $flf2aArray['height']),
-            array_fill(0,$flf2aArray['height'], $flf2aArray['hardBlank']));
+            array_fill(0, $flf2aArray['height'], $flf2aArray['hardBlank']));
     } // getFigletChar
 
     /**
@@ -1658,41 +1730,41 @@ class Clibelt
      *  * File not readable
      *  * File not an .flf file
      *
-     * @param $figletFilePath String. Path to the figlet file to load
+     * @param $figletFileOrUrl String. Path or url to the figlet file to load
      * @throws ClibeltException
      * @return Array
      */
-    private function loadFigletFile($figletFilePath)
+    private function loadFigletFile($figletFileOrUrl)
     {
         $returnArray = [];
 
         // ClibeltException error code 3 on figlet file does not exist
-        if (!@file_exists($figletFilePath)) {
-            throw new ClibeltException("Figlet file at \"$figletFilePath\" does not exist", 3, __FUNCTION__);
+        if (!@file_exists($figletFileOrUrl) && !filter_var($figletFileOrUrl, FILTER_VALIDATE_URL)) {
+            throw new ClibeltException("Figlet file at \"$figletFileOrUrl\" does not exist", 3, __FUNCTION__);
         }
 
         // ClibeltException error code 2 on figlet file is not readable
-        if (!@is_readable($figletFilePath)) {
-            throw new ClibeltException("Figlet file at \"$figletFilePath\" is not readable", 2, __FUNCTION__);
+        if (!@is_readable($figletFileOrUrl) && !filter_var($figletFileOrUrl, FILTER_VALIDATE_URL)) {
+            throw new ClibeltException("Figlet file at \"$figletFileOrUrl\" is not readable", 2, __FUNCTION__);
         }
 
         // Load figlet file into an array of lines
-        $flf2a = file($figletFilePath);
+        $flf2a = file($figletFileOrUrl);
 
         // ClibeltException error code 11 on figlet is not valid: does not start with flf2a
-        if(substr($flf2a[0],0,strlen('flf2a')) != 'flf2a') {
-            throw new ClibeltException("Figlet file at \"$figletFilePath\" is not a valid flf file", 11, __FUNCTION__);
+        if (substr($flf2a[0], 0, strlen('flf2a')) != 'flf2a') {
+            throw new ClibeltException("Figlet file at \"$figletFileOrUrl\" is not a valid flf file", 11, __FUNCTION__);
         }
 
         // Break header line out into array elements named for what they are
-        list($returnArray['hardBlank'],
+        @list($returnArray['hardBlank'],
             $returnArray['height'],
             $returnArray['heightDescenderless'],
             $returnArray['maxWidth'],
             $returnArray['defaultSmush'],
             $returnArray['commentLine'],
             $returnArray['rightToLeft'],
-            $returnArray['fontSmush']) =  preg_split('/ /', preg_replace('/flf2a/', '', $flf2a[0])) ;
+            $returnArray['fontSmush']) =  preg_split('/ /', preg_replace('/flf2a/', '', $flf2a[0]));
 
         // Put entire figlet file lines array into element at flf2a
         $returnArray['flf2a'] = $flf2a;
