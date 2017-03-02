@@ -1603,18 +1603,46 @@ class Clibelt
     /**
      * @brief Outputs a string using a figlet font
      *
+     * Outputs a string in a 'figlet' style large, stylized font.
+     *
+     * Font files in the flf2a format with .flf extensions can be loaded either from a file on disk
+     * or via an url.
+     *
+     * For example
+     * @code
+     * try {
+     *     $cli->figlet("a font loaded from a file", "/path/to/banner.flf");
+     *     // or
+     *     $cli->figlet("a font loaded from an url", "http://www.figlet.org/fonts/stellar.flf");
+     * }
+     * catch(ClibeltException $cbe) {
+     *     // error handling here
+     * }
+     * @endcode
+     * Note that fonts load over the internet result in slower execution and their continued availability cannot
+     * be guaranteed.
+     *
+     * Like other output methods, figlet() can by styled with foreground and background colours and aligned LEFT (default),
+     * RIGHT or CENTER.
+     *
+     * For information on figlet, see http://www.figlet.org
+     *
      * @param $displayString String. The string to displ as figlet banner
-     * @param $figlet String. Path to figlet file
-     * @param $foregroundColour Pre-defined Constant.
-     * @param $backgroundColour Pre-defined Constant.
+     * @param $figletFileOrUrl String. Optional. Path or url to figlet file.
+     * @param $foregroundColour Pre-defined Constant. Optional.
+     * @param $backgroundColour Pre-defined Constant. Optional.
+     * @param $alignment Pre-defined Constant. Optional. Default LEFT
      * @throws ClibeltException
      * @see loadFigletFile
      * @see getFigletChar
+     * @see http://www.figlet.org/fontdb.cgi
      */
-    public function figlet($displayString, $figletFilePath, $foregroundColour = null, $backgroundColour = null, $alignment=null)
+    public function figlet($displayString, $figletFileOrUrl, $foregroundColour = null, $backgroundColour = null, $alignment = null)
     {
         // load the flf file into an array
-        $flf2aArray = $this->loadFigletFile($figletFilePath);
+        if (is_string($figletFileOrUrl)) {
+            $flf2aArray = $this->loadFigletFile($figletFileOrUrl);
+        }
 
         // turn the string of chars to output as figlet into an array of chars
         $charArray = str_split($displayString);
@@ -1636,26 +1664,29 @@ class Clibelt
             }
             $linesArray[] = $accumulator;
         }
-/*
-$asciiL = +strlen(ESC."[".implode(";", [$foregroundColour,$backgroundColour])."m".CLOSE_ANSI);
-print "strlen ascii ".$asciiL.PHP_EOL;
-
-$asciiLength = $this->getTerminalWidth()-(strlen($val)+strlen(ESC."[".implode(";", [$foregroundColour,$backgroundColour])."m".CLOSE_ANSI));
-*/
 
         // output with colouring
+        // note that alignment is done manually here instead of using the alignment feature in
+        // printout(). this is because figlet needs leading and trailing spaces for letter line
+        // alignment and pad() strips those.
         while (list(, $val) = each($linesArray)) {
-			if ($alignment == RIGHT || $alignment == CENTER) {
-				$padLength = $this->getTerminalWidth()-strlen($val);
+            // pad to right
+            // terminal width minus length of printable line
+            if ($alignment == RIGHT) {
+                $padLength = $this->getTerminalWidth()-strlen($val);
+                fwrite(STDOUT, str_pad("", $padLength));
+            }
 
-/*
-				$padLength = $padLength-3;
-				$val = $val.CLOSE_ANSI;
-*/
+            // pad to center
+            // half of terminal width minus length of printable line
+            elseif ($alignment == CENTER) {
+                // ceil, because there's no .5 of a space
+                $padLength = ceil(($this->getTerminalWidth()-strlen($val))/2);
+                fwrite(STDOUT, str_pad("", $padLength));
+            }
 
-				fwrite(STDOUT,str_pad("",$padLength,'.'));
-			}
-			fwrite(STDOUT, $val.PHP_EOL);
+            // output
+            $this->printout($val, null, $foregroundColour, $backgroundColour);
         }
     } // figlet
 
@@ -1699,34 +1730,34 @@ $asciiLength = $this->getTerminalWidth()-(strlen($val)+strlen(ESC."[".implode(";
      *  * File not readable
      *  * File not an .flf file
      *
-     * @param $figletFilePath String. Path to the figlet file to load
+     * @param $figletFileOrUrl String. Path or url to the figlet file to load
      * @throws ClibeltException
      * @return Array
      */
-    private function loadFigletFile($figletFilePath)
+    private function loadFigletFile($figletFileOrUrl)
     {
         $returnArray = [];
 
         // ClibeltException error code 3 on figlet file does not exist
-        if (!@file_exists($figletFilePath)) {
-            throw new ClibeltException("Figlet file at \"$figletFilePath\" does not exist", 3, __FUNCTION__);
+        if (!@file_exists($figletFileOrUrl) && !filter_var($figletFileOrUrl, FILTER_VALIDATE_URL)) {
+            throw new ClibeltException("Figlet file at \"$figletFileOrUrl\" does not exist", 3, __FUNCTION__);
         }
 
         // ClibeltException error code 2 on figlet file is not readable
-        if (!@is_readable($figletFilePath)) {
-            throw new ClibeltException("Figlet file at \"$figletFilePath\" is not readable", 2, __FUNCTION__);
+        if (!@is_readable($figletFileOrUrl) && !filter_var($figletFileOrUrl, FILTER_VALIDATE_URL)) {
+            throw new ClibeltException("Figlet file at \"$figletFileOrUrl\" is not readable", 2, __FUNCTION__);
         }
 
         // Load figlet file into an array of lines
-        $flf2a = file($figletFilePath);
+        $flf2a = file($figletFileOrUrl);
 
         // ClibeltException error code 11 on figlet is not valid: does not start with flf2a
         if (substr($flf2a[0], 0, strlen('flf2a')) != 'flf2a') {
-            throw new ClibeltException("Figlet file at \"$figletFilePath\" is not a valid flf file", 11, __FUNCTION__);
+            throw new ClibeltException("Figlet file at \"$figletFileOrUrl\" is not a valid flf file", 11, __FUNCTION__);
         }
 
         // Break header line out into array elements named for what they are
-        list($returnArray['hardBlank'],
+        @list($returnArray['hardBlank'],
             $returnArray['height'],
             $returnArray['heightDescenderless'],
             $returnArray['maxWidth'],

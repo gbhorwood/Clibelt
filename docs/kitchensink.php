@@ -12,7 +12,6 @@ $cli = new Clibelt();
  * Table of contents
  *
  *   Output methods
- *
  *    1.  Simple outputs
  *          a. Level outputs
  *          b. Colorized outputs
@@ -25,39 +24,42 @@ $cli = new Clibelt();
  *          a. With different bullets
  *          b. Lists with sub lists
  *          c. List indentations
- *    4.  Erase
- *    5.  Clear Line
- *    6.  Clear Screen
+ *    4.  Figlet output
+ *          a. Colorize figlet output
+ *          b. Align figlet output
+ *    5.  Erase
+ *    6.  Clear Line
+ *    7.  Clear Screen
  *
  *   User input methods
- *    7.  Any key
- *    8.  Prompt user choice
+ *    8.  Any key
+ *    9.  Prompt user choice
  *          a. Setting a default choice
  *          b. Yn convenience method
- *    9.  Read user input
- *    10. Read user input password
- *    11. Menu
+ *    10. Read user input
+ *    11. Read user input password
+ *    12. Menu
  *          a. Inner-align menu text
  *          b. Outer-align menu box
  *          c. Colorize menu
- *    12. Horizontal menu
+ *    13. Horizontal menu
  *          a. Pre-select an option
  *          b. Align horizontal menu
  *          c. Colorize horizontal menu
- *    13. File selector
+ *    14. File selector
  *          a. Align file selector
  *          b. Colorize file selector
  *          c. Set for returning a directory
- *    14. Date selector
- *    15. Get last input
+ *    15. Date selector
+ *    16. Get last input
  *
  *    Stream input methods
- *    16. read STDIN to string
- *    17. read STDIN to stream
- *    18. test STDIN
+ *    17. read STDIN to string
+ *    18. read STDIN to stream
+ *    19. test STDIN
  *
  *    Backgrounding
- *    19. Run a process in the background with a spinner
+ *    20. Run a process in the background with a spinner
  *          a. Background an anonymous function with a single argument
  *          b. Background an anonymous function with multiple args
  *          c. Background an anonymous function with different animation style
@@ -65,8 +67,8 @@ $cli = new Clibelt();
  *          e. Background an evalable string
  *
  *    Copy and download methods
- *    20. Copy a file somewhat safely
- *    21. Download a file somewhat safely
+ *    21. Copy a file somewhat safely
+ *    22. Download a file somewhat safely
  *
  */
 
@@ -308,7 +310,57 @@ $cli->printlist($listArray, [BULLET_LETTER_UPPERCASE, BULLET_ROMAN], 12);
 $cli->printlist($listArray, [BULLET_LETTER_UPPERCASE, BULLET_ROMAN], 12, 9);
 
 /**
- * 4. Erase
+ * 4. Figlet output
+ * Outputs a string as a banner in a figlet font
+ *
+ * Figlet fonts can be loaded from either a file or a URL.
+ * Font files are in the flf2a format and have a .flf extension.
+ *
+ * Figlet fonts can be found at http://www.figlet.org
+ */
+
+// Print 'big banner' in a font loaded from a file
+$cli->figlet("big banner", "/path/to/figletfont.flf");
+
+// Print 'big banner' in a font loaded from an URL 
+$cli->figlet("big banner", "http://www.figlet.org/fonts/stellar.flf");
+
+/**
+ * 4a. Colorize figlet output
+ * The foreground and background colors can be set. 
+ *
+ * figlet(string to print, font file, foreground color, background color)
+ *
+ * The available colors are:
+ * RED
+ * BLACK
+ * GREEN
+ * YELLOW
+ * BLUE
+ * MAGENTA
+ * CYAN
+ * WHITE
+ */
+
+// red forground
+$cli->figlet("big banner", "http://www.figlet.org/fonts/stellar.flf", RED);
+
+// blue forground, white background
+$cli->figlet("big banner", "http://www.figlet.org/fonts/stellar.flf", BLUE, WHITE);
+
+/**
+ * 4b. Align figlet output
+ * Align the figlet text in the terminal. one of LEFT, RIGHT, CENTER. LEFT is default.
+ */
+
+// align default color in center of the terminal
+$cli->figlet("big banner", "http://www.figlet.org/fonts/stellar.flf", null, null, CENTER);
+
+// align blue on white to the right of the terminal
+$cli->figlet("big banner", "http://www.figlet.org/fonts/stellar.flf", BLUE, WHITE, RIGHT);
+
+/**
+ * 5. Erase
  * Any previous output can be erased with erase()
  *
  * erase() will only work on the last output. multiple calls do nothing.
@@ -326,7 +378,7 @@ $cli->printout($someText);
 $cli->erase();
 
 /**
- * 5. Clear Line
+ * 6. Clear Line
  * Clears the last line of output. Only clears one line
  */
 
@@ -342,7 +394,7 @@ $cli->printout($someText);
 $cli->clearLine();
 
 /**
- * 6. Clear Screen
+ * 7. Clear Screen
  * Clears the entire terminal window and re-homes the cursor
  */
 
@@ -353,7 +405,7 @@ $cli->clear();
  */
 
 /**
- * 7. Any key
+ * 8. Any key
  * Pauses execution of the script, awaiting any user input key
  *
  * anykey(optional prompt string)
@@ -366,7 +418,7 @@ $cli->anykey();
 $cli->anykey("A custom any key prompt");
 
 /**
- * 8. Prompt user choice
+ * 9. Prompt user choice
  * Prompts user to input choice from supplied array of options
  * Prompt continues until user makes valid selection
  *
@@ -382,7 +434,7 @@ $userChoice = $cli->promptChoice("Pick a vowel", ['a', 'e', 'i', 'o', 'u']);
 $cli->printout("user chose ".$userChoice);
 
 /**
- * 8a. Setting a default choice
+ * 9a. Setting a default choice
  * A default option can be set so that hitting RETURN selects it
  */
 
@@ -391,7 +443,7 @@ $userChoice = $cli->promptChoice("Pick a vowel", ['a', 'e', 'i', 'o', 'u'], 'i')
 $cli->printout("user chose ".$userChoice);
 
 /**
- * 8b. Yn convenience method
+ * 9b. Yn convenience method
  * A convenience method for Yes/No prompts
  */
 
@@ -406,7 +458,7 @@ $userChoice = $cli->promptChoiceYn("A custom y/n prompt", 'y');
 $cli->printout("user entered $userChoice");
 
 /**
- * 9. Read user input
+ * 10. Read user input
  * Reads one line of user input, submitted by the RETURN key, after the prompt.
  *
  * read(supplied prompt)
@@ -444,14 +496,14 @@ do {
 while (strlen($userInput) < 5 || strlen($userInput) > 10);
 
 /**
- * 10. Read user input password
+ * 11. Read user input password
  * Reads one line of user input with a star echo, submitted by the RETURN key, after the prompt.
  */
 
 $userInput = $cli->readPassword("enter a secret");
 
 /**
- * 11. Menu
+ * 12. Menu
  * Display an interactive menu of options
  *
  * menu(prompt, options array, inner alignment, outer alignment, foreground color, background color)
@@ -466,14 +518,14 @@ $options = array(
 $selectedKey = $cli->menu("Which band is the first true punk rock band?", $options);
 
 /**
- * 11a. Inner-align menu text
+ * 12a. Inner-align menu text
  * Align the menu text inside the box. one of LEFT, RIGHT, CENTER. LEFT is default.
  */
 // center the text in the box
 $selectedKey = $cli->menu("Which band is the first true punk rock band?", $options, CENTER);
 
 /**
- * 11b. Outer-align menu box
+ * 12b. Outer-align menu box
  * Align the menu box in the terminal. one of LEFT, RIGHT, CENTER. LEFT is default.
  */
 // center box in terminal, used default inner text alignment
@@ -483,7 +535,7 @@ $selectedKey = $cli->menu("Which band is the first true punk rock band?", $optio
 $selectedKey = $cli->menu("Which band is the first true punk rock band?", $options, CENTER, RIGHT);
 
 /**
- * 11c. Colorize menu
+ * 12c. Colorize menu
  * the foreground and background colors of the menu can be set
  * The available colors are:
  * RED
@@ -500,7 +552,7 @@ $selectedKey = $cli->menu("Which band is the first true punk rock band?", $optio
 $selectedKey = $cli->menu("Which band is the first true punk rock band?", $options, null, null, WHITE, BLUE);
 
 /**
- * 12. Horizontal menu
+ * 13. Horizontal menu
  * A horiontal menu is a single line menu that runs horizontally across the terminal
  *
  * menuhorizontal(description, options array, pre-selected option, alignment, foreground color, background color)
@@ -513,14 +565,14 @@ $options = array(
 $selectedKey = $cli->menuhorizontal("where to next?", $options);
 
 /**
- * 12a. Pre-select an option
+ * 13a. Pre-select an option
  * You can set an option to be pre-selected
  */
 // pre-select the option 'b', "Home"
 $selectedKey = $cli->menuhorizontal("where to next?", $options, 'b');
 
 /**
- * 12b. Align horizontal menu
+ * 13b. Align horizontal menu
  * The menu can be aligned LEFT, RIGHT or CENTER. LEFT is default.
  */
 // center horizontal menu, no option pre-selected
@@ -530,7 +582,7 @@ $selectedKey = $cli->menuhorizontal("where to next?", $options, null, CENTER);
 $selectedKey = $cli->menuhorizontal("where to next?", $options, 'b', CENTER);
 
 /**
- * 12c. Colorize horizontal menu
+ * 13c. Colorize horizontal menu
  * The foreground and background colors of the menu can be set
  * The available colors are:
  * RED
@@ -549,7 +601,7 @@ $selectedKey = $cli->menuhorizontal("where to next?", $options, 'b', CENTER, WHI
 $selectedKey = $cli->menuhorizontal("where to next?", $options, null, null, WHITE, BLUE);
 
 /**
- * 13. File selector
+ * 14. File selector
  * A file selection interface that returns a string to the full path of the selected file.
  * The interface is displayed in a box with configurable alignment and colors.
  *
@@ -567,14 +619,14 @@ catch(ClibeltException $cbe) {
 }
 
 /**
- * 13a. Align file selector
+ * 14a. Align file selector
  *
  * The fileselect box can be aligned in the terminal. LEFT, RIGHT or CENTER. LEFT is default.
  */
 $selectedFile = $cli->fileselect("/tmp", "Select a file", CENTER);
 
 /**
- * 13b. Colorize file selector
+ * 14b. Colorize file selector
  * The foreground and background colors of the menu can be set
  * The available colors are:
  * RED
@@ -596,7 +648,7 @@ $selectedFile = $cli->fileselect("/tmp", "Select a file", null, YELLOW, RED);
 $selectedFile = $cli->fileselect("/tmp", "Select a file", null, GREEN);
 
 /**
- * 13c. Set for returning a directory
+ * 14c. Set for returning a directory
  * The fileselect has the option of allowing the user to select a directory by hitting 'o' for open.
  * Directory select can be enabled by passing true
  */
@@ -605,13 +657,13 @@ $selectedFile = $cli->fileselect("/tmp", "Select a file", null, GREEN);
 $selectedFile = $cli->fileselect("/tmp", "Select a file", null, null, true);
 
 /**
- * 14. Date selector
+ * 15. Date selector
  * A date selector interface that returns a Date object of the seected date
  */
 $dateObject = $cli->datepicker("pick a date");
 
 /**
- * Get last input
+ * 16. Get last input
  * Get the last user input
  */
 $lastThingUserEntered = $cli->getLastInput();
@@ -625,14 +677,14 @@ $lastThingUserEntered = $cli->getLastInput();
  */
 
 /**
- * 16. read STDIN to string
+ * 17. read STDIN to string
  * Read all of the STDIN into a string.
  * Returns a null string if no input.
  */
 $pipedInput = $cli->readStdin();
 
 /**
- * 17. read STDIN to stream
+ * 18. read STDIN to stream
  * Read STDIN input into a stream. This is the preferred way as piped-in input
  * can be of an arbitrary length. Returns an empty iterable if no input.
  */
@@ -641,7 +693,7 @@ foreach ($cli->readStdinStream() as $pipedInputLine) {
 }
 
 /**
- * 18. test STDIN
+ * 19. test STDIN
  * Test to see if there is any piped input
  */
 $stdinBoolean = $cli->testStdin();
@@ -652,7 +704,7 @@ $stdinBoolean = $cli->testStdin();
  */
 
 /**
- * 19. Background an anonymous function
+ * 20. Background an anonymous function
  * Run an anonymous function with the default spinner progress animation and
  * get the return value
  *
@@ -672,7 +724,7 @@ catch(ClibeltException $cbe) {
 }
 
 /**
- * 19a. Background an anonymous function with a single argument
+ * 20a. Background an anonymous function with a single argument
  */
 $longFunction = function ($duration) {
     sleep($duration);
@@ -688,7 +740,7 @@ catch(ClibeltException $cbe) {
 }
 
 /**
- * 19b. Background an anonymous function with multiple args
+ * 20b. Background an anonymous function with multiple args
  */
 $longFunction = function ($duration1, $duration2) {
     sleep($duration1);
@@ -705,7 +757,7 @@ catch(ClibeltException $cbe) {
 }
 
 /**
- * 19c. Background an anonymous function with different animation style
+ * 20c. Background an anonymous function with different animation style
  * animation speed options are
  * SPIN
  * PROGRESS
@@ -719,7 +771,7 @@ catch(ClibeltException $cbe) {
 }
 
 /**
- * 19d. Background an anonymous function with custom animation speed
+ * 20d. Background an anonymous function with custom animation speed
  * animation speed options are
  * DELAY_SLOW
  * DELAY_MED
@@ -735,7 +787,7 @@ catch(ClibeltException $cbe) {
 }
 
 /**
- * 19e. Background an evalable string
+ * 20e. Background an evalable string
  * valid PHP code in a string can be run in the background
  */
 try {
@@ -750,7 +802,7 @@ catch(ClibeltException $cbe) {
  */
 
 /**
- * 20. Copy a file somewhat safely
+ * 21. Copy a file somewhat safely
  * Tests readability of source, writeability of desination, disk space
  *
  * ClibeltException can be thrown:
@@ -768,7 +820,7 @@ catch(ClibeltException $cbe) {
 }
 
 /**
- * 21. Download a file somewhat safely
+ * 22. Download a file somewhat safely
  * Tests Desitnation before starting download
  *
  * ClibeltException can be thrown:
@@ -782,9 +834,3 @@ try {
 } catch(ClibeltException $cbe) {
     // handle error
 }
-
-
-
-/**
- * Errors and error handling
- */
