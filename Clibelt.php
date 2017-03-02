@@ -1611,7 +1611,7 @@ class Clibelt
      * @see loadFigletFile
      * @see getFigletChar
      */
-    public function figlet($displayString, $figletFilePath, $foregroundColour = null, $backgroundColour = null)
+    public function figlet($displayString, $figletFilePath, $foregroundColour = null, $backgroundColour = null, $alignment=null)
     {
         // load the flf file into an array
         $flf2aArray = $this->loadFigletFile($figletFilePath);
@@ -1636,10 +1636,26 @@ class Clibelt
             }
             $linesArray[] = $accumulator;
         }
+/*
+$asciiL = +strlen(ESC."[".implode(";", [$foregroundColour,$backgroundColour])."m".CLOSE_ANSI);
+print "strlen ascii ".$asciiL.PHP_EOL;
+
+$asciiLength = $this->getTerminalWidth()-(strlen($val)+strlen(ESC."[".implode(";", [$foregroundColour,$backgroundColour])."m".CLOSE_ANSI));
+*/
 
         // output with colouring
         while (list(, $val) = each($linesArray)) {
-            $this->printout($val, null, $foregroundColour, $backgroundColour);
+			if ($alignment == RIGHT || $alignment == CENTER) {
+				$padLength = $this->getTerminalWidth()-strlen($val);
+
+/*
+				$padLength = $padLength-3;
+				$val = $val.CLOSE_ANSI;
+*/
+
+				fwrite(STDOUT,str_pad("",$padLength,'.'));
+			}
+			fwrite(STDOUT, $val.PHP_EOL);
         }
     } // figlet
 
