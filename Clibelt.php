@@ -2075,12 +2075,14 @@ class Clibelt
         $lengthOfLongestKey = $this->getLengthOfLongestLine(array_keys($options));
 
         // all the lines in the menu are put in one array so we can treat them as a single block
-        $fullMenuArray = array_merge(
-            ["description" => $description],
-            ["blank1" => ""], // empty space for readability
-            $options,
-            ["blank2" => ""], // empty space for readability
-            ["prompt" => $prompt]);
+
+        $fullMenuArray["description"] = $description;
+        $fullMenuArray["blank1"] = "";
+        while(list($key,$val) = each($options)) {
+            $fullMenuArray[strval($key)] = $val;
+        }
+        $fullMenuArray["blank2"] = "";
+        $fullMenuArray["prompt"] = $prompt;
 
         // word wrap
         // option vals, the description or the prompt may be wider than current terminal. this creates ugly default wrapping.
@@ -2114,7 +2116,7 @@ class Clibelt
         // once the lines have been wrapped to the screen width, we build an array of all the lines to
         // display complete with keys for options, padding on keys and creating sub-arrays for lines.
         $fullMenuArrayWrappedAndPadded = []; // the array that will hold all the formatted lines
-        $longestKey = $this->getLongestLine(array_keys($options)); // the longest option key, used for padding
+        $longestKey = $this->getLongestLine(array_map('strval', array_keys($options))); // the longest option key, used for padding
         $maxContentLineLength = 0; // the length of the longest line, used for building top and bottom borders of the box
 
         while (list($key, $val) = each($fullMenuArrayWrapped)) {
@@ -2168,10 +2170,12 @@ class Clibelt
 
         // push the top and bottom borders of the box onto the array of lines
         $borderString = str_pad("", strlen($boxBorderChar)+$boxMargin+$maxContentLineLength+$boxMargin+strlen($boxBorderChar), $boxBorderChar);
-        $printableMenuArray = array_merge(
-            array("bordertop" => [$borderString]),
-            $fullMenuArrayWrappedAndPadded,
-            array("borderbottom" => [$borderString]));
+
+        $printableMenuArray["bordertop"] = [$borderString];
+        while(list($key,$val) = each($fullMenuArrayWrappedAndPadded)) {
+            $printableMenuArray[strval($key)] = $val;
+        }
+        $printableMenuArray["borderbottom"] = [$borderString];
 
         // cache the printableMenuArray and the maxContentLineLength (used for building the top and bottom borders of the box)
         // so that on future calls to this method for menu refresh we don't need to do all this calculation again.
