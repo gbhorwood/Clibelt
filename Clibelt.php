@@ -49,6 +49,8 @@ define('REVERSE', '7');
  */
 define('CLOSE_ANSI', ESC."[0m"); // termination code to revert to default styling
 define('BOLD_ANSI', ESC."[1m"); //
+define('UNDERLINE_ANSI', ESC."[4m"); //
+define('REVERSE_ANSI', ESC."[7m"); //
 define('GREEN_ANSI', ESC."[32m"); //
 define('RED_ANSI', ESC."[31m"); //
 
@@ -2430,7 +2432,7 @@ class Clibelt
      * @return String
      * @see getTerminalWidth
      */
-    private function wrapToTerminalWidth($text, $padLength = 0)
+    public function wrapToTerminalWidth($text, $padLength = 0)
     {
         $terminalWidth = $this->getTerminalWidth();
 
@@ -3101,3 +3103,5 @@ class ClibeltException extends Exception
         return __CLASS__."::".$this->method." ".$this->code." ".$this->message;
     }
 } // ClibeltException
+
+// User script code
