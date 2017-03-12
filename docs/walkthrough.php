@@ -399,23 +399,146 @@ function functiond($section, $subSection, $cli, $menudata=null) {
 } // functiond
 
 
+/**
+ * @brief Simple outputs
+ *
+ * @param $section
+ * @param $subSection
+ * @param $cli
+ * @param $menudata
+ * @return void
+ */
 function function1($section, $subSection, $cli, $menudata=null) {
     if($menudata) {
-        return [substr(__FUNCTION__,strlen("function")), "this is function 1"];
+        return [substr(__FUNCTION__,strlen("function")), "Simple output (streams, colours, alignments)"];
     }
 
-    $cli->clear();
-    $cli->box("section $section sb 1",null, null, CENTER, CENTER);
+    $streamsText =<<<TXT
+On Unix syestem, output is one to one of two different 'streams': STDOUT, or 'standard out', for regular output; and STDERR, or 'standard error' for error output.
+
+These streams can be redirected to files when running the script using output redirection, but by default they both go to the terminal.
+
+In Clibelt, you can print directly to either stream using the printout() and printerr() commands.
+
+\t<?php
+\tinclude('Clibelt.php');
+
+\t\$cli = new Clibelt();
+
+\t\$cli->printout("this is printed to STDOUT");
+\t\$cli->printerr("this is printed to STDERR");
+
+TXT;
+
+$rfc5424_1 =<<<TXT
+Output with printout() and printerr() can be tagged with one of the RFC 5424 levels (plus 'OK'). The levles are defined by the following constants:
+
+TXT;
+
+$rfc5424Levels = [
+    "DEBUG",
+    "INFO",
+    "NOTICE",
+    "WARNING",
+    "ERROR",
+    "CRITICAL",
+    "ALERT",
+    "EMERGENCY",
+    "OK"
+];
+
+$rfc5424_2 =<<<TXT
+Level constants are passed as the second argument to printout() and printerr(), ie.
+
+\t\$cli->printout(message, level);
+
+A short example
+
+\t// Print with an INFO tag to standard out
+\t\$cli->printout("this is an INFO notice printed to STDOUT", INFO);
+
+\t// Print with an ERROR tag to standard error
+\t\$cli->printerr("this is an ERROR notice printed to STDERR", ERROR);
+
+You can print any level to either stream.
+
+The outputs look like:
+
+TXT;
+
+$levelsArray = [
+    1=> "OK",
+    2=> "DEBUG",
+    3=> "INFO",
+    4=> "NOTICE",
+    5=> "WARNING",
+    6=> "ERROR",
+    7=> "CRITICAL",
+    8=> "ALERT",
+    9=> "EMERGENCY"
+];
 
     switch($subSection) {
 
+        // streams
         case null:
-        print "this is null".PHP_EOL;
-        $cli->anykey("next section 'a' (hit any key)");
+            $cli->clear();
+            $cli->box("Section $section\n\nOutput streams.",null, null, CENTER, CENTER);
+            $cli->printout("");
+            $cli->printout($streamsText);
+            $cli->printout("");
+            $cli->printout("This page can be referenced with `walkthrough.php --section=$section`".PHP_EOL);
+            $cli->anykey(REVERSE_ANSI."Next:".CLOSE_ANSI." 1a. 'Outputting with RFC-5424 tags.' (Hit any key)");
         
         case 'a':
-        print "this is a".PHP_EOL;
-        $cli->anykey("next section 'b' (hit any key)");
+            $cli->clear();
+            $cli->box("Section $section a\n\nOutputting with RFC-5424 tags.",null, null, CENTER, CENTER);
+            $cli->printout("");
+            $cli->printout($rfc5424_1);
+            $cli->printlist($rfc5424Levels, [BULLET_UNORDERED]);
+            $cli->printout($rfc5424_2);
+            $cli->printout("This is OK", OK);
+            $cli->printout("This is DEBUG", DEBUG);
+            $cli->printout("This is INFO", INFO);
+            $cli->printout("This is NOTICE", NOTICE);
+            $cli->printout("This is WARNING", WARNING);
+            $cli->printout("This is ERROR", ERROR);
+            $cli->printout("This is CRITICAL", CRITICAL);
+            $cli->printout("This is ALERT", ALERT);
+            $cli->printout("This is EMERGENCY", EMERGENCY);
+            $cli->printout("");
+            $cli->printout("");
+
+            $prompt = "Give it a try?";
+            while($cli->menuhorizontal($prompt, [1=>"Yes", 0=>"No"], 1, LEFT)) {
+                $cli->clear();
+                $cli->printout("Build a printout with a level.".PHP_EOL);
+                $inputText = $cli->read("Enter message text: ");
+                $cli->printout("");
+                $level = $cli->menu("Select a level", $levelsArray);
+                $cli->printout("");
+                $cli->printout("The function call is:");
+                $cli->printout("");
+                $cli->printout("\t\$cli->printout(\"$inputText\", ".$levelsArray[$level].");");
+                $OK = OK;
+                $DEBUG = DEBUG;
+                $INFO = INFO;
+                $NOTICE = NOTICE;
+                $WARNING = WARNING;
+                $ERROR = ERROR;
+                $CRITICAL = CRITICAL;
+                $ALERT = ALERT;
+                $EMERGENCY = EMERGENCY;
+                $cli->printout("");
+                $cli->printout("The output looks like:");
+                $cli->printout("");
+                $cli->printout($inputText, ${$levelsArray[$level]});
+                $cli->printout(PHP_EOL);
+                $prompt = "Try again?";
+            }
+            $cli->printout(PHP_EOL.PHP_EOL);
+            $cli->printout("This page can be referenced with `walkthrough.php --section=$section --subsection=a`".PHP_EOL);
+            $cli->anykey(REVERSE_ANSI."Next:".CLOSE_ANSI." 1b. 'Outputting with colours.' (Hit any key)");
 
         case 'b':
         print "this is b".PHP_EOL;
@@ -425,9 +548,18 @@ function function1($section, $subSection, $cli, $menudata=null) {
     nextPrevious($section, $cli);
 }
 
+/**
+ * @brief More complex outputs
+ *
+ * @param $section
+ * @param $subSection
+ * @param $cli
+ * @param $menudata
+ * @return void
+ */
 function function2($section, $subSection, $cli, $menudata=null) {
     if($menudata) {
-        return [substr(__FUNCTION__,strlen("function")), "this is function 2"];
+        return [substr(__FUNCTION__,strlen("function")), "More complex outputs (boxes, lists & headlines)"];
     }
     $cli->clear();
     $cli->box("section $section",null, null, CENTER, CENTER);
