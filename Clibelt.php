@@ -48,11 +48,17 @@ define('REVERSE', '7');
  * Convenience ANSI codes
  */
 define('CLOSE_ANSI', ESC."[0m"); // termination code to revert to default styling
-define('BOLD_ANSI', ESC."[1m"); //
-define('UNDERLINE_ANSI', ESC."[4m"); //
-define('REVERSE_ANSI', ESC."[7m"); //
-define('GREEN_ANSI', ESC."[32m"); //
-define('RED_ANSI', ESC."[31m"); //
+define('BOLD_ANSI', ESC."[1m");
+define('UNDERLINE_ANSI', ESC."[4m");
+define('REVERSE_ANSI', ESC."[7m");
+define('BLACK_ANSI', ESC."[30m");
+define('RED_ANSI', ESC."[31m");
+define('GREEN_ANSI', ESC."[32m");
+define('YELLOW_ANSI', ESC."[33m");
+define('BLUE_ANSI', ESC."[34m");
+define('MAGENTA_ANSI', ESC."[35m");
+define('CYAN_ANSI', ESC."[36m");
+define('WHITE_ANSI', ESC."[37m");
 
 /**
  * Colorized output tags for PSR-2/RFC-5424 levels.
@@ -97,6 +103,9 @@ define('BULLET_LETTER_UPPERCASE', 2);
 define('BULLET_LETTER_LOWERCASE', 3);
 define('BULLET_ROMAN', 4);
 
+/**
+ * key codes for tracking user input on getKeyDown()
+ */
 define('KEY_RETURN', 10);
 define('KEY_UP_ARROW', 65);
 define('KEY_DOWN_ARROW', 66);
@@ -110,15 +119,11 @@ define('KEY_O', 111);
 /**
  * Clibelt
  *
- * @author gbh
- *
  * needs: php-curl
- *
  * needs: stty
  *
- * may need: ANSI
- *
- * @todo banner() // printout text as a banner
+ * @author gbh
+ * @license BSD 3-clause
  */
 class Clibelt
 {
@@ -158,7 +163,7 @@ class Clibelt
     # Methods to read input piped in
 
     /**
-     * @brief Tests whether there is piped input incoming on STDIN, returns boolean
+     * @brief Tests whether there is piped input incoming on STDIN
      *
      * @return Boolean
      */
@@ -224,7 +229,7 @@ class Clibelt
      *
      * An optional custom prompt can by supplied.
      *
-     * @param $prompt Optional display prompt. If none provided, default is "Hit any key to continue: "
+     * @param $prompt String. Optional. Display prompt. If none provided, default is "Hit any key to continue: "
      * @return void
      */
     public function anyKey($prompt = null)
@@ -248,6 +253,7 @@ class Clibelt
      */
     public function promptChoiceYn($prompt = "Choose 'yes' or 'no'", $default = null)
     {
+        // malformed default becomes null, ie no default set
         $default = strtolower($default);
         if ($default && !in_array($default, ["y", "n"])) {
             $default = null;
@@ -707,7 +713,7 @@ class Clibelt
     /**
      * @brief Outputs a file selection interface, navigable with arrow or tab keys, with optional alignment and styling
      *
-     * This method builds and displays a file selection menu with the initial direcotry defined by arg $directory
+     * This method builds and displays a file selection menu with the initial directory defined by arg $directory
      * The user can navigate the menu by either
      * 		* Using the up arrow to scroll up the file list
      * 		* Using the down arrow or tab key to scroll down the file list
@@ -2080,7 +2086,7 @@ class Clibelt
 
         $fullMenuArray["description"] = $description;
         $fullMenuArray["blank1"] = "";
-        while(list($key,$val) = each($options)) {
+        while (list($key, $val) = each($options)) {
             $fullMenuArray[strval($key)] = $val;
         }
         $fullMenuArray["blank2"] = "";
@@ -2174,7 +2180,7 @@ class Clibelt
         $borderString = str_pad("", strlen($boxBorderChar)+$boxMargin+$maxContentLineLength+$boxMargin+strlen($boxBorderChar), $boxBorderChar);
 
         $printableMenuArray["bordertop"] = [$borderString];
-        while(list($key,$val) = each($fullMenuArrayWrappedAndPadded)) {
+        while (list($key, $val) = each($fullMenuArrayWrappedAndPadded)) {
             $printableMenuArray[strval($key)] = $val;
         }
         $printableMenuArray["borderbottom"] = [$borderString];
