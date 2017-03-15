@@ -1698,6 +1698,30 @@ class Clibelt
         }
     } // figlet
 
+
+    /**
+     * @brief Returns the width of the terminal in columns or 0 or failure
+     *
+     * If there is a failure because of stty() or beause exec() has been disabled in PHP, then zero will
+     * be returned. _Make sure you handle this_.
+     *
+     * @return Int
+     * @note This method relies on an exec() call to `stty`
+     * @see pad
+     * @see wrapToTerminalWidth
+     */
+    public function getTerminalWidth()
+    {
+        return (int) implode("", array_map(function ($row) {
+                if (substr(trim($row), 0, strlen("columns")) == "columns") {
+                    return filter_var(preg_split("/ /", trim($row))[1], FILTER_VALIDATE_INT);
+                }
+
+                return;
+            },
+            preg_split("/;/", strtolower(exec('stty -a | grep columns')))));
+    } // getTerminalWidth
+
     ##
     # Private methods
 
@@ -2311,30 +2335,6 @@ class Clibelt
 
         return $args;
     } // prepArgs
-
-
-    /**
-     * @brief Returns the width of the terminal in columns or 0 or failure
-     *
-     * If there is a failure because of stty() or beause exec() has been disabled in PHP, then zero will
-     * be returned. _Make sure you handle this_.
-     *
-     * @return Int
-     * @note This method relies on an exec() call to `stty`
-     * @see pad
-     * @see wrapToTerminalWidth
-     */
-    private function getTerminalWidth()
-    {
-        return (int) implode("", array_map(function ($row) {
-                if (substr(trim($row), 0, strlen("columns")) == "columns") {
-                    return filter_var(preg_split("/ /", trim($row))[1], FILTER_VALIDATE_INT);
-                }
-
-                return;
-            },
-            preg_split("/;/", strtolower(exec('stty -a | grep columns')))));
-    } // getTerminalWidth
 
 
     /**

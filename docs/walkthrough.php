@@ -189,7 +189,7 @@ TXT;
 
     $preferredMethods = [
         BOLD_ANSI."Include Clibelt as a file: ".CLOSE_ANSI.
-        "Using include() or require() to include Clibelt.php in your script file. The advantage of this method is that it is easy to upgrade".
+        "Using include() or require() to include Clibelt.php in your script file. The advantage of this method is that it is easy to upgrade ".
         "the library file. However it necessitates Clibelt.php being installed on all machines that run your script.".
         PHP_EOL,
 
@@ -361,7 +361,7 @@ function functiond($section, $subSection, $cli, $menudata=null) {
     }
 
     $cli->clear();
-    $cli->box("Section $section\n\nThe BSD-3 License.",null, null, CENTER, CENTER);
+    $cli->box("Section $section\n\nFurther Reading.",null, null, CENTER, CENTER);
     $cli->printout("");
 
     $bold_ansi = BOLD_ANSI;
@@ -413,8 +413,13 @@ function function1($section, $subSection, $cli, $menudata=null) {
         return [substr(__FUNCTION__,strlen("function")), "Simple output (streams, colours, alignments)"];
     }
 
+    $simpleOutput =<<<TXT
+This section covers doing simple output of strings to the terminal with various formatting and decorations. The subsections are:
+
+TXT;
+
     $streamsText =<<<TXT
-On Unix syestem, output is one to one of two different 'streams': STDOUT, or 'standard out', for regular output; and STDERR, or 'standard error' for error output.
+On Unix syestem, output is done to one of two different 'streams': STDOUT, or 'standard out', for regular output; and STDERR, or 'standard error' for error output.
 
 These streams can be redirected to files when running the script using output redirection, but by default they both go to the terminal.
 
@@ -431,7 +436,7 @@ In Clibelt, you can print directly to either stream using the printout() and pri
 TXT;
 
 $rfc5424_1 =<<<TXT
-Output with printout() and printerr() can be tagged with one of the RFC 5424 levels (plus 'OK'). The levles are defined by the following constants:
+Output with printout() and printerr() can be tagged with one of the RFC 5424 levels (plus 'OK'). The levels are defined by the following constants:
 
 TXT;
 
@@ -478,25 +483,287 @@ $levelsArray = [
     9=> "EMERGENCY"
 ];
 
+$colourOutputText_1 =<<<TXT
+Text written to standard out and standard error can have ANSI colours and stylings applied as the foreground or background to them. 
+
+ANSI constants are passed as the second and third arguments to printout() and printerr(), ie
+
+\t\$cli->printout(message, level, foreground colour, background colour or styling);
+
+
+TXT;
+
+$colourOutputText_2 =<<<TXT
+Colours can be applied to the foreground. Colours or styles (such as BOLD) can be applied as the background.
+
+Note that ITALIC is not widely supported by terminals and is unlikely to work.
+
+Some examples:
+
+
+TXT;
+
+$colourOutputText_3 =<<<TXT
+Characters in a string can have ANSI colors and formats applied to them like so:
+
+\t\$cli->printout("Regular text. ".BOLD_ANSI."bold text".CLOSE_ANSI);
+
+ANSI color tags must be closed with the CLOSE_ANSI tag.
+
+The available tags are:
+
+TXT;
+
+
+$CLOSE_ANSI = CLOSE_ANSI;
+$BOLD_ANSI = BOLD_ANSI;
+$UNDERLINE_ANSI = UNDERLINE_ANSI;
+$REVERSE_ANSI = REVERSE_ANSI;
+$BLACK_ANSI = BLACK_ANSI;
+$RED_ANSI = RED_ANSI;
+$GREEN_ANSI = GREEN_ANSI;
+$YELLOW_ANSI = YELLOW_ANSI;
+$BLUE_ANSI = BLUE_ANSI;
+$MAGENTA_ANSI = MAGENTA_ANSI;
+$CYAN_ANSI = CYAN_ANSI;
+$WHITE_ANSI = WHITE_ANSI;
+
+$colourOutputText_4 =<<<TXT
+Some examples:
+
+\t\$cli->printout("Regular text. ".BOLD_ANSI."bold text.".CLOSE_ANSI);
+Regular text. {$BOLD_ANSI}bold text.{$CLOSE_ANSI}
+
+\t\$cli->printout("Regular text. ".UNDERLINE_ANSI."underline text.".CLOSE_ANSI);
+Regular text. {$UNDERLINE_ANSI}underline text.{$CLOSE_ANSI}
+
+\t\$cli->printout("Regular text. ".REVERSE_ANSI."reverse text.".CLOSE_ANSI);
+Regular text. {$REVERSE_ANSI}reverse text.{$CLOSE_ANSI}
+
+\t\$cli->printout("Regular text. ".RED_ANSI."red text.".CLOSE_ANSI);
+Regular text. {$RED_ANSI}red text.{$CLOSE_ANSI}
+
+TXT;
+
+
+$alignmentOutputText_1 =<<<TXT
+Output text can be aligned in the terminal.
+
+Alignment constants are:
+
+TXT;
+
+$alignmentOutputText_2 =<<<TXT
+The alignment constant is the fourth argument and is optional.  The default alignment option is LEFT.
+
+\t\$cli->printout(message, level, foreground colour, background colour or styling, alignment);
+
+Some examples:
+
+TXT;
+
+$terminalWidth = $cli->getTerminalWidth();
+
+$wideString = "";
+if($terminalWidth > 0) {
+    while(strlen($wideString) < $terminalWidth+20) {
+        $wideString .= "foobarbazquux ";
+    }
+
+    $widthAndWrap_1 =<<<TXT
+Output strings are often wider than the terminal you are displaying them on.
+
+You can get the width of the terminal as an integer of columns with:
+
+\t\$cli->getTerminalWidth();
+
+The width of this terminal is $terminalWidth.
+
+You can also format a string so that it word breaks to the terminal width with wrapToTerminalWidth(). example:
+
+\t\$wrappedString = \$cli->wrapToTerminalWidth(\$somestring);
+\t\$cli->printout(\$wrappedString)
+
+If you don't call wrapToTerminalWidth(), stings wider than the terminal will break at the character, which is ugly. For example
+
+{$BOLD_ANSI}This text is not wrapped{$CLOSE_ANSI}
+
+TXT;
+}
+else {
+    $widthAndWrap_1 =<<<TXT
+Output strings are often wider than the terminal you are displaying them on.
+
+You can get the width of the terminal as an integer of columns with:
+
+\t\$cli->getTerminalWidth();
+
+You can also format a string so that it word breaks to the terminal width with:
+
+\t\$wrappedString = \$cli->wrapToTerminalWidth(\$somestring);
+\t\$cli->printout(\$wrappedString)
+
+Your terminal width is not available. This is commonly caused by stty not being installed on your system. This means a demonstration of getTerminalWidth() or wrappedString() is not possible.
+
+TXT;
+}
+
+    $clearingAndErasing_1 =<<<TXT
+An important part of output is being able to undo it. There are two Clibelt methods to do this:
+
+TXT;
+
+$clearingAndErasingMethods = [
+    "clear() -- Erases the entire screen",
+    "erase() -- Erases the last ouput made"
+];
+
+    $clearingAndErasing_2 =<<<TXT
+The clear() method clears the entire screen and is called like:
+
+\t\$cli->clear();
+
+The erase() method erases the last output of one or more lines and is called like:
+
+\t\$cli->erase();
+TXT;
+
+$clearingAndErasing_3 =<<<TXT
+The code we are going to run is:
+
+\t\$cli->printout("one line".PHP_EOL."two line".PHP_EOL."three line");
+\tsleep(2);
+\t\$cli->clear();
+
+TXT;
+
+$clearingAndErasing_4 =<<<TXT
+The code we are going to run is:
+
+\t\$cli->printout("This line won't be erased as it is not the last line output");
+\t\$cli->printout("one line".PHP_EOL."two line".PHP_EOL."three line");
+\tsleep(2);
+\t\$cli->erase();
+
+TXT;
+
+$ansiColorTags = [
+    'CLOSE_ANSI',
+    'BOLD_ANSI',
+    'UNDERLINE_ANSI',
+    'REVERSE_ANSI',
+    'BLACK_ANSI',
+    'RED_ANSI',
+    'GREEN_ANSI',
+    'YELLOW_ANSI',
+    'BLUE_ANSI',
+    'MAGENTA_ANSI',
+    'CYAN_ANSI',
+    'WHITE_ANSI'
+];
+
+$alignmentOptions = [
+    "LEFT",
+    "RIGHT",
+    "CENTER"
+];
+
+$foregroundAnsiCodes = [
+    "BLACK",
+    "RED",
+    "GREEN",
+    "YELLOW",
+    "BLUE",
+    "MAGENTA",
+    "CYAN",
+    "WHITE"
+];
+
+$backgroundAnsiCodes = [
+    "NORMAL",
+    "BOLD",
+    "ITALIC",
+    "UNDERLINE",
+    "STRIKETHROUGH",
+    "REVERSE",
+    "BLACK",
+    "RED",
+    "GREEN",
+    "YELLOW",
+    "BLUE",
+    "MAGENTA",
+    "CYAN",
+    "WHITE"
+];
+
+$foregroundAnsiCodesMenu = [
+    1 => "BLACK",
+    2 => "RED",
+    3 => "GREEN",
+    4 => "YELLOW",
+    5 => "BLUE",
+    6 => "MAGENTA",
+    7 => "CYAN",
+    8 => "WHITE",
+    9 => "NO COLOR"
+];
+
+$backgroundAnsiCodesMenu = [
+    1 => "BLACK",
+    2 => "RED",
+    3 => "GREEN",
+    4 => "YELLOW",
+    5 => "BLUE",
+    6 => "MAGENTA",
+    7 => "CYAN",
+    8 => "WHITE",
+    9 => "NORMAL",
+    10 => "BOLD",
+    11 => "ITALIC",
+    12 => "UNDERLINE",
+    13 => "STRIKETHROUGH",
+    14 => "REVERSE",
+    15 => "NO COLOR"
+];
+
+$sections = [
+    "Streams (STDOUT and STDERR)",
+    "Outputting with RFC-5424 tags",
+    "Outputting with colours",
+    "Outputting with alignment",
+    "Terminal width and wrapping",
+    "Clearing and erasing"
+];
+
     switch($subSection) {
 
-        // streams
+        // intro
         case null:
             $cli->clear();
-            $cli->box("Section $section\n\nOutput streams.",null, null, CENTER, CENTER);
+            $cli->box("Section $section\n\nSimple output.",null, null, CENTER, CENTER);
             $cli->printout("");
-            $cli->printout($streamsText);
-            $cli->printout("");
+            $cli->printout($simpleOutput);
+            $cli->printlist($sections, [BULLET_LETTER_LOWERCASE]);
             $cli->printout("This page can be referenced with `walkthrough.php --section=$section`".PHP_EOL);
-            $cli->anykey(REVERSE_ANSI."Next:".CLOSE_ANSI." 1a. 'Outputting with RFC-5424 tags.' (Hit any key)");
-        
+            $cli->anykey(REVERSE_ANSI."Next:".CLOSE_ANSI." 1a. 'Output streams.' (Hit any key)");
+
+        // streams
         case 'a':
             $cli->clear();
-            $cli->box("Section $section a\n\nOutputting with RFC-5424 tags.",null, null, CENTER, CENTER);
+            $cli->box("Section $section a\n\nOutput streams.",null, null, CENTER, CENTER);
             $cli->printout("");
-            $cli->printout($rfc5424_1);
+            $cli->printout($cli->wrapToTerminalWidth($streamsText));
+            $cli->printout("");
+            $cli->printout("This page can be referenced with `walkthrough.php --section=$section --subSection=a`".PHP_EOL);
+            $cli->anykey(REVERSE_ANSI."Next:".CLOSE_ANSI." 1b. 'Outputting with RFC-5424 tags.' (Hit any key)");
+        
+        case 'b':
+            $cli->clear();
+            $cli->box("Section $section b\n\nOutputting with RFC-5424 tags.",null, null, CENTER, CENTER);
+            $cli->printout("");
+            $cli->printout($cli->wrapToTerminalWidth($rfc5424_1));
             $cli->printlist($rfc5424Levels, [BULLET_UNORDERED]);
-            $cli->printout($rfc5424_2);
+            $cli->printout($cli->wrapToTerminalWidth($rfc5424_2));
             $cli->printout("This is OK", OK);
             $cli->printout("This is DEBUG", DEBUG);
             $cli->printout("This is INFO", INFO);
@@ -513,7 +780,7 @@ $levelsArray = [
             while($cli->menuhorizontal($prompt, [1=>"Yes", 0=>"No"], 1, LEFT)) {
                 $cli->clear();
                 $cli->printout("Build a printout with a level.".PHP_EOL);
-                $inputText = $cli->read("Enter message text: ");
+                $inputText = $cli->read("Enter message text");
                 $cli->printout("");
                 $level = $cli->menu("Select a level", $levelsArray);
                 $cli->printout("");
@@ -537,19 +804,183 @@ $levelsArray = [
                 $prompt = "Try again?";
             }
             $cli->printout(PHP_EOL.PHP_EOL);
-            $cli->printout("This page can be referenced with `walkthrough.php --section=$section --subsection=a`".PHP_EOL);
-            $cli->anykey(REVERSE_ANSI."Next:".CLOSE_ANSI." 1b. 'Outputting with colours.' (Hit any key)");
+            $cli->printout("This page can be referenced with `walkthrough.php --section=$section --subsection=b`".PHP_EOL);
+            $cli->anykey(REVERSE_ANSI."Next:".CLOSE_ANSI." 1c. 'Outputting with colours.' (Hit any key)");
 
-        case 'b':
-        print "this is b".PHP_EOL;
+        case 'c':
+            $cli->clear();
+            $cli->box("Section $section c\n\nOutputting with colours.",null, null, CENTER, CENTER);
+            $cli->printout("");
+            $cli->printout($cli->wrapToTerminalWidth($colourOutputText_1));
+            $cli->printout("Foreground ANSI constants:".PHP_EOL);
+            $cli->printlist($foregroundAnsiCodes, [BULLET_UNORDERED]);
+            $cli->printout("Background ANSI constants:".PHP_EOL);
+            $cli->printlist($backgroundAnsiCodes, [BULLET_UNORDERED]);
+            $cli->printout(PHP_EOL);
+            $cli->anykey();
+            $cli->erase();
+            $cli->printout($cli->wrapToTerminalWidth($colourOutputText_2));
+            $cli->printout("\$cli->printout(\"green text\", null, GREEN);");
+            $cli->printout("green text", null, GREEN);
+            $cli->printout(PHP_EOL);
+            $cli->printout("\$cli->printout(\"white on black text\", null, WHITE, BLACK);");
+            $cli->printout("white on black text", null, WHITE, BLACK);
+            $cli->printout(PHP_EOL);
+            $cli->printout("\$cli->printout(\"cyan on white ERROR text\", ERROR, CYAN, WHITE);");
+            $cli->printout("cyan on white ERROR text", ERROR, CYAN, WHITE);
+            $cli->printout(PHP_EOL);
+
+            $prompt = "Give it a try?";
+            while($cli->menuhorizontal($prompt, [1=>"Yes", 0=>"No"], 1, LEFT)) {
+                $cli->clear();
+                $cli->printout("Build a printout with a level.".PHP_EOL);
+                $inputText = $cli->read("Enter message text");
+                $cli->printout("");
+                $levelsArrayWithNone = $levelsArray;
+                $levelsArrayWithNone[10] = "NONE";
+                $level = $cli->menu("Select a level", $levelsArrayWithNone);
+                $cli->printout("");
+                $fgAnsi = $cli->menu("Select a foreground ANSI code", $foregroundAnsiCodesMenu);
+                $cli->printout("");
+                $bgAnsi = $cli->menu("Select a background ANSI code", $backgroundAnsiCodesMenu);
+                $BLACK = BLACK;
+                $RED = RED;
+                $GREEN = GREEN;
+                $YELLOW = YELLOW;
+                $BLACK = BLUE;
+                $MAGENTA = MAGENTA;
+                $CYAN = CYAN;
+                $WHITE = WHITE;
+                $NORMAL = NORMAL;
+                $BOLD = BOLD;
+                $ITALIC = ITALIC;
+                $UNDERLINE = UNDERLINE;
+                $STRIKETHROUGH = STRIKETHROUGH;
+                $REVERSE = REVERSE;
+                $OK = OK;
+                $DEBUG = DEBUG;
+                $INFO = INFO;
+                $NOTICE = NOTICE;
+                $WARNING = WARNING;
+                $ERROR = ERROR;
+                $CRITICAL = CRITICAL;
+                $ALERT = ALERT;
+                $EMERGENCY = EMERGENCY;
+                $cli->printout("");
+                $cli->printout("The function call is:");
+                $cli->printout("");
+                $fgcolor = @${$foregroundAnsiCodesMenu[$fgAnsi]};
+                $bgcolor = @${$backgroundAnsiCodesMenu[$bgAnsi]};
+                if($fgcolor == "NO COLOR") {
+                    $fgcolor = null;
+                }
+                if($bgcolor == "NO COLOR") {
+                    $bgcolor = null;
+                }
+                @$cli->printout("\t\$cli->printout(\"$inputText\", ".$levelsArray[$level].", ".$foregroundAnsiCodesMenu[$fgAnsi].", ".$backgroundAnsiCodesMenu[$bgAnsi].");");
+                $cli->printout("");
+                $cli->printout("The output looks like:");
+                $cli->printout("");
+                $levelDisplay = @${$levelsArray[$level]};
+                $cli->printout($inputText, $levelDisplay, $fgcolor, $bgcolor);
+                $cli->printout(PHP_EOL);
+                $prompt = "Try again?";
+            }
+            $cli->clear();
+            $cli->box("Section $section b\n\nOutputting with colours.",null, null, CENTER, CENTER);
+            $cli->printout("");
+
+            $cli->printout($cli->wrapToTerminalWidth($colourOutputText_3));
+            $cli->printlist($ansiColorTags, [BULLET_UNORDERED]);
+            $cli->anykey();
+            $cli->printout($cli->wrapToTerminalWidth($colourOutputText_4));
+
+            $cli->printout(PHP_EOL.PHP_EOL);
+            $cli->printout("This page can be referenced with `walkthrough.php --section=$section --subsection=c`".PHP_EOL);
+            $cli->anykey(REVERSE_ANSI."Next:".CLOSE_ANSI." 1d. 'Outputting with alignment.' (Hit any key)");
+
+        case 'd':
+            $cli->clear();
+            $cli->box("Section $section d\n\nOutputting with alignment.",null, null, CENTER, CENTER);
+            $cli->printout("");
+            $cli->printout($cli->wrapToTerminalWidth($alignmentOutputText_1));
+            $cli->printlist($alignmentOptions, [BULLET_UNORDERED]);
+            $cli->printout($cli->wrapToTerminalWidth($alignmentOutputText_2));
+            $cli->printout("\$cli->printout(\"centered cyan on white ERROR text\", ERROR, CYAN, WHITE, CENTER);");
+            $cli->printout("cyan on white ERROR text", ERROR, CYAN, WHITE, CENTER);
+            $cli->printout(PHP_EOL);
+            $cli->printout("\$cli->printout(\"right-justified uncoloured text\", null, null, null, RIGHT);");
+            $cli->printout("right-justified uncoloured text", null, null, null, RIGHT);
+            $cli->printout(PHP_EOL);
+            $cli->printout("\$cli->printout(\"default alignment red text\", null, RED);");
+            $cli->printout("default alignment red text", null, RED);
+            $cli->printout(PHP_EOL.PHP_EOL);
+            $cli->printout("This page can be referenced with `walkthrough.php --section=$section --subsection=d`".PHP_EOL);
+            $cli->anykey(REVERSE_ANSI."Next:".CLOSE_ANSI." 1e. 'Terminal width and wrapping.' (Hit any key)");
+
+        case 'e':
+            $cli->clear();
+            $cli->box("Section $section e\n\nTerminal width and wrapping.",null, null, CENTER, CENTER);
+            $cli->printout("");
+            $cli->printout($cli->wrapToTerminalWidth($widthAndWrap_1));
+            $cli->printout($wideString);
+            $cli->printout(PHP_EOL.PHP_EOL.BOLD_ANSI."This text is wrapped".CLOSE_ANSI.PHP_EOL);
+            $cli->printout($cli->wrapToTerminalWidth($wideString));
+            $cli->printout(PHP_EOL.PHP_EOL);
+            $cli->printout("This page can be referenced with `walkthrough.php --section=$section --subsection=e`".PHP_EOL);
+            $cli->anykey(REVERSE_ANSI."Next:".CLOSE_ANSI." 1f. 'Clearing and erasing.' (Hit any key)");
+
+        case 'f':
+            $cli->clear();
+            $cli->box("Section $section f\n\nClearing and erasing.",null, null, CENTER, CENTER);
+            $cli->printout("");
+            $cli->printout($cli->wrapToTerminalWidth($clearingAndErasing_1));
+            $cli->printlist($clearingAndErasingMethods, [BULLET_UNORDERED]);
+            $cli->printout($cli->wrapToTerminalWidth($clearingAndErasing_2));
+            $cli->printout("");
+
+            if($cli->menuhorizontal("Try clear()?", [1=>"Yes", 0=>"No"], 1, LEFT)) {
+                $cli->clear();
+                $cli->printout($cli->wrapToTerminalWidth($clearingAndErasing_3));
+                $cli->anykey("Run this (Hit any key)");
+                $cli->clear();
+                $cli->printout("one line".PHP_EOL."two line".PHP_EOL."three line");
+                sleep(2);
+                $cli->clear();
+                sleep(1);
+                $cli->anykey("Continue (Hit any key)");
+                $cli->clear();
+            } 
+
+            if($cli->menuhorizontal("Try erase()?", [1=>"Yes", 0=>"No"], 1, LEFT)) {
+                $cli->clear();
+                $cli->printout($cli->wrapToTerminalWidth($clearingAndErasing_4));
+                $cli->anykey("Run this (Hit any key)");
+                $cli->clear();
+                $cli->printout("This line won't be erased as it is not the last line output");
+                $cli->printout("one line".PHP_EOL."two line".PHP_EOL."three line");
+                sleep(2);
+                $cli->erase();
+                sleep(1);
+                $cli->anykey("Continue (Hit any key)");
+            } 
+
+            $cli->printout(PHP_EOL.PHP_EOL);
+            $cli->printout("This page can be referenced with `walkthrough.php --section=$section --subsection=f`".PHP_EOL);
 
     }
 
+    $cli->printout(PHP_EOL);
+    $cli->printout("Next Section: More complex outputs", null, null, null, CENTER);
     nextPrevious($section, $cli);
-}
+} // function1
 
 /**
  * @brief More complex outputs
+ *
+ * a) figlet
+ * b) box
+ * c) list
  *
  * @param $section
  * @param $subSection
@@ -561,8 +992,24 @@ function function2($section, $subSection, $cli, $menudata=null) {
     if($menudata) {
         return [substr(__FUNCTION__,strlen("function")), "More complex outputs (boxes, lists & headlines)"];
     }
-    $cli->clear();
-    $cli->box("section $section",null, null, CENTER, CENTER);
+
+    switch($subSection) {
+
+        // streams
+        case null:
+            $cli->clear();
+            $cli->box("Section $section\n\nMore Complex Outputs.",null, null, CENTER, CENTER);
+            $cli->printout("");
+            $cli->printout("");
+            $cli->printout("This page can be referenced with `walkthrough.php --section=$section`".PHP_EOL);
+            $cli->anykey(REVERSE_ANSI."Next:".CLOSE_ANSI." 2a. 'Outputting with RFC-5424 tags.' (Hit any key)");
+        
+        case 'a':
+            $cli->clear();
+            $cli->box("Section $section a\n\nOutputting with RFC-5424 tags.",null, null, CENTER, CENTER);
+            $cli->printout("");
+
+    }
 
     nextPrevious($section, $cli);
 }
